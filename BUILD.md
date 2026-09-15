@@ -97,13 +97,20 @@ storeFile=keystore/vsystem-release.jks
 
 ## البناء على جهاز ضعيف (١–٢ جيجا رام)
 
-`android/gradle.properties` مضبوط أصلاً على وضع الذاكرة المنخفضة:
-```
-org.gradle.jvmargs=-Xmx512m ...
+الملف `android/gradle.properties` مضبوط على قيم عادية (٢.٥ جيجا) لأن CI يحتاجها.
+على جهاز ضعيف استبدل القسم الأول بهذا:
+
+```properties
+org.gradle.jvmargs=-Xmx512m -XX:MaxMetaspaceSize=256m -XX:ReservedCodeCacheSize=64m -XX:+UseSerialGC -Dfile.encoding=UTF-8
 org.gradle.parallel=false
+org.gradle.caching=false
+org.gradle.workers.max=1
 kotlin.compiler.execution.strategy=in-process
+kotlin.daemon.useFallbackStrategy=true
 ```
-وإذا ما زالت الذاكرة لا تكفي، استخدم GitHub Actions (٧ جيجا) — هو الخيار المضمون.
+
+> جرّبت البناء داخل مساحة عمل بذاكرة ١ جيجا فقط: نظام التشغيل يقتل Gradle (OOM).
+> لذلك **GitHub Actions هو الخيار المضمون** — ٧ جيجا رام، مجاني، ويبني في ~٦ دقائق.
 
 ---
 
