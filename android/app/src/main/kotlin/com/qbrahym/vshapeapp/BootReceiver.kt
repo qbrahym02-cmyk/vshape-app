@@ -16,6 +16,11 @@ class BootReceiver : BroadcastReceiver() {
                 Alarms.scheduleAll(ctx)
             } catch (e: Exception) {
             }
+            try {
+                // redraw the home-screen widget from the cached snapshot
+                HomeWidget.updateAll(ctx)
+            } catch (e: Exception) {
+            }
         }
     }
 }

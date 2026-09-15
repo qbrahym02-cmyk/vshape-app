@@ -28,6 +28,11 @@ Future<void> _afterFirstFrame(AppState st) async {
     await Reminders.apply(st);
   } catch (_) {}
 
+  // Bring the home-screen widget up to date (no-op when it is not installed).
+  try {
+    await st.refreshWidget();
+  } catch (_) {}
+
   // Auto-sync the content file at most once every 6 hours.
   final last = st.lastSyncAt;
   final stale = last == null ||

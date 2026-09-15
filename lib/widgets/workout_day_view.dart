@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../core/models.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
+import '../widgets/exercise_art.dart';
 import '../widgets/rest_timer.dart';
 import '../widgets/scope.dart';
 
@@ -151,6 +152,12 @@ class _ExerciseCardState extends State<ExerciseCard> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ExerciseArt(
+              exerciseId: ex.id,
+              size: 58,
+              color: complete ? C.green : C.violet,
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,6 +169,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                 ],
               ),
             ),
+            const SizedBox(width: 6),
             CheckDisc(
               done: complete,
               color: C.green,
@@ -233,7 +241,19 @@ class _ExerciseCardState extends State<ExerciseCard> {
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: C.violet.withValues(alpha: 0.2)),
                         ),
-                        child: StepList(steps: st.tl(ex.steps), color: C.violet),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ExerciseArt(
+                              exerciseId: ex.id,
+                              size: 92,
+                              color: C.violet,
+                              showFrame: false,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(child: StepList(steps: st.tl(ex.steps), color: C.violet)),
+                          ],
+                        ),
                       ),
                       if (!ex.note.isEmpty) ...[
                         const Gap(10),

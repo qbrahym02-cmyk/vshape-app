@@ -187,9 +187,67 @@ class WaterConfig {
 class MealItem {
   final Txt name;
   final String qty;
-  MealItem({required this.name, required this.qty});
-  factory MealItem.from(Map<String, dynamic> j) =>
-      MealItem(name: _txt(j['name']), qty: _s(j['qty'], '1'));
+
+  /// Exact macros for this single item. `null` when the content file only
+  /// gives meal totals (older content versions) - the counter then falls back
+  /// to splitting the meal evenly, exactly like before.
+  final int? proteinG;
+  final int? kcal;
+
+  MealItem({required this.name, required this.qty, this.proteinG, this.kcal});
+
+  factory MealItem.from(Map<String, dynamic> j) => MealItem(
+        name: _txt(j['name']),
+        qty: _s(j['qty'], '1'),
+        proteinG: j['protein_g'] is num ? (j['protein_g'] as num).toInt() : null,
+        kcal: j['kcal'] is num ? (j['kcal'] as num).toInt() : null,
+      );
+}
+
+/// One "off-plan" food the user can tap to add to today's totals.
+class FoodExtra {
+  final String id;
+  final String emoji;
+  final Txt name;
+  final int proteinG;
+  final int kcal;
+
+  FoodExtra({
+    required this.id,
+    required this.emoji,
+    required this.name,
+    required this.proteinG,
+    required this.kcal,
+  });
+
+  factory FoodExtra.from(Map<String, dynamic> j) => FoodExtra(
+        id: _s(j['id']),
+        emoji: _s(j['emoji'], '🍽️'),
+        name: _txt(j['name']),
+        proteinG: _i(j['protein_g']),
+        kcal: _i(j['kcal']),
+      );
+}
+
+class ExtrasConfig {
+  final Txt note;
+  final List<FoodExtra> items;
+
+  ExtrasConfig({required this.note, required this.items});
+
+  const ExtrasConfig._empty()
+      : note = const Txt('', ''),
+        items = const <FoodExtra>[];
+
+  bool get isEmpty => items.isEmpty;
+
+  factory ExtrasConfig.from(Map<String, dynamic> j) => ExtrasConfig(
+        note: _txt(j['note']),
+        items: [
+          for (final e in _list(j['items']))
+            FoodExtra.from((e as Map).cast<String, dynamic>())
+        ],
+      );
 }
 
 class Meal {
@@ -250,6 +308,10 @@ class FoodConfig {
   final List<ProteinSource> sources;
   final BiList avoid;
 
+  /// Tap-to-add foods for anything eaten outside the plan (v4 of the content
+  /// file).  Empty on older content, and the UI simply hides the section.
+  final ExtrasConfig extras;
+
   FoodConfig({
     required this.kcalTarget,
     required this.proteinTarget,
@@ -257,6 +319,7 @@ class FoodConfig {
     required this.meals,
     required this.sources,
     required this.avoid,
+    this.extras = const ExtrasConfig._empty(),
   });
 
   int get plannedProtein => meals.fold(0, (s, m) => s + m.proteinG);
@@ -274,6 +337,8 @@ class FoodConfig {
           ProteinSource.from((e as Map).cast<String, dynamic>())
       ]..sort((a, b) => a.rank.compareTo(b.rank)),
       avoid: BiList.from(j['avoid']),
+      extras: ExtrasConfig.from(
+          (j['extras'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{}),
     );
   }
 }

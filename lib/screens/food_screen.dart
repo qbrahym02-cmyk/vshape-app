@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../core/app_state.dart';
 import '../core/models.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
@@ -86,6 +87,12 @@ class FoodScreen extends StatelessWidget {
           ),
           const Gap(16),
 
+          const _WeekCard(),
+          const Gap(16),
+
+          const _ExtrasCard(),
+          const Gap(16),
+
           SectionCard(
             emoji: '🍳',
             title: l.meals,
@@ -153,8 +160,8 @@ class _MealCardState extends State<_MealCard> {
         .where((e) => e)
         .length;
     final complete = m.items.isNotEmpty && doneCount == m.items.length;
-    final proteinNow =
-        m.items.isEmpty ? 0 : (m.proteinG * doneCount / m.items.length).round();
+    final proteinNow = _mealProtein(st, m);
+    final kcalNow = _mealKcal(st, m);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -216,7 +223,7 @@ class _MealCardState extends State<_MealCard> {
             spacing: 8,
             children: [
               Pill('$proteinNow/${m.proteinG} g', color: complete ? C.green : C.orange, icon: Icons.egg_alt_outlined),
-              Pill('${m.kcal} kcal', color: C.amber, icon: Icons.local_fire_department_outlined),
+              Pill('$kcalNow/${m.kcal} kcal', color: C.amber, icon: Icons.local_fire_department_outlined),
               Pill('$doneCount/${m.items.length}', color: C.blue, icon: Icons.checklist_rounded),
             ],
           ),
@@ -249,16 +256,26 @@ class _MealCardState extends State<_MealCard> {
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
-                                    child: Text(
-                                      m.items[i].name.t(st.isArabic),
-                                      style: t.textTheme.bodyMedium?.copyWith(
-                                        decoration: st.mealItemDone(m.id, i)
-                                            ? TextDecoration.lineThrough
-                                            : null,
-                                        color: st.mealItemDone(m.id, i)
-                                            ? t.textTheme.bodySmall?.color
-                                            : null,
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          m.items[i].name.t(st.isArabic),
+                                          style: t.textTheme.bodyMedium?.copyWith(
+                                            decoration: st.mealItemDone(m.id, i)
+                                                ? TextDecoration.lineThrough
+                                                : null,
+                                            color: st.mealItemDone(m.id, i)
+                                                ? t.textTheme.bodySmall?.color
+                                                : null,
+                                          ),
+                                        ),
+                                        if (m.items[i].proteinG != null)
+                                          Text(
+                                            '${m.items[i].proteinG}g ${st.isArabic ? 'بروتين' : 'protein'} · ${m.items[i].kcal} kcal',
+                                            style: t.textTheme.labelSmall?.copyWith(fontSize: 10.5),
+                                          ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -278,6 +295,42 @@ class _MealCardState extends State<_MealCard> {
       ),
     );
   }
+}
+
+/// Exact macros of the ticked items; falls back to an even split when the
+/// content file has no per-item numbers (older content versions).
+int _mealProtein(AppState st, Meal m) {
+  if (m.items.isEmpty) return 0;
+  var done = 0, sum = 0, exact = true;
+  for (var i = 0; i < m.items.length; i++) {
+    if (!st.mealItemDone(m.id, i)) continue;
+    done++;
+    final p = m.items[i].proteinG;
+    if (p == null) {
+      exact = false;
+    } else {
+      sum += p;
+    }
+  }
+  if (done == 0) return 0;
+  return exact ? sum : (m.proteinG * done / m.items.length).round();
+}
+
+int _mealKcal(AppState st, Meal m) {
+  if (m.items.isEmpty) return 0;
+  var done = 0, sum = 0, exact = true;
+  for (var i = 0; i < m.items.length; i++) {
+    if (!st.mealItemDone(m.id, i)) continue;
+    done++;
+    final k = m.items[i].kcal;
+    if (k == null) {
+      exact = false;
+    } else {
+      sum += k;
+    }
+  }
+  if (done == 0) return 0;
+  return exact ? sum : (m.kcal * done / m.items.length).round();
 }
 
 class _SourceRow extends StatelessWidget {
@@ -322,6 +375,161 @@ class _SourceRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+/// 7-day protein / kcal history, read straight from the stored day keys.
+class _WeekCard extends StatelessWidget {
+  const _WeekCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.st;
+    final l = context.l10n;
+    final week = st.weekMacros(days: 7);
+    final proteins = [for (final d in week) d.protein.toDouble()];
+    final kcals = [for (final d in week) d.kcal.toDouble()];
+    final logged = week.where((d) => d.protein > 0 || d.kcal > 0).length;
+    final avgP = logged == 0
+        ? 0
+        : (week.fold<int>(0, (s, d) => s + d.protein) / logged).round();
+
+    return SectionCard(
+      emoji: '📈',
+      title: l.weekChart,
+      accent: C.blue,
+      subtitle: st.isArabic
+          ? '$logged/٧ أيام مسجّلة · متوسط البروتين $avgP جم'
+          : '$logged/7 days logged - average protein $avgP g',
+      children: [
+        Text(l.protein, style: Theme.of(context).textTheme.labelMedium),
+        const Gap(6),
+        WeekBars(
+          values: proteins,
+          color: C.orange,
+          goal: st.content.food.proteinTarget.toDouble(),
+          height: 74,
+        ),
+        const Gap(12),
+        Text(st.isArabic ? 'سعرات' : 'Calories',
+            style: Theme.of(context).textTheme.labelMedium),
+        const Gap(6),
+        WeekBars(
+          values: kcals,
+          color: C.amber,
+          goal: st.content.food.kcalTarget[1].toDouble(),
+          height: 62,
+        ),
+        if (logged == 0) ...[
+          const Gap(10),
+          Text(
+            st.isArabic
+                ? 'علّم أصناف وجباتك (أو أضف من «إضافات سريعة») وسيظهر أسبوعك هنا.'
+                : 'Tick your meal items (or use Quick extras) and your week shows up here.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Tap-to-add foods that are not part of the plan.
+class _ExtrasCard extends StatelessWidget {
+  const _ExtrasCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.st;
+    final l = context.l10n;
+    final extras = st.content.food.extras;
+    if (extras.items.isEmpty) return const SizedBox.shrink();
+
+    return SectionCard(
+      emoji: '➕',
+      title: l.extrasTitle,
+      accent: C.green,
+      subtitle: extras.note.isEmpty ? l.extrasHint : extras.note.t(st.isArabic),
+      children: [
+        for (final x in extras.items)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                Text(x.emoji, style: const TextStyle(fontSize: 18)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(x.name.t(st.isArabic),
+                          style: Theme.of(context).textTheme.bodyMedium),
+                      Text('${x.proteinG}g · ${x.kcal} kcal',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10.5)),
+                    ],
+                  ),
+                ),
+                _StepButton(
+                  icon: Icons.remove_rounded,
+                  color: C.red,
+                  enabled: st.extraCount(x.id) > 0,
+                  onTap: () => st.bumpExtra(x.id, up: false),
+                ),
+                SizedBox(
+                  width: 34,
+                  child: Text('${st.extraCount(x.id)}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                ),
+                _StepButton(
+                  icon: Icons.add_rounded,
+                  color: C.green,
+                  enabled: true,
+                  onTap: () => st.bumpExtra(x.id, up: true),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _StepButton extends StatelessWidget {
+  const _StepButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    this.enabled = true,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: enabled
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap();
+            }
+          : null,
+      child: Container(
+        width: 30,
+        height: 30,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: enabled ? color.withValues(alpha: 0.14) : color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withValues(alpha: enabled ? 0.4 : 0.15)),
+        ),
+        child: Icon(icon, size: 18, color: enabled ? color : color.withValues(alpha: 0.4)),
       ),
     );
   }

@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "updated_at": "2026-09-15",
+  "version": 4,
+  "updated_at": "2026-09-16",
   "app": {
     "name": {
       "ar": "نظام V",
@@ -138,28 +138,36 @@
               "ar": "٤ بيضات (مسلوقة أو مقلية بملعقة زيت)",
               "en": "4 eggs (boiled, or fried in 1 tsp oil)"
             },
-            "qty": "4"
+            "qty": "4",
+            "protein_g": 24,
+            "kcal": 300
           },
           {
             "name": {
               "ar": "كوب كبير فول مدمس + زيت زيتون وكمون",
               "en": "Big cup of fava beans + olive oil & cumin"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 9,
+            "kcal": 250
           },
           {
             "name": {
               "ar": "رغيف خبز بلدي أو أسمر",
               "en": "1 loaf of whole-wheat / baladi bread"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 6,
+            "kcal": 150
           },
           {
             "name": {
               "ar": "كوبان حليب",
               "en": "2 cups of milk"
             },
-            "qty": "2"
+            "qty": "2",
+            "protein_g": 6,
+            "kcal": 100
           }
         ],
         "tip": {
@@ -186,21 +194,27 @@
               "ar": "ساندويتش جبن قريش مع طماطم",
               "en": "Cottage-cheese sandwich with tomato"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 9,
+            "kcal": 215
           },
           {
             "name": {
               "ar": "أو كوب ترمس / حمص مسلوق (علبة من البيت)",
               "en": "Or a cup of lupini / boiled chickpeas (box from home)"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 9,
+            "kcal": 90
           },
           {
             "name": {
               "ar": "موزة أو برتقالة",
               "en": "1 banana or orange"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 2,
+            "kcal": 45
           }
         ],
         "tip": {
@@ -227,28 +241,36 @@
               "ar": "طبق كبير مكرونة أو أرز",
               "en": "Big plate of pasta or rice"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 8,
+            "kcal": 425
           },
           {
             "name": {
               "ar": "السر: اخلطها بعدس أو حمص مهروس (كشري) أو كوب شوربة عدس",
               "en": "The trick: mix in lentils / mashed chickpeas (koshary) or a cup of lentil soup"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 9,
+            "kcal": 150
           },
           {
             "name": {
               "ar": "ربع دجاجة (فخذ + صدر) أو علبة تونة/سردين",
               "en": "Quarter chicken (thigh + breast) or a tin of tuna/sardines"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 24,
+            "kcal": 280
           },
           {
             "name": {
               "ar": "سلطة خيار وطماطم",
               "en": "Cucumber & tomato salad"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 4,
+            "kcal": 45
           }
         ],
         "tip": {
@@ -275,14 +297,18 @@
               "ar": "٢ ثمرة بطاطس مسلوقة",
               "en": "2 boiled potatoes"
             },
-            "qty": "2"
+            "qty": "2",
+            "protein_g": 4,
+            "kcal": 222
           },
           {
             "name": {
               "ar": "بيضة مسلوقة",
               "en": "1 boiled egg"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 6,
+            "kcal": 78
           }
         ],
         "tip": {
@@ -309,21 +335,27 @@
               "ar": "٢٥٠ جرام جبن قريش (أو علبة زبادي كبيرة)",
               "en": "250 g cottage cheese (or a big tub of yoghurt)"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 24,
+            "kcal": 250
           },
           {
             "name": {
               "ar": "قطعة خبز أو حبة بطاطس",
               "en": "Bread or 1 potato"
             },
-            "qty": "1"
+            "qty": "1",
+            "protein_g": 6,
+            "kcal": 150
           },
           {
             "name": {
               "ar": "٢ بيضة",
               "en": "2 eggs"
             },
-            "qty": "2"
+            "qty": "2",
+            "protein_g": 10,
+            "kcal": 150
           }
         ],
         "tip": {
@@ -456,7 +488,135 @@
         "ar": "المكملات — أنت في سن ١٥ وما تحتاجها",
         "en": "Supplements — at 15 you simply don't need them"
       }
-    ]
+    ],
+    "extras": {
+      "note": {
+        "ar": "أضفت شي خارج الخطة؟ علّمه هنا — البروتين والسعرات تُحسب فوراً مع وجباتك.",
+        "en": "Ate something off-plan? Tick it here - protein and kcal are added to your meals instantly."
+      },
+      "items": [
+        {
+          "id": "egg",
+          "emoji": "🥚",
+          "name": {
+            "ar": "بيضة مسلوقة",
+            "en": "Boiled egg"
+          },
+          "protein_g": 6,
+          "kcal": 78
+        },
+        {
+          "id": "qeresh50",
+          "emoji": "🧀",
+          "name": {
+            "ar": "٥٠ جم جبن قريش",
+            "en": "50 g cottage cheese"
+          },
+          "protein_g": 7,
+          "kcal": 50
+        },
+        {
+          "id": "milk250",
+          "emoji": "🥛",
+          "name": {
+            "ar": "كوب حليب ٢٥٠ مل",
+            "en": "250 ml milk"
+          },
+          "protein_g": 8,
+          "kcal": 150
+        },
+        {
+          "id": "yogurt",
+          "emoji": "🍶",
+          "name": {
+            "ar": "علبة زبادي",
+            "en": "Yogurt cup"
+          },
+          "protein_g": 6,
+          "kcal": 100
+        },
+        {
+          "id": "tuna",
+          "emoji": "🐟",
+          "name": {
+            "ar": "علبة تونة/سردين",
+            "en": "Tuna / sardine tin"
+          },
+          "protein_g": 22,
+          "kcal": 150
+        },
+        {
+          "id": "bread",
+          "emoji": "🍞",
+          "name": {
+            "ar": "رغيف خبز بلدي",
+            "en": "Baladi bread loaf"
+          },
+          "protein_g": 6,
+          "kcal": 130
+        },
+        {
+          "id": "banana",
+          "emoji": "🍌",
+          "name": {
+            "ar": "موزة",
+            "en": "Banana"
+          },
+          "protein_g": 1,
+          "kcal": 105
+        },
+        {
+          "id": "dates3",
+          "emoji": "🌴",
+          "name": {
+            "ar": "٣ تمرات",
+            "en": "3 dates"
+          },
+          "protein_g": 1,
+          "kcal": 200
+        },
+        {
+          "id": "potato",
+          "emoji": "🥔",
+          "name": {
+            "ar": "بطاطس مسلوقة",
+            "en": "Boiled potato"
+          },
+          "protein_g": 2,
+          "kcal": 90
+        },
+        {
+          "id": "lentil",
+          "emoji": "🍲",
+          "name": {
+            "ar": "كوب شوربة عدس",
+            "en": "Cup of lentil soup"
+          },
+          "protein_g": 9,
+          "kcal": 230
+        },
+        {
+          "id": "rice",
+          "emoji": "🍚",
+          "name": {
+            "ar": "طبق أرز/مكرونة",
+            "en": "Plate of rice / pasta"
+          },
+          "protein_g": 8,
+          "kcal": 420
+        },
+        {
+          "id": "peanuts",
+          "emoji": "🥜",
+          "name": {
+            "ar": "حفنة فول سوداني",
+            "en": "Handful of peanuts"
+          },
+          "protein_g": 7,
+          "kcal": 170
+        }
+      ]
+    }
   },
   "workout": {
     "tempo_rule": {

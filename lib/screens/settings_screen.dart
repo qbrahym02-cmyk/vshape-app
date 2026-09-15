@@ -7,6 +7,7 @@ import '../core/native_bridge.dart';
 import '../core/theme.dart';
 import '../services/content_service.dart';
 import '../services/update_controller.dart';
+import '../services/widget_bridge.dart';
 import '../widgets/common.dart';
 import '../widgets/painters.dart';
 import '../widgets/scope.dart';
@@ -208,6 +209,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Gap(16),
 
+          // -------------------------------------------------- home widget --
+          _WidgetCard(onHow: () => _showWidgetHelp(context)),
+          const Gap(16),
+
           // ---------------------------------------------------------- data --
           SectionCard(
             emoji: '🗑️',
@@ -252,6 +257,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .toList()
       ..sort();
     return out.isEmpty ? st.content.reminders.water : out;
+  }
+
+  void _showWidgetHelp(BuildContext context) {
+    final st = context.st;
+    final l = context.l10n;
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (_) => AppScope(
+        state: st,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 26),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('🧩 ${l.widgetTitle}',
+                    style: Theme.of(context).textTheme.titleLarge),
+                const Gap(12),
+                StepList(
+                  steps: st.isArabic
+                      ? const [
+                          'اضغط مطولاً على مكان فاضي في الشاشة الرئيسية.',
+                          'اختر «ودجت» أو «Widgets».',
+                          'ابحث عن V-System واضغط عليه.',
+                          'اسحبه إلى المكان الذي تريده (يحتاج عرض ٤ خانات).',
+                          'ارجع للتطبيق واضغط «تحديث الودجت الآن» — أو استخدم التطبيق بشكل عادي وسيتحدث وحده.',
+                        ]
+                      : const [
+                          'Long-press an empty spot on your home screen.',
+                          'Tap "Widgets".',
+                          'Find V-System and tap it.',
+                          'Drag it where you want it (needs 4 columns of width).',
+                          'Back in the app press "Refresh widget now" - or just use the app and it updates by itself.',
+                        ],
+                  color: C.cyan,
+                ),
+                const Gap(12),
+                InfoBanner(
+                  st.isArabic
+                      ? 'لو ما ظهر V-System في قائمة الودجت: افتح التطبيق مرة واحدة بعد التثبيت ثم أعد المحاولة.'
+                      : 'If V-System is missing from the widget list: open the app once after installing, then try again.',
+                  color: C.amber,
+                  icon: Icons.lightbulb_outline_rounded,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   String _fmt(DateTime d) =>
@@ -574,6 +631,166 @@ class _UpdateCard extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// Home-screen widget: a live preview of what Android will render, plus a
+/// manual refresh (the widget also updates on every tap inside the app).
+class _WidgetCard extends StatelessWidget {
+  const _WidgetCard({required this.onHow});
+
+  final VoidCallback onHow;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.st;
+    final l = context.l10n;
+    final t = Theme.of(context);
+    final d = WidgetData.from(st);
+    final waterPct = d.waterGoalMl == 0 ? 0.0 : d.waterMl / d.waterGoalMl;
+    final setsPct = d.setsTotal == 0
+        ? (d.restDay ? 1.0 : 0.0)
+        : d.setsDone / d.setsTotal;
+
+    return SectionCard(
+      emoji: '🧩',
+      title: l.widgetTitle,
+      accent: C.cyan,
+      subtitle: l.widgetHint,
+      children: [
+        // ---- preview (mirrors res/layout/widget_vsystem.xml) ----
+        Directionality(
+          textDirection: st.isArabic ? TextDirection.rtl : TextDirection.ltr,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0B1020),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: C.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text('V',
+                        style: TextStyle(
+                            color: C.cyan, fontWeight: FontWeight.w900, fontSize: 15)),
+                    const SizedBox(width: 6),
+                    Text('V-System',
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.85),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12)),
+                    const Spacer(),
+                    Text('${d.streak} 🔥',
+                        style: const TextStyle(color: C.amber, fontWeight: FontWeight.w800, fontSize: 12)),
+                  ],
+                ),
+                const Gap(9),
+                Text(
+                  '${(d.waterMl / 1000).toStringAsFixed(1)}'
+                  ' / ${(d.waterGoalMl / 1000).toStringAsFixed(1)} '
+                  '${st.isArabic ? 'لتر' : 'L'}  ·  ${d.waterGlasses} ${st.isArabic ? 'كوب' : 'glasses'}',
+                  style: const TextStyle(color: C.cyan, fontWeight: FontWeight.w800, fontSize: 13),
+                ),
+                const Gap(4),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(9),
+                  child: LinearProgressIndicator(
+                    value: waterPct.clamp(0.0, 1.0),
+                    minHeight: 6,
+                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    valueColor: const AlwaysStoppedAnimation(C.cyan),
+                  ),
+                ),
+                const Gap(9),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '🍗 ${d.proteinG}/${d.proteinGoalG}g',
+                        style: const TextStyle(color: C.orange, fontWeight: FontWeight.w800, fontSize: 12),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        '🔥 ${d.kcal}/${d.kcalGoal}',
+                        style: const TextStyle(color: C.amber, fontWeight: FontWeight.w800, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(7),
+                Text(
+                  '${d.workoutEmoji} ${d.workoutTitle}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 12),
+                ),
+                const Gap(4),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(9),
+                        child: LinearProgressIndicator(
+                          value: setsPct.clamp(0.0, 1.0),
+                          minHeight: 5,
+                          backgroundColor: Colors.white.withValues(alpha: 0.12),
+                          valueColor: const AlwaysStoppedAnimation(C.violet),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      d.restDay
+                          ? (st.isArabic ? 'راحة' : 'rest')
+                          : '${d.setsDone}/${d.setsTotal}',
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6), fontSize: 10.5),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Gap(12),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  await st.refreshWidget();
+                  if (context.mounted) {
+                    snack(context, l.widgetUpdated, color: C.cyan);
+                  }
+                },
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: Text(l.widgetRefresh,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: onHow,
+                icon: const Icon(Icons.help_outline_rounded, size: 18),
+                label: Text(l.widgetHow, maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+            ),
+          ],
+        ),
+        const Gap(8),
+        Text(
+          st.isArabic
+              ? 'الودجت يشتغل حتى والتطبيق مغلق، ويتحدّث تلقائياً مع كل ضغطة + مرة كل ساعة تقريباً.'
+              : 'The widget keeps working with the app closed, and refreshes on every tap plus roughly once an hour.',
+          style: t.textTheme.labelSmall,
+        ),
+      ],
     );
   }
 }

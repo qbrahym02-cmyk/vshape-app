@@ -57,19 +57,19 @@ flutter build apk --release --split-per-abi
 
 ```bash
 # 1) عدّل pubspec.yaml
-version: 1.0.4+5          # الاسم 1.0.4 ورقم النسخة 5 (لازم يزيد)
+version: 1.0.5+6          # الاسم 1.0.5 ورقم النسخة 6 (لازم يزيد)
 
 # 2) اكتب وش تغيّر للمستخدم في RELEASE_NOTES.md (يظهر داخل التطبيق على بطاقة التحديث)
 
 # 3) ارفع ونشر
-git commit -am "release 1.0.4"
-git tag v1.0.4+5
+git commit -am "release 1.0.5"
+git tag v1.0.5+6
 git push origin main --tags
 ```
 
 Actions يبني وينشر Release فيه:
 - `V-System-universal.apk`
-- `version.json` → `{"versionName":"1.0.4","versionCode":5,...}`  ← **بدون** إزاحة المعالج
+- `version.json` → `{"versionName":"1.0.5","versionCode":6,...}`  ← **بدون** إزاحة المعالج
 - `V-System-arm64-v8a.apk` / `armeabi-v7a` / `x86_64`
 - نص الإصدار من `RELEASE_NOTES.md`
 - `checksums.sha256`

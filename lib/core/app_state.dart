@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/content_service.dart';
+import '../services/widget_bridge.dart';
 import 'models.dart';
 import 'native_bridge.dart';
 
@@ -42,6 +43,9 @@ class K {
   static String dayDone(String d, String dayId) => 'dd_${d}_$dayId';
   static String strength(String id) => 'str_$id';
   static String measure(String id) => 'meas_$id';
+
+  /// How many times an "extra" (off-plan) food was added on a given day.
+  static String extra(String d, String id) => 'ex_${d}_$id';
 }
 
 enum SyncStatus { idle, loading, ok, error }
@@ -188,6 +192,32 @@ class AppState extends ChangeNotifier {
   /// Lets external helpers trigger a rebuild.
   void ping() => notifyListeners();
 
+  // ------------------------------------------------------- home widget -----
+  bool _widgetSyncQueued = false;
+
+  /// Pushes the numbers to the home-screen widget.
+  ///
+  /// Uses a microtask (not a Timer) so widget tests never end up with a pending
+  /// timer, and collapses bursts of taps into a single platform-channel call.
+  void scheduleWidgetSync() {
+    if (_widgetSyncQueued) return;
+    _widgetSyncQueued = true;
+    Future.microtask(() async {
+      _widgetSyncQueued = false;
+      try {
+        await WidgetBridge.syncFrom(this);
+      } catch (_) {}
+    });
+  }
+
+  /// Full refresh: re-probe whether the widget is on a home screen, then push.
+  Future<void> refreshWidget() async {
+    try {
+      await WidgetBridge.probe();
+      await WidgetBridge.push(WidgetData.from(this));
+    } catch (_) {}
+  }
+
   // ---------------------------------------------------------------- state ---
   SharedPreferences get prefs => _prefs;
 
@@ -197,12 +227,14 @@ class AppState extends ChangeNotifier {
     final v = (waterToday() + ml).clamp(0, 20000);
     await _prefs.setInt(K.water(K.date()), v);
     notifyListeners();
+    scheduleWidgetSync();
   }
 
   Future<void> setSlot(String slotId, int glasses) async {
     await _prefs.setInt(K.slot(K.date(), slotId), glasses.clamp(0, 40));
     await _syncQuickTotal();
     notifyListeners();
+    scheduleWidgetSync();
   }
 
   /// Keeps the "quick add" counter in sync with the slot checklist so both
@@ -250,6 +282,7 @@ class AppState extends ChangeNotifier {
   Future<void> setTask(String id, bool v) async {
     await _prefs.setBool(K.task(K.date(), id), v);
     notifyListeners();
+    scheduleWidgetSync();
   }
 
   Future<void> toggleTask(String id) => setTask(id, !taskDone(id));
@@ -260,6 +293,7 @@ class AppState extends ChangeNotifier {
   Future<void> toggleMealItem(String mealId, int idx) async {
     await _prefs.setBool(K.mealItem(K.date(), mealId, idx), !mealItemDone(mealId, idx));
     notifyListeners();
+    scheduleWidgetSync();
   }
 
   bool mealDone(String mealId) {
@@ -271,30 +305,93 @@ class AppState extends ChangeNotifier {
     return m.first.items.isNotEmpty;
   }
 
-  int proteinEaten() {
-    var sum = 0;
+  /// Protein eaten today, in grams (planned meals + extras).
+  int proteinEaten() => proteinOn(keyFor(DateTime.now()));
+
+  /// Kcal eaten today (planned meals + extras).
+  int kcalEaten() => kcalOn(keyFor(DateTime.now()));
+
+  bool _mealItemDoneOn(String date, String mealId, int idx) =>
+      _prefs.getBool(K.mealItem(date, mealId, idx)) ?? false;
+
+  /// Protein for an arbitrary day - used by the 7-day chart.
+  int proteinOn(String date) => _mealMacros(date).$1 + _extrasMacros(date).$1;
+
+  /// Kcal for an arbitrary day.
+  int kcalOn(String date) => _mealMacros(date).$2 + _extrasMacros(date).$2;
+
+  /// (protein, kcal) coming from the ticked items of the planned meals.
+  ///
+  /// When the content file carries per-item macros the count is exact; when it
+  /// does not (older content) the meal total is split evenly between its items,
+  /// which is what the app always did.
+  (int, int) _mealMacros(String date) {
+    var protein = 0;
+    var kcal = 0;
     for (final m in _content.food.meals) {
       if (m.items.isEmpty) continue;
       var done = 0;
+      var itemP = 0;
+      var itemK = 0;
+      var hasMacros = true;
       for (var i = 0; i < m.items.length; i++) {
-        if (mealItemDone(m.id, i)) done++;
+        if (!_mealItemDoneOn(date, m.id, i)) continue;
+        done++;
+        final it = m.items[i];
+        if (it.proteinG == null || it.kcal == null) {
+          hasMacros = false;
+        } else {
+          itemP += it.proteinG!;
+          itemK += it.kcal!;
+        }
       }
-      sum += (m.proteinG * done / m.items.length).round();
+      if (done == 0) continue;
+      if (hasMacros) {
+        protein += itemP;
+        kcal += itemK;
+      } else {
+        protein += (m.proteinG * done / m.items.length).round();
+        kcal += (m.kcal * done / m.items.length).round();
+      }
     }
-    return sum;
+    return (protein, kcal);
   }
 
-  int kcalEaten() {
-    var sum = 0;
-    for (final m in _content.food.meals) {
-      if (m.items.isEmpty) continue;
-      var done = 0;
-      for (var i = 0; i < m.items.length; i++) {
-        if (mealItemDone(m.id, i)) done++;
-      }
-      sum += (m.kcal * done / m.items.length).round();
+  // ------------------------------------------------------------- extras ----
+  /// How many times an off-plan food was added today.
+  int extraCount(String id) => extraCountOn(keyFor(DateTime.now()), id);
+
+  int extraCountOn(String date, String id) => _prefs.getInt(K.extra(date, id)) ?? 0;
+
+  Future<void> bumpExtra(String id, {required bool up}) async {
+    final cur = extraCount(id);
+    final next = up ? cur + 1 : cur - 1;
+    await _prefs.setInt(K.extra(keyFor(DateTime.now()), id), next.clamp(0, 40));
+    notifyListeners();
+    scheduleWidgetSync();
+  }
+
+  /// (protein, kcal) contributed by the extras of a given day.
+  (int, int) _extrasMacros(String date) {
+    var protein = 0;
+    var kcal = 0;
+    for (final x in _content.food.extras.items) {
+      final n = extraCountOn(date, x.id);
+      if (n == 0) continue;
+      protein += x.proteinG * n;
+      kcal += x.kcal * n;
     }
-    return sum;
+    return (protein, kcal);
+  }
+
+  /// Last [days] days of (protein, kcal), oldest first - for the week chart.
+  List<({String date, int protein, int kcal})> weekMacros({int days = 7}) {
+    final out = <({String date, int protein, int kcal})>[];
+    for (var i = days - 1; i >= 0; i--) {
+      final key = keyFor(DateTime.now().subtract(Duration(days: i)));
+      out.add((date: key, protein: proteinOn(key), kcal: kcalOn(key)));
+    }
+    return out;
   }
 
   // workouts
@@ -303,6 +400,7 @@ class AppState extends ChangeNotifier {
   Future<void> toggleSet(String exId, int idx) async {
     await _prefs.setBool(K.setDone(K.date(), exId, idx), !setDoneToday(exId, idx));
     notifyListeners();
+    scheduleWidgetSync();
   }
 
   int setsDone(String dayId) {
@@ -322,6 +420,7 @@ class AppState extends ChangeNotifier {
   Future<void> toggleDayDone(String dayId) async {
     await _prefs.setBool(K.dayDone(K.date(), dayId), !dayDoneToday(dayId));
     notifyListeners();
+    scheduleWidgetSync();
   }
 
   // progress logs  (json arrays of {"d": "2026-09-15", "v": 12})

@@ -110,6 +110,31 @@ class L10n {
   String get save => s('حفظ', 'Save');
   String get howRemoteWorks => s('كيف يشتغل التحديث عن بُعد؟', 'How does remote updating work?');
 
+  // food extras (v4 content) + week chart
+  String get extrasTitle => s('إضافات سريعة', 'Quick extras');
+  String get extrasHint => s('أكلت شي خارج الخطة؟ اضغط + ليُحسب فوراً', 'Ate something off-plan? Tap + to count it instantly');
+  String get weekChart => s('آخر ٧ أيام', 'Last 7 days');
+  String get avg => s('المتوسط', 'Average');
+  String get best => s('أفضل يوم', 'Best day');
+  String get kcalUnit => s('سعرة', 'kcal');
+  String get gUnit => s('جم', 'g');
+  String get exactCount => s('عدّ دقيق لكل صنف', 'Exact count per item');
+  String get perItem => s('لكل صنف', 'per item');
+
+  // home-screen widget
+  String get widgetTitle => s('ودجت الشاشة الرئيسية', 'Home-screen widget');
+  String get widgetHint => s('ماء + بروتين + تمرين اليوم على شاشتك بدون فتح التطبيق',
+      'Water, protein and today\'s session on your home screen - no need to open the app');
+  String get widgetRefresh => s('تحديث الودجت الآن', 'Refresh widget now');
+  String get widgetHow => s('كيف أضيفه؟', 'How do I add it?');
+  String get widgetHowBody => s(
+      'اضغط مطولاً على مكان فاضي في الشاشة الرئيسية ← «ودجت» / «Widgets» ← ابحث عن V-System ← اسحبه للشاشة. بعدها يتحدّث تلقائياً مع كل ضغطة في التطبيق.',
+      'Long-press an empty spot on your home screen -> Widgets -> find V-System -> drag it onto the screen. It then refreshes automatically with every tap you make in the app.');
+  String get widgetUpdated => s('تم تحديث الودجت ✅', 'Widget refreshed ✅');
+
+  // exercise art
+  String get showArt => s('رسوم التمارين', 'Exercise illustrations');
+
   // misc
   String get retry => s('إعادة المحاولة', 'Retry');
   String get close => s('إغلاق', 'Close');

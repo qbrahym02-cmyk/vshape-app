@@ -8,12 +8,16 @@
 //
 // SharedPreferences performs real async platform work which the fake-async
 // zone inside testWidgets blocks, so every async call runs in tester.runAsync.
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vshape_app/core/app_state.dart';
+import 'package:vshape_app/core/models.dart';
 import 'package:vshape_app/screens/food_screen.dart';
 import 'package:vshape_app/screens/more_screen.dart';
 import 'package:vshape_app/screens/progress_screen.dart';
@@ -22,6 +26,9 @@ import 'package:vshape_app/screens/settings_screen.dart';
 import 'package:vshape_app/screens/today_screen.dart';
 import 'package:vshape_app/screens/training_screen.dart';
 import 'package:vshape_app/screens/water_screen.dart';
+import 'package:vshape_app/services/widget_bridge.dart';
+import 'package:vshape_app/widgets/exercise_art.dart';
+import 'package:vshape_app/widgets/painters.dart';
 import 'package:vshape_app/widgets/scope.dart';
 
 Future<AppState> _boot({bool arabic = true}) async {
@@ -252,6 +259,116 @@ void main() {
       expect(note.t(true), isNot(note.t(false)));
       expect(note.t(true), contains('ماء'));
       expect(note.t(false), contains('water'));
+    });
+  });
+
+  // ---------------------------------------------------- v1.0.3: food extras --
+  group('exact macros + quick extras', () {
+    late AppState st;
+
+    setUp(() async {
+      st = await _boot();
+    });
+
+    test('extras add protein and kcal on top of the planned meals', () async {
+      expect(st.proteinEaten(), 0);
+      expect(st.kcalEaten(), 0);
+
+      await st.bumpExtra('egg', up: true);
+      await st.bumpExtra('egg', up: true);
+      expect(st.extraCount('egg'), 2);
+      expect(st.proteinEaten(), 12);
+      expect(st.kcalEaten(), 156);
+
+      await st.bumpExtra('egg', up: false);
+      expect(st.extraCount('egg'), 1);
+      expect(st.proteinEaten(), 6);
+
+      await st.bumpExtra('egg', up: false);
+      await st.bumpExtra('egg', up: false); // never goes below zero
+      expect(st.extraCount('egg'), 0);
+      expect(st.proteinEaten(), 0);
+    });
+
+    test('meal items are counted with their exact macros', () async {
+      final breakfast = st.content.food.meals.firstWhere((m) => m.id == 'breakfast');
+      expect(breakfast.items.first.proteinG, isNotNull);
+
+      await st.toggleMealItem('breakfast', 0);
+      expect(st.proteinEaten(), breakfast.items.first.proteinG);
+      expect(st.kcalEaten(), breakfast.items.first.kcal);
+
+      for (var i = 1; i < breakfast.items.length; i++) {
+        await st.toggleMealItem('breakfast', i);
+      }
+      expect(st.proteinEaten(), breakfast.proteinG);
+      expect(st.kcalEaten(), breakfast.kcal);
+    });
+
+    test('weekMacros returns 7 days ending today', () async {
+      final w = st.weekMacros();
+      expect(w.length, 7);
+      expect(w.last.date, K.date());
+      await st.bumpExtra('tuna', up: true);
+      final w2 = st.weekMacros();
+      expect(w2.last.protein, 22);
+      expect(w2.first.protein, 0);
+    });
+
+    test('WidgetData payload is complete and localised', () {
+      final d = WidgetData.from(st).toJson();
+      for (final k in [
+        'water', 'waterGoal', 'waterPct', 'protein', 'proteinGoal',
+        'kcal', 'kcalGoal', 'streak', 'setsDone', 'setsTotal',
+        'workout', 'emoji', 'lang', 'labelWater', 'labelProtein', 'labelSets',
+      ]) {
+        expect(d.containsKey(k), isTrue, reason: 'widget payload is missing "$k"');
+      }
+      expect(d['lang'], 'ar');
+      expect(d['proteinGoal'], st.content.food.proteinTarget);
+      expect(d['waterGoal'], isNotEmpty);
+    });
+  });
+
+  // --------------------------------------------------- v1.0.3: exercise art --
+  group('exercise illustrations', () {
+    test('every exercise in the plan has a drawing', () {
+      final map = jsonDecode(File('assets/content/content.json').readAsStringSync())
+          as Map<String, dynamic>;
+      final c = AppContent.fromMap(map);
+      for (final day in c.workout.days) {
+        for (final e in day.exercises) {
+          expect(hasExerciseArt(e.id), isTrue, reason: 'no art for ${e.id}');
+        }
+      }
+      expect(exerciseArtIds.length, greaterThanOrEqualTo(18));
+    });
+
+    testWidgets('ExerciseArt paints without throwing', (tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(
+          body: Wrap(children: [
+            ExerciseArt(exerciseId: 'goblet_squat'),
+            ExerciseArt(exerciseId: 'table_row', size: 120),
+            ExerciseArt(exerciseId: 'unknown_id_falls_back'),
+          ]),
+        ),
+      ));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('WeekBars paints with and without data', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Column(children: [
+            WeekBars(values: const [0, 40, 90, 150, 60, 0, 120], color: Colors.orange, goal: 150),
+            WeekBars(values: const [0, 0, 0, 0, 0, 0, 0], color: Colors.amber),
+          ]),
+        ),
+      ));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
     });
   });
 }

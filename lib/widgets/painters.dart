@@ -193,3 +193,115 @@ class _SparkPainter extends CustomPainter {
   @override
   bool shouldRepaint(_SparkPainter old) => old.v != v || old.color != color;
 }
+
+
+/// Seven vertical bars with weekday labels and a dashed goal line.
+///
+/// Used for the protein / kcal week on the food tab. Bars are drawn from the
+/// bottom, the goal line is only shown when it fits inside the chart.
+class WeekBars extends StatelessWidget {
+  const WeekBars({
+    super.key,
+    required this.values,
+    required this.color,
+    this.goal,
+    this.height = 70,
+    this.labels,
+  });
+
+  final List<double> values;
+  final Color color;
+  final double? goal;
+  final double height;
+  final List<String>? labels;
+
+  @override
+  Widget build(BuildContext context) {
+    if (values.isEmpty) return SizedBox(height: height);
+    final g = goal;
+    final peak = values.fold<double>(0, (m, v) => v > m ? v : m);
+    final top = (g != null && g > peak ? g : peak);
+    final maxV = top <= 0 ? 1.0 : top;
+    final def = _defaultLabels(context);
+    final lab = labels ?? def;
+
+    return SizedBox(
+      height: height + 16,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (var i = 0; i < values.length; i++)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(
+                        begin: 0,
+                        end: maxV == 0 ? 0 : (values[i] / maxV).clamp(0.0, 1.0),
+                      ),
+                      duration: const Duration(milliseconds: 450),
+                      curve: Curves.easeOut,
+                      builder: (context, v, _) => SizedBox(
+                        height: height,
+                        child: Stack(
+                          children: [
+                            // the filled bar, anchored to the bottom
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              height: height * (v == 0 ? 0.02 : v),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: values[i] <= 0
+                                      ? color.withValues(alpha: 0.15)
+                                      : color,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            // the goal line
+                            if (g != null && g > 0)
+                              Positioned(
+                                bottom: height * (g / maxV).clamp(0.0, 1.0),
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  height: 1.4,
+                                  color: color.withValues(alpha: 0.4),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      i < lab.length ? lab[i] : '',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 9.5),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  List<String> _defaultLabels(BuildContext context) {
+    final ar = Directionality.of(context) == TextDirection.rtl;
+    const arS = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح'];
+    const enS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    // values are oldest-first, i.e. ending today
+    final today = DateTime.now().weekday; // 1 = Monday
+    final set = ar ? arS : enS;
+    return [
+      for (var i = values.length - 1; i >= 0; i--)
+        set[((today - 1 - i) % 7 + 7) % 7],
+    ];
+  }
+}

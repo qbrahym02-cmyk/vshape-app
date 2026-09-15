@@ -167,6 +167,20 @@ class MainActivity : FlutterActivity() {
                     result.success(true)
                 }
 
+                "widgetInstalled" -> {
+                    result.success(HomeWidget.isInstalled(this))
+                }
+
+                "updateWidget" -> {
+                    val json = call.argument<String>("json")
+                    try {
+                        HomeWidget.updateAll(this, json)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.success(false)
+                    }
+                }
+
                 "keepScreenOn" -> {
                     val on = call.argument<Boolean>("on") ?: false
                     runOnUiThread {
