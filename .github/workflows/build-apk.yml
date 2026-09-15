@@ -6,13 +6,13 @@ name: Build & publish APK
 #
 # Trigger it in two ways:
 #   1. Push a tag like  v1.1.0+2   ->  git tag v1.1.0+2 && git push origin v1.1.0+2
+#      (any tag starting with 'v' triggers this workflow)
 #   2. GitHub -> Actions -> "Build & publish APK" -> Run workflow (manual)
 
 on:
   push:
     tags:
-      - 'v*.*.*+*'
-      - 'v*.*.*'
+      - 'v*'
   workflow_dispatch:
     inputs:
       publish_release:
