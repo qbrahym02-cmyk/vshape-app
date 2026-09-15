@@ -42,6 +42,9 @@ class ReleaseInfo {
   final int apkSize;
   final String abi;
 
+  /// True when [versionCode] is already free of the per-ABI offset.
+  final bool codeIsNormalized;
+
   ReleaseInfo({
     required this.tagName,
     required this.name,
@@ -51,12 +54,18 @@ class ReleaseInfo {
     required this.apkUrl,
     required this.apkSize,
     this.abi = 'universal',
+    this.codeIsNormalized = false,
   });
 
-  /// `flutter build apk --split-per-abi` adds an ABI offset to versionCode
-  /// (armeabi-v7a +1000, arm64-v8a +2000, x86_64 +3000).  Strip it so that a
-  /// per-ABI build and the universal build compare equal.
-  int get normalizedCode => versionCode - abiOffsetFor(abi);
+  /// The versionCode to compare against the installed build.
+  ///
+  /// `flutter build apk --split-per-abi` adds an ABI offset to the code baked
+  /// into the APK (armeabi-v7a +1000, arm64-v8a +2000, x86_64 +3000), so a code
+  /// read off a device has to be stripped. A code that comes from `version.json`
+  /// - or from the `+N` part of a tag - is *already* the base code, and
+  /// subtracting the offset again would make it negative and hide every future
+  /// update. [codeIsNormalized] tells the two cases apart.
+  int get normalizedCode => codeIsNormalized ? versionCode : versionCode - abiOffsetFor(abi);
 
   static int abiOffsetFor(String abi) {
     final a = abi.toLowerCase();
@@ -89,23 +98,61 @@ class UpdateService {
     final res = await _dio.get<dynamic>(apiLatest);
     if (res.statusCode != 200 || res.data == null) return null;
     final j = (res.data as Map).cast<String, dynamic>();
+
+    // Preferred source of truth for the version: the version.json asset that CI
+    // publishes next to the APKs.
+    Map<String, dynamic>? versionJson;
+    final vUrl = versionJsonUrlOf(j);
+    if (vUrl.isNotEmpty) {
+      try {
+        final r = await _dio.get<dynamic>(vUrl);
+        if (r.data is Map) versionJson = (r.data as Map).cast<String, dynamic>();
+      } catch (_) {}
+    }
+    return parseRelease(j, abi: abi, versionJson: versionJson);
+  }
+
+  /// URL of the `version.json` asset inside a release payload ('' when absent).
+  static String versionJsonUrlOf(Map<String, dynamic> j) {
+    for (final a in _list(j['assets'])) {
+      if (a is! Map) continue;
+      final am = a.cast<String, dynamic>();
+      if ((am['name'] ?? '').toString().toLowerCase() == 'version.json') {
+        return (am['browser_download_url'] ?? '').toString();
+      }
+    }
+    return '';
+  }
+
+  /// Pure part of [latest]: turns a GitHub release payload into a [ReleaseInfo].
+  ///
+  /// Version resolution, in order:
+  ///   1. the `version.json` asset published next to the APKs - CI writes the
+  ///      *base* versionCode there, so it is already normalised;
+  ///   2. the `+N` of the tag (`v1.0.4+5` -> 5), also a base code;
+  ///   3. `MAJOR*10000 + MINOR*100 + PATCH` of the tag.
+  /// In every case [ReleaseInfo.codeIsNormalized] is set, because nothing here
+  /// ever carries a per-ABI offset.
+  static ReleaseInfo parseRelease(
+    Map<String, dynamic> j, {
+    String abi = '',
+    Map<String, dynamic>? versionJson,
+  }) {
     final tag = (j['tag_name'] ?? '').toString();
-    final assets = (j['assets'] as List? ?? const []);
-    String apkUrl = '';
-    String versionJsonUrl = '';
-    int size = 0;
-    String chosenAbi = 'universal';
+    final assets = _list(j['assets']);
+
     String universalUrl = '';
     int universalSize = 0;
     String abiUrl = '';
     int abiSize = 0;
 
     for (final a in assets) {
-      final am = (a as Map).cast<String, dynamic>();
+      if (a is! Map) continue;
+      final am = a.cast<String, dynamic>();
       final name = (am['name'] ?? '').toString().toLowerCase();
       final url = (am['browser_download_url'] ?? '').toString();
+      final assetSize = (am['size'] as num?)?.toInt() ?? 0;
       if (name.endsWith('.apk') && url.isNotEmpty) {
-        final assetSize = (am['size'] as num?)?.toInt() ?? 0;
         if (abi.isNotEmpty && name.contains(abi.toLowerCase())) {
           abiUrl = url;
           abiSize = assetSize;
@@ -116,10 +163,12 @@ class UpdateService {
           universalUrl = url;
           universalSize = assetSize;
         }
-      } else if (name == 'version.json') {
-        versionJsonUrl = url;
       }
     }
+
+    String apkUrl;
+    int size;
+    String chosenAbi;
     if (abiUrl.isNotEmpty) {
       apkUrl = abiUrl;
       size = abiSize;
@@ -128,24 +177,20 @@ class UpdateService {
       apkUrl = universalUrl;
       size = universalSize;
       chosenAbi = 'universal';
-    }
-    if (apkUrl.isEmpty) {
+    } else {
       // fall back to the release web page
       apkUrl = (j['html_url'] ?? '').toString();
+      size = 0;
+      chosenAbi = 'universal';
     }
 
-    // Preferred: an explicit version.json asset published next to the APK.
     int versionCode = 0;
     String versionName = tag.replaceFirst('v', '');
-    if (versionJsonUrl.isNotEmpty) {
-      try {
-        final r = await _dio.get<dynamic>(versionJsonUrl);
-        final v = (r.data as Map).cast<String, dynamic>();
-        versionCode = (v['versionCode'] as num?)?.toInt() ?? 0;
-        versionName = (v['versionName'] ?? versionName).toString();
-      } catch (_) {}
+    final v = versionJson;
+    if (v != null && v.isNotEmpty) {
+      versionCode = (v['versionCode'] as num?)?.toInt() ?? 0;
+      versionName = (v['versionName'] ?? versionName).toString();
     }
-    // Fallback: parse the tag  vMAJOR.MINOR.PATCH+CODE
     if (versionCode == 0) {
       final m = _tagRe.firstMatch(tag);
       if (m != null) {
@@ -167,8 +212,11 @@ class UpdateService {
       apkUrl: apkUrl,
       apkSize: size,
       abi: chosenAbi,
+      codeIsNormalized: true,
     );
   }
+
+  static List<dynamic> _list(dynamic v) => v is List ? v : const <dynamic>[];
 
   /// Downloads the APK into app-private external storage and returns the file.
   static Future<File> download(

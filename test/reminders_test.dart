@@ -102,12 +102,91 @@ void main() {
             abi: abi,
           );
 
-      // what CI publishes for pubspec `version: 1.0.3+4`
+      // codes as they are baked into a --split-per-abi APK (pubspec 1.0.3+4)
       expect(info('arm64-v8a', 2004).normalizedCode, 4);
       expect(info('armeabi-v7a', 1004).normalizedCode, 4);
       expect(info('x86_64', 3004).normalizedCode, 4);
       expect(info('universal', 4).normalizedCode, 4);
       expect(ReleaseInfo.abiOffsetFor(''), 0);
+    });
+
+    test('a release read from version.json is offered to every ABI (regression)',
+        () {
+      // Exactly what CI publishes for pubspec `version: 1.0.4+5`.
+      Map<String, dynamic> release(String tag) => {
+            'tag_name': tag,
+            'name': 'V-System',
+            'body': 'notes',
+            'html_url': 'https://github.com/o/r/releases/tag/$tag',
+            'assets': [
+              for (final n in [
+                'V-System-arm64-v8a.apk',
+                'V-System-armeabi-v7a.apk',
+                'V-System-universal.apk',
+                'V-System-x86_64.apk',
+              ])
+                {'name': n, 'size': 20000000, 'browser_download_url': 'https://dl/$n'},
+              {
+                'name': 'version.json',
+                'size': 60,
+                'browser_download_url':
+                    'https://dl/version.json'
+              },
+            ],
+          };
+
+      // A phone on 1.0.2+3 reports 2003 (arm64) -> normalised 3.
+      for (final abi in ['arm64-v8a', 'armeabi-v7a', 'x86_64', 'universal', '']) {
+        final info = UpdateService.parseRelease(
+          release('v1.0.4+5'),
+          abi: abi,
+          versionJson: {'versionName': '1.0.4', 'versionCode': 5},
+        );
+        expect(info.versionName, '1.0.4');
+        expect(info.normalizedCode, 5, reason: 'abi=$abi');
+        expect(UpdateChecker.isNewer(latestCode: info.normalizedCode, installedCode: 3), isTrue,
+            reason: 'abi=$abi: the update must be offered');
+        if (abi.isNotEmpty && abi != 'universal') {
+          expect(info.apkUrl, contains(abi), reason: 'the matching per-ABI APK wins');
+        }
+      }
+    });
+
+    test('without version.json the tag still yields the base code', () {
+      final info = UpdateService.parseRelease({
+        'tag_name': 'v1.0.4+5',
+        'assets': [
+          {'name': 'V-System-arm64-v8a.apk', 'size': 1, 'browser_download_url': 'https://dl/a.apk'},
+        ],
+      }, abi: 'arm64-v8a');
+      expect(info.versionCode, 5);
+      expect(info.normalizedCode, 5, reason: 'the +N of a tag is already a base code');
+      expect(info.versionName, '1.0.4');
+      expect(UpdateChecker.isNewer(latestCode: info.normalizedCode, installedCode: 4), isTrue);
+    });
+
+    test('a tag without +N falls back to MAJOR*10000+MINOR*100+PATCH', () {
+      final info = UpdateService.parseRelease({
+        'tag_name': 'v1.2.3',
+        'assets': [
+          {'name': 'app-release.apk', 'size': 1, 'browser_download_url': 'https://dl/u.apk'},
+        ],
+      });
+      expect(info.versionCode, 10203);
+      expect(info.normalizedCode, 10203);
+      expect(info.apkUrl, 'https://dl/u.apk');
+    });
+
+    test('a release with no APK falls back to the release page', () {
+      final info = UpdateService.parseRelease({
+        'tag_name': 'v1.0.4+5',
+        'html_url': 'https://github.com/o/r/releases/tag/v1.0.4+5',
+        'assets': [
+          {'name': 'checksums.sha256', 'size': 1, 'browser_download_url': 'https://dl/c'},
+        ],
+      }, abi: 'arm64-v8a');
+      expect(info.apkUrl, contains('/releases/tag/'));
+      expect(info.apkSize, 0);
     });
 
     test('the updater offers a build only when it is genuinely newer', () {

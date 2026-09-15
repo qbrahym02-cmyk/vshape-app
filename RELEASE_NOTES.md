@@ -1,45 +1,47 @@
-# 🆕 وش الجديد في 1.0.3
+# 🚨 1.0.4 — إصلاح مهم: التحديث من داخل التطبيق
 
-## ⏱️ مؤقّت راحة حقيقي
-اضغط على «٩٠ ث راحة» في أي تمرين → يبدأ عدّ تنازلي دائري، يشتغل حتى لو غيّرت التبويب.
-فيه **+30 ثانية**، **إيقاف مؤقت**، **تخطي** — وعند النهاية اهتزاز + صوت + تنبيه، عشان تعرف وأنت ممدّد على الأرض أن الراحة خلصت.
+## 📦 التحديث صار يوصل فعلاً
+في النسخ السابقة كان التطبيق يقرأ رقم النسخة من `version.json` (مثلاً `4`) ثم **يطرح منه إزاحة المعالج** (٢٠٠٠ لـ arm64) فيصبح `-1996` — والنتيجة: **الشريط الأخضر لا يظهر أبداً**، وما يصلك أي تحديث مستقبلي من داخل التطبيق.
+الحين الرقم القادم من `version.json` (أو من التاج) يُعتبر رقم أساس ولا تُطرح منه الإزاحة. الإزاحة تُطرح فقط من الرقم المثبّت على الجوال.
 
-## 🔥 عدّاد الأيام المتتالية صار صادقاً
-قبل: لو عبّيت ماءك من **محطات الجدول** بدل زر «إضافة سريعة»، اليوم ما كان يُحسب — فينكسر العدّاد رغم أنك شربت ٣.٧٥ لتر.
-الحين: أي طريقة تعبئة تُحسب، واليوم ما ينكسر.
-
-## ⚙️ الإعدادات تعرض الحقيقة
-قسم التنبيهات صار يعرض الأوقات التي **ستدق فعلاً** (من محطات الجدول + الأوقات الزائدة)، بدل قائمة `reminders.water` وحدها.
-
-## 🔐 أمان
-كلمة مرور مفتاح التوقيع كانت مكتوبة نصّاً في `BUILD.md` داخل مستودع عام — انحذفت، والوثائق توضح أن المفتاح في Secrets فقط.
-
-## 🔔 تنبيهات الماء تتبع الملف فعلاً
-علامة `"remind": false` لأي محطة في `content.json` صارت تُحترم — قبل كان التطبيق يتجاهلها وينبّهك على كل المحطات.
-والتنبيه صار يعيد جدولة نفسه **بنفس الدقة** كل يوم (قبل: من اليوم الثاني يبدأ يتأخر بسبب وضع Doze).
-
-## 📦 التحديث صار يوصلك فعلاً
-الشريط الأخضر «فيه نسخة جديدة» يرجع في كل تشغيل حتى تحدّث — قبل كان يظهر **مرة واحدة** في العمر، وإذا ما ضغطت عليه ما رجع.
-وصار يفحص أسرع (كل ~٦ ساعات) لما ما يكون فيه تحديث معلّق.
+> ⚠️ **لمرة واحدة فقط:** النسخة المثبتة عندك (1.0.2) فيها هذا الخلل، لذلك **ثبّت 1.0.4 يدوياً** من رابط التنزيل. بعدها كل التحديثات توصلك من داخل التطبيق بضغطة.
 
 ---
 
-# 🆕 What's new in 1.0.3
+# ⏱️ وهذه مزايا 1.0.3 (مضمّنة هنا)
 
-## ⏱️ A real rest timer
-Tap the “90 s rest” chip on any exercise → a circular countdown starts and keeps running across tabs, with **+30 s**, **pause** and **skip**. When it ends you get a vibration, a sound and a notification, so you know the rest is over even lying on the floor.
+## مؤقّت راحة حقيقي
+اضغط على «٩٠ ث راحة» في أي تمرين → عدّ تنازلي دائري فوق شريط التنقّل، يشتغل حتى لو غيّرت التبويب.
+`+30 ثانية` · إيقاف مؤقت · تخطي — وعند النهاية اهتزاز + صوت + تنبيه.
 
-## 🔥 The streak counter is honest now
-Filling your water through the **schedule stations** instead of the quick-add buttons used to break the streak even though you drank all 3.75 L. Both paths count now.
+## 🔥 عدّاد الأيام المتتالية صار صادقاً
+لو عبّيت ماءك من **محطات الجدول** بدل زر «إضافة سريعة»، اليوم ما كان يُحسب — فينكسر العدّاد رغم أنك شربت ٣.٧٥ لتر. الحين أي طريقة تُحسب.
 
-## ⚙️ Settings tell the truth
-The reminders row now lists the times that will **actually ring** (schedule stations + extra times) instead of only `reminders.water`.
+## 🔔 التنبيهات تتبع ملف المحتوى فعلاً
+`"remind": false` لأي محطة في `content.json` صارت تُحترم (كانت تُتجاهل)، والتنبيه يعيد جدولة نفسه **بنفس الدقة** كل يوم بدل أن يتأخر تدريجياً مع وضع Doze.
+وشاشة الإعدادات صارت تعرض الأوقات التي **ستدق فعلاً**.
 
-## 🔐 Security
-The keystore password was written in plain text inside `BUILD.md` in a public repo. It is gone, and the docs now state the key lives only in Actions secrets.
+## 🔐 أمان
+كلمة مرور مفتاح التوقيع كانت مكتوبة نصّاً في `BUILD.md` داخل مستودع عام — انحذفت، والوثائق توضح أن المفتاح في أسرار Actions فقط. وCI صار **يفشل عمداً** لو ما لقى مادة توقيع، بدل نشر APK بمفتاح debug.
 
-## 🔔 Water reminders follow the content file
-`"remind": false` on a station in `content.json` is honoured (it used to be ignored), and each reminder re-arms itself **with the same exactness** daily instead of drifting later under Doze.
+---
 
-## 📦 Updates actually reach you
-The green “new version available” strip comes back on every launch until you update — it used to appear once and never again. Checks also run sooner (~6 h) when nothing is pending.
+# 🚨 1.0.4 — the important one: in-app updates
+
+## 📦 Updates actually arrive now
+Previous builds read the version number from `version.json` (e.g. `4`) and then **subtracted the ABI offset** (2000 for arm64), producing `-1996` — so the green strip never appeared and no future update could ever be offered in-app.
+A code that comes from `version.json` (or from a tag) is now treated as the base code; the offset is only stripped from the code installed on the device.
+
+> ⚠️ **One time only:** the build on your phone (1.0.2) has this bug, so **install 1.0.4 manually** from the download link. Every update after that arrives from inside the app.
+
+---
+
+# ⏱️ Plus everything from 1.0.3
+
+**A real rest timer** — tap the “90 s rest” chip for a circular countdown parked above the nav bar (survives tab switches), with +30 s / pause / skip and vibration + sound + notification when it ends.
+
+**Honest streaks** — water logged through the schedule stations used not to count, breaking the streak even at a full 3.75 L. Both paths count now.
+
+**Reminders follow the content file** — `"remind": false` on a station is honoured, each reminder re-arms with the same exactness daily instead of drifting under Doze, and Settings lists the times that really ring.
+
+**Security** — the keystore password was in plain text in `BUILD.md` in a public repo; it is removed, and CI now fails instead of shipping a debug-signed APK.
