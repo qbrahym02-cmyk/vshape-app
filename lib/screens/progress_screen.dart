@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../core/app_state.dart';
 import '../core/models.dart';
+import '../core/plan_math.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
 import '../widgets/painters.dart';
@@ -71,6 +72,9 @@ class ProgressScreen extends StatelessWidget {
               ],
             ],
           ),
+          const Gap(16),
+
+          const _MonthlyCard(),
         ],
       ),
     );
@@ -201,10 +205,44 @@ class _LogRow extends StatelessWidget {
         ],
       ),
     );
-    if (res != null) {
-      await st.appendLog(id, res);
-      if (context.mounted) snack(context, st.isArabic ? 'تم الحفظ ✓' : 'Saved ✓', color: color);
+    if (res == null) return;
+    // Read the history first: appendLog replaces an entry from the same day.
+    final before = <num>[
+      for (final e in st.logFor(id))
+        if (e['v'] is num) e['v'] as num
+    ];
+    await st.appendLog(id, res);
+    if (!context.mounted) return;
+    if (beatsBest(before, res)) {
+      _celebrate(context, res);
+    } else {
+      snack(context, st.isArabic ? 'تم الحفظ ✓' : 'Saved ✓', color: color);
     }
+  }
+
+  /// A personal record is the one piece of proof that needs no scale and no
+  /// tape measure, so it gets a proper moment instead of a quiet snackbar.
+  void _celebrate(BuildContext context, num value) {
+    final l = context.l10n;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: const Text('🏆', style: TextStyle(fontSize: 40)),
+        title: Text(l.newRecord, textAlign: TextAlign.center),
+        content: Text(
+          l.newRecordBody(compact(value), unit),
+          textAlign: TextAlign.center,
+          style: Theme.of(ctx).textTheme.bodyMedium,
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx),
+            style: FilledButton.styleFrom(backgroundColor: C.amber, foregroundColor: Colors.black),
+            child: Text(l.ok),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showHistory(BuildContext context, AppState st) {
@@ -238,6 +276,83 @@ class _LogRow extends StatelessWidget {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The once-a-month checks: comparison photo, clothes test, measurements and
+/// the max-rep test. Ticks are stored per `yyyy-MM`, so every month starts clean
+/// and last month's evidence stays on the record.
+class _MonthlyCard extends StatelessWidget {
+  const _MonthlyCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.st;
+    final l = context.l10n;
+    final checks = st.content.progress.monthlyChecks;
+    if (checks.isEmpty) return const SizedBox.shrink();
+
+    final cp = st.content.progress.photoCheckpoint;
+    final done = checks.where((m) => st.monthlyDone(m.id)).length;
+
+    return SectionCard(
+      emoji: '🗓️',
+      title: l.monthlyChecks,
+      accent: C.violet,
+      subtitle: '$done/${checks.length} · ${l.thisMonth} (${st.monthKey})',
+      children: [
+        BarProgress(
+          value: checks.isEmpty ? 0 : done / checks.length,
+          color: done == checks.length ? C.green : C.violet,
+          height: 7,
+        ),
+        const Gap(10),
+        for (final m in checks) _MonthlyRow(check: m),
+        if (!cp.isEmpty) ...[
+          const Gap(12),
+          InfoBanner(st.t(cp.note), color: C.violet, icon: Icons.photo_camera_rounded),
+        ],
+      ],
+    );
+  }
+}
+
+class _MonthlyRow extends StatelessWidget {
+  const _MonthlyRow({required this.check});
+
+  final MonthlyCheck check;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.st;
+    final done = st.monthlyDone(check.id);
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        st.toggleMonthly(check.id);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            CheckDisc(done: done, color: C.violet, size: 26),
+            const SizedBox(width: 11),
+            Text(check.emoji, style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: 9),
+            Expanded(
+              child: Text(
+                st.t(check.title),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      decoration: done ? TextDecoration.lineThrough : null,
+                      color: done ? Theme.of(context).textTheme.bodySmall?.color : null,
+                    ),
+              ),
+            ),
+          ],
         ),
       ),
     );

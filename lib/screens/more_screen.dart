@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
 import '../screens/progress_screen.dart';
+import '../screens/report_screen.dart';
 import '../screens/rules_screen.dart';
 import '../screens/settings_screen.dart';
+import '../widgets/backpack_calc.dart';
 import '../widgets/common.dart';
 import '../widgets/scope.dart';
 
@@ -31,6 +33,27 @@ class MoreScreen extends StatelessWidget {
             color: C.green,
             onTap: () => Navigator.push(
                 context, MaterialPageRoute(builder: (_) => const ProgressScreen())),
+          ),
+          const Gap(10),
+          _BigTile(
+            emoji: '📅',
+            title: l.weeklyReport,
+            subtitle: st.isArabic
+                ? 'نسبة التزامك في ٧ أيام مقابل الأسبوع الماضي'
+                : 'Your 7-day adherence versus last week',
+            color: C.cyan,
+            onTap: () => Navigator.push(
+                context, MaterialPageRoute(builder: (_) => const ReportScreen())),
+          ),
+          const Gap(10),
+          _BigTile(
+            emoji: '🎒',
+            title: l.backpackCalc,
+            subtitle: st.isArabic
+                ? 'قوارير الرمل والماء: كم كيلوجراماً تحمل بأمان؟'
+                : 'Sand and water bottles: how many kg is safe to carry?',
+            color: C.amber,
+            onTap: () => showBackpackCalc(context),
           ),
           const Gap(10),
           _BigTile(

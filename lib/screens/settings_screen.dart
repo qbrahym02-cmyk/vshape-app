@@ -9,6 +9,7 @@ import '../services/content_service.dart';
 import '../services/update_controller.dart';
 import '../services/widget_bridge.dart';
 import '../widgets/common.dart';
+import '../widgets/daily_cards.dart';
 import '../widgets/painters.dart';
 import '../widgets/scope.dart';
 
@@ -96,6 +97,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
+          const Gap(16),
+
+          // ----------------------------------------------------- exam mode --
+          const ExamModeCard(),
           const Gap(16),
 
           // ------------------------------------------------- remote content --

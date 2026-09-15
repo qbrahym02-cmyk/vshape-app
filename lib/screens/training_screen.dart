@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../core/app_state.dart';
+import '../core/models.dart';
 import '../core/theme.dart';
+import '../widgets/backpack_calc.dart';
 import '../widgets/common.dart';
+import '../widgets/daily_cards.dart';
+import '../widgets/safety_gate.dart';
 import '../widgets/scope.dart';
 import '../widgets/workout_day_view.dart';
 
@@ -29,6 +34,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
             .id;
     final day = days.firstWhere((d) => d.id == selectedId, orElse: () => days.first);
 
+    /// Shown whenever this day contains a gated exercise - red until the
+    /// briefing is acknowledged, green afterwards (and tappable to re-read).
+    final gate = st.content.workout.gateForDay(day);
+
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 26),
@@ -36,17 +45,33 @@ class _TrainingScreenState extends State<TrainingScreen> {
           ScreenHeader(
             title: l.training,
             subtitle: st.content.meta.goal.t(st.isArabic),
-            trailing: IconButton.filledTonal(
-              onPressed: () => _showEquipment(context),
-              icon: const Icon(Icons.backpack_outlined),
-              tooltip: l.backpackTitle,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton.filledTonal(
+                  onPressed: () => showBackpackCalc(context),
+                  icon: const Icon(Icons.scale_rounded),
+                  tooltip: l.backpackCalc,
+                ),
+                const SizedBox(width: 6),
+                IconButton.filledTonal(
+                  onPressed: () => _showEquipment(context),
+                  icon: const Icon(Icons.backpack_outlined),
+                  tooltip: l.backpackTitle,
+                ),
+              ],
             ),
           ),
+          const ExamModeBanner(),
           DayStrip(
             selectedId: day.id,
-            onSelect: (id) => setState(() => _selected = id),
+            onSelect: (id) => _selectDay(st, id),
           ),
           const Gap(14),
+          if (gate != null) ...[
+            SafetyGateCard(gate: gate),
+            const Gap(14),
+          ],
           Row(
             children: [
               Text(day.emoji, style: const TextStyle(fontSize: 22)),
@@ -76,6 +101,21 @@ class _TrainingScreenState extends State<TrainingScreen> {
         ],
       ),
     );
+  }
+
+  /// Selecting a day that still has an unacknowledged safety briefing opens it
+  /// straight away: the table has to be secured before the first pull set.
+  void _selectDay(AppState st, String id) {
+    setState(() => _selected = id);
+    WorkoutDay? day;
+    for (final d in st.content.workout.days) {
+      if (d.id == id) day = d;
+    }
+    final gate = day == null ? null : st.pendingGateFor(day);
+    if (gate == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ensureSafetyGate(context, gate);
+    });
   }
 
   void _showEquipment(BuildContext context) {

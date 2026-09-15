@@ -135,6 +135,104 @@ class L10n {
   // exercise art
   String get showArt => s('رسوم التمارين', 'Exercise illustrations');
 
+  // exam mode (v1.1)
+  String get examMode => s('وضع الامتحانات', 'Exam mode');
+  String get examModeHint => s('الدراسة أولاً: ٣ جلسات فقط في الأسبوع', 'Study first: only 3 sessions a week');
+  String get examModeOn => s('مفعّل — الجدول مخفّف', 'On - lighter week');
+  String get examModeOff => s('مطفأ — الجدول الكامل', 'Off - full week');
+  String examSessions(int n) => s('$n جلسات في الأسبوع', '$n sessions a week');
+  String get examDropped => s('مؤجّل للامتحانات', 'paused for exams');
+  String get examKept => s('من جلسات وضع الامتحانات', 'kept in exam mode');
+
+  // growth sleep (v1.1)
+  String get sleepTitle => s('نوم النمو', 'Growth sleep');
+  String get logBedtime => s('سجّل ساعة نومك', 'Log your bedtime');
+  String get bedtimeLastNight => s('نمت الساعة', 'You slept at');
+  String get sleepOnTime => s('داخل نافذة هرمون النمو ✅', 'inside the growth-hormone window ✅');
+  String sleepLate(int m) => s('متأخر $m دقيقة عن ١١ مساءً', '$m min past the 11 PM cutoff');
+  String get sleepStreak => s('سلسلة النوم', 'sleep streak');
+  String get sleepNotLogged => s('لم تسجّل نومك اليوم بعد', 'No bedtime logged yet today');
+  String get sleepTarget => s('الهدف', 'Target');
+  String get clearEntry => s('مسح', 'Clear');
+  String get changeEntry => s('تغيير', 'Change');
+
+  // daily check-in (v1.1)
+  String get checkinTitle => s('تقييم اليوم', "Today's check-in");
+  String get checkinAsk => s('كيف جسمك اليوم؟ اضغط مرة واحدة.', 'How does your body feel? One tap.');
+  String get checkinDone => s('تقييمك اليوم', 'Your rating today');
+  String get deloadTitle => s('يومان منخفضان — خفّف الأسبوع', 'Two low days - deload this week');
+
+  // protein price tool (v1.1)
+  String get priceTool => s('حاسبة سعر البروتين', 'Protein price calculator');
+  String get pricePer20 => s('سعر ٢٠ جم بروتين', 'price of 20 g protein');
+  String get enterPrice => s('اكتب السعر', 'Enter price');
+  String get cheapestBasket => s('أرخص سلة لهدف اليوم', 'Cheapest basket for today');
+  String get basketEmpty => s('اكتب سعر مصدرين على الأقل لتظهر أرخص سلة.', 'Price at least two sources to see the cheapest basket.');
+  String get notPriced => s('بلا سعر', 'no price');
+  String get perDay => s('في اليوم', 'per day');
+  String get yourCurrency => s('رمز العملة', 'Currency symbol');
+  String get cheapest => s('الأرخص', 'cheapest');
+  String get priciest => s('الأغلى', 'priciest');
+
+  // backpack load calculator (v1.1)
+  String get backpackCalc => s('حاسبة وزن الحقيبة', 'Backpack load calculator');
+  String get bottles => s('قوارير', 'bottles');
+  String get fill => s('الحشو', 'Fill');
+  String get fillWater => s('ماء', 'Water');
+  String get fillHalf => s('نصف رمل', 'Half sand');
+  String get fillSand => s('رمل', 'Sand');
+  String get totalLoad => s('الوزن الكلي', 'Total load');
+  String get safeRange => s('المدى الآمن لجسمك', 'Safe range for you');
+  String get loadLight => s('خفيف — تقدر تزيد', 'Light - you can add more');
+  String get loadGood => s('مناسب — ابدأ به', 'Good - start here');
+  String get loadHeavy => s('ثقيل — خفّف قارورة', 'Heavy - drop a bottle');
+
+  // safety gates (v1.1)
+  String get safetyBriefing => s('قبل أن تبدأ: الأمان', 'Before you start: safety');
+  String get safetyAcked => s('راجع checklist الأمان', 'Review the safety checklist');
+  String get safetyOpen => s('أمان الطاولة', 'Table safety');
+  String get safetyDone => s('تم التأمين ✓', 'Secured ✓');
+
+  // weekly report (v1.1)
+  String get weeklyReport => s('تقرير الأسبوع', 'Weekly report');
+  String get reportHint => s('التزامك الحقيقي في آخر ٧ أيام مقابل الأسبوع الذي قبله', 'Your real adherence over the last 7 days versus the week before');
+  String get thisWeek => s('هذا الأسبوع', 'this week');
+  String get lastWeek => s('الأسبوع الماضي', 'last week');
+  String get adherence => s('الالتزام', 'Adherence');
+  String get sessionsDone => s('جلسات مكتملة', 'sessions complete');
+  String get recordsSet => s('أرقام قياسية', 'personal records');
+  String get nightsOnTime => s('ليالٍ في الموعد', 'nights on time');
+  String get weakestRow => s('أضعف خانة — ركّز عليها الأسبوع الجاي', 'Weakest column - focus here next week');
+  String get reportNoData => s('لا يوجد ما يكفي من البيانات بعد. سجّل يومين أو ثلاثة وارجع.', 'Not enough data yet. Log two or three days and come back.');
+
+  // monthly checks (v1.1)
+  String get monthlyChecks => s('فحوصات الشهر', 'Monthly checks');
+  String get thisMonth => s('هذا الشهر', 'this month');
+  String get photoDue => s('صورة الشهر حانت — يوم ١٥', 'Photo day is here - the 15th');
+  String get photoDone => s('صورة الشهر تمت ✓', 'Monthly photo done ✓');
+
+  // personal records (v1.1)
+  String get newRecord => s('رقم قياسي جديد 🎉', 'New personal record 🎉');
+  String newRecordBody(String v, String unit) => s('$v $unit — أفضل رقم لك حتى الآن. هذا هو الدليل على أن العضل يكبر.', '$v $unit - your best ever. This is the proof that muscle is being built.');
+
+  // row labels for the report
+  String reportRow(String id) {
+    switch (id) {
+      case 'water':
+        return water;
+      case 'protein':
+        return protein;
+      case 'routine':
+        return s('الروتين', 'Routine');
+      case 'training':
+        return training;
+      case 'sleep':
+        return sleepTitle;
+      default:
+        return id;
+    }
+  }
+
   // misc
   String get retry => s('إعادة المحاولة', 'Retry');
   String get close => s('إغلاق', 'Close');

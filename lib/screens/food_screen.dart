@@ -6,6 +6,7 @@ import '../core/models.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
 import '../widgets/painters.dart';
+import '../widgets/price_tool.dart';
 import '../widgets/scope.dart';
 
 class FoodScreen extends StatelessWidget {
@@ -110,6 +111,9 @@ class FoodScreen extends StatelessWidget {
             accent: C.green,
             children: [for (final s in c.sources) _SourceRow(src: s)],
           ),
+          const Gap(16),
+
+          const PriceToolCard(),
           const Gap(16),
 
           InfoBanner(c.budgetRule.t(st.isArabic), color: C.amber, icon: Icons.savings_rounded),

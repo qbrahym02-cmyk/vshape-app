@@ -10,6 +10,7 @@ import '../services/content_service.dart';
 import '../services/widget_bridge.dart';
 import 'models.dart';
 import 'native_bridge.dart';
+import 'plan_math.dart';
 
 const String kAssetContent = 'assets/content/content.json';
 const String kDefaultContentUrl =
@@ -46,6 +47,32 @@ class K {
 
   /// How many times an "extra" (off-plan) food was added on a given day.
   static String extra(String d, String id) => 'ex_${d}_$id';
+
+  // ---- v1.1 settings and daily logs -------------------------------------
+  /// "Study first" mode: only the three V-shape sessions stay in the week.
+  static const examMode = 'exam_mode_on';
+
+  /// Currency symbol the protein price tool shows (user typed, e.g. "ج.م").
+  static const currency = 'currency_symbol';
+
+  /// Bedtime logged for a given morning, as `HH:MM`.
+  static String sleep(String d) => 'sl_$d';
+
+  /// Morning readiness / DOMS rating, 1..5.
+  static String checkin(String d) => 'ci_$d';
+
+  /// Local price of one unit of a protein source.
+  static String price(String id) => 'pr_$id';
+
+  /// A once-a-month check (photo, clothes test...) for `yyyy-MM`.
+  static String monthly(String id, String ym) => 'mo_${ym}_$id';
+
+  /// A safety briefing the user has acknowledged.
+  static String gate(String id) => 'gate_$id';
+
+  /// `yyyy-MM` for [d] - the granularity of the monthly checks.
+  static String ymOf(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}';
 }
 
 enum SyncStatus { idle, loading, ok, error }
@@ -403,13 +430,16 @@ class AppState extends ChangeNotifier {
     scheduleWidgetSync();
   }
 
-  int setsDone(String dayId) {
+  int setsDone(String dayId) => setsDoneOn(K.date(), dayId);
+
+  /// Ticked sets of [dayId] on an arbitrary day - what the weekly report needs.
+  int setsDoneOn(String date, String dayId) {
     final d = _content.workout.days.where((e) => e.id == dayId).toList();
     if (d.isEmpty) return 0;
     var n = 0;
     for (final ex in d.first.exercises) {
       for (var i = 0; i < ex.sets; i++) {
-        if (setDoneToday(ex.id, i)) n++;
+        if (_prefs.getBool(K.setDone(date, ex.id, i)) ?? false) n++;
       }
     }
     return n;
@@ -421,6 +451,361 @@ class AppState extends ChangeNotifier {
     await _prefs.setBool(K.dayDone(K.date(), dayId), !dayDoneToday(dayId));
     notifyListeners();
     scheduleWidgetSync();
+  }
+
+  // ---------------------------------------------------------- exam mode ----
+  /// "Study first": keeps only the three sessions that build the V.
+  bool get examModeOn => _prefs.getBool(K.examMode) ?? false;
+
+  /// False when the loaded content predates exam mode (v4 and older).
+  bool get examModeAvailable => !_content.examMode.isEmpty;
+
+  Future<void> setExamMode(bool on) async {
+    await _prefs.setBool(K.examMode, on);
+    notifyListeners();
+    scheduleWidgetSync();
+  }
+
+  /// Rest days always stay; exam mode only drops training days it does not keep.
+  bool dayIsActive(WorkoutDay d) =>
+      !examModeOn || d.isRest || _content.examMode.keeps(d.id);
+
+  /// Training sessions that count towards this week's target.
+  List<WorkoutDay> get activeTrainingDays =>
+      _content.workout.days.where((d) => !d.isRest && dayIsActive(d)).toList();
+
+  int get weeklySessionTarget => activeTrainingDays.length;
+
+  // -------------------------------------------------------- growth sleep ----
+  /// Bedtime logged for [date] as `HH:MM`, or null when nothing was entered.
+  String? sleepTimeOn(String date) => _prefs.getString(K.sleep(date));
+
+  String? get sleepTimeToday => sleepTimeOn(K.date());
+
+  /// Records last night's bedtime; anything that is not `HH:MM` is ignored.
+  Future<void> setSleepTime(String hhmm) async {
+    final s = hhmm.trim();
+    if (minutesOfDay(s) == null) return;
+    await _prefs.setString(K.sleep(K.date()), s);
+    notifyListeners();
+    scheduleWidgetSync();
+  }
+
+  Future<void> clearSleepTime() async {
+    await _prefs.remove(K.sleep(K.date()));
+    notifyListeners();
+    scheduleWidgetSync();
+  }
+
+  /// True when the logged bedtime is at or before the growth-hormone cutoff.
+  bool sleepOnTimeOn(String date) {
+    final t = sleepTimeOn(date);
+    if (t == null) return false;
+    return bedtimeOnTime(bedtime: t, target: _content.sleep.target);
+  }
+
+  bool get sleepOnTimeToday => sleepOnTimeOn(K.date());
+
+  /// Nights in a row inside the window, ending with the most recent logged one.
+  ///
+  /// Today with nothing logged yet does not break the streak; a late night does.
+  int sleepStreak() {
+    final flags = <bool>[];
+    for (var i = 0; i < 400; i++) {
+      final key = keyFor(DateTime.now().subtract(Duration(days: i)));
+      final t = sleepTimeOn(key);
+      if (t == null) {
+        if (i == 0) continue; // this morning not filled in yet
+        break;
+      }
+      flags.add(bedtimeOnTime(bedtime: t, target: _content.sleep.target));
+    }
+    return leadingStreak(flags);
+  }
+
+  // ------------------------------------------------------------ check-in ----
+  int? checkinOn(String date) => _prefs.getInt(K.checkin(date));
+
+  int? get checkinToday => checkinOn(K.date());
+
+  Future<void> setCheckin(int level) async {
+    await _prefs.setInt(K.checkin(K.date()), level.clamp(1, 5));
+    notifyListeners();
+    scheduleWidgetSync();
+  }
+
+  CheckInLevel? get checkinLevelToday => _content.checkin.levelFor(checkinToday);
+
+  /// Sets to drop from every exercise today, from the morning rating.
+  /// 99 means "do not train at all" (ill or wiped out).
+  int get setsToDropToday {
+    if (_content.checkin.isEmpty) return 0;
+    final v = checkinToday;
+    if (v == null) return 0;
+    if (v <= 1) return 99;
+    return _content.checkin.isLow(v) ? 1 : 0;
+  }
+
+  /// Several low days in a row -> suggest a deload week instead of pushing.
+  bool get deloadSuggested {
+    final cfg = _content.checkin;
+    if (cfg.isEmpty || cfg.deloadAfterDays <= 0) return false;
+    for (var i = 0; i < cfg.deloadAfterDays; i++) {
+      if (!cfg.isLow(checkinOn(keyFor(DateTime.now().subtract(Duration(days: i)))))) return false;
+    }
+    return true;
+  }
+
+  // -------------------------------------------------- protein price tool ----
+  /// Currency symbol: what the user typed, else the content default.
+  String get currency {
+    final saved = _prefs.getString(K.currency)?.trim() ?? '';
+    if (saved.isNotEmpty) return saved;
+    final d = _content.food.priceTool.currencyDefault.t(_isArabic);
+    return d.isEmpty ? (_isArabic ? 'ج.م' : 'EGP') : d;
+  }
+
+  Future<void> setCurrency(String s) async {
+    final v = s.trim();
+    if (v.isEmpty) {
+      await _prefs.remove(K.currency);
+    } else {
+      await _prefs.setString(K.currency, v.length > 8 ? v.substring(0, 8) : v);
+    }
+    notifyListeners();
+  }
+
+  /// Reads a double defensively: SharedPreferences hands back an int when a
+  /// whole number was stored on some platforms.
+  double? priceOf(String id) {
+    final v = _prefs.get(K.price(id));
+    return v is num ? v.toDouble() : null;
+  }
+
+  Future<void> setPrice(String id, double? value) async {
+    if (value == null || value <= 0 || !value.isFinite) {
+      await _prefs.remove(K.price(id));
+    } else {
+      await _prefs.setDouble(K.price(id), value.clamp(0.01, 1000000));
+    }
+    notifyListeners();
+  }
+
+  /// Every priceable source together with the local price the user typed.
+  List<SourcePrice> get pricedSources => [
+        for (final s in _content.food.priceableSources)
+          SourcePrice(
+            id: s.id,
+            proteinPerUnitG: s.proteinPerUnitG,
+            maxUnits: s.maxUnits > 0 ? s.maxUnits : double.infinity,
+            price: priceOf(s.id),
+          )
+      ];
+
+  /// Priced sources, cheapest protein first.
+  List<SourcePrice> get rankedSources => [...pricedSources.where((s) => s.priced)]
+    ..sort((a, b) => a.costPerGram!.compareTo(b.costPerGram!));
+
+  /// Cheapest basket that reaches today's protein target.
+  Basket get proteinBasket =>
+      cheapestBasket(sources: pricedSources, targetG: _content.food.proteinTarget.toDouble());
+
+  // ------------------------------------------------------- backpack load ----
+  /// Bodyweight for the loading window: the last logged weight wins, otherwise
+  /// the middle of the profile range in the content file.
+  double get bodyKg {
+    final logged = lastLogValue(K.measure('weight'));
+    if (logged != null && logged >= 25 && logged <= 300) return logged.toDouble();
+    final r = _content.meta.weightKg;
+    if (r.length == 2 && r[0] > 0) return (r[0] + r[1]) / 2.0;
+    return 80;
+  }
+
+  double backpackLoadKg({required int bottles, required double sandFraction}) {
+    final cfg = _content.backpackLoad;
+    return backpackKg(
+      bottles: bottles,
+      bottleMl: cfg.bottleMl.toDouble(),
+      sandFraction: sandFraction,
+      waterKgPerL: cfg.waterKgPerL,
+      sandKgPerL: cfg.sandKgPerL,
+      bagKg: cfg.bagKg,
+    );
+  }
+
+  ({double min, double max}) get safeLoadKg =>
+      loadRangeKg(bodyKg: bodyKg, bodyPct: _content.backpackLoad.bodyPct);
+
+  // ------------------------------------------------- monthly checkpoints ----
+  String get monthKey => K.ymOf(DateTime.now());
+
+  bool monthlyDone(String id, [String? ym]) =>
+      _prefs.getBool(K.monthly(id, ym ?? monthKey)) ?? false;
+
+  Future<void> toggleMonthly(String id, [String? ym]) async {
+    final key = K.monthly(id, ym ?? monthKey);
+    await _prefs.setBool(key, !(_prefs.getBool(key) ?? false));
+    notifyListeners();
+  }
+
+  /// True from the checkpoint day (the 15th) until the photo is ticked off.
+  bool get photoDue =>
+      _content.progress.photoCheckpoint.isDueOn(DateTime.now()) && !monthlyDone('photo');
+
+  // --------------------------------------------------------- safety gates ----
+  bool gateAcked(String id) => _prefs.getBool(K.gate(id)) ?? false;
+
+  Future<void> ackGate(String id) async {
+    await _prefs.setBool(K.gate(id), true);
+    notifyListeners();
+  }
+
+  /// The briefing that still has to be acknowledged before training [day].
+  SafetyGate? pendingGateFor(WorkoutDay day) {
+    final g = _content.workout.gateForDay(day);
+    if (g == null || g.id.isEmpty || gateAcked(g.id)) return null;
+    return g;
+  }
+
+  // -------------------------------------------------------- weekly report ----
+  /// Adherence over the last [days] days, compared with the [days] before.
+  WeekReport weeklyReport({int days = 7}) {
+    final cfg = _content.report;
+    String key(int i) => keyFor(DateTime.now().subtract(Duration(days: i)));
+
+    double meanOf(int from, int to, double Function(String date) f) {
+      var sum = 0.0;
+      for (var i = from; i < to; i++) {
+        sum += f(key(i));
+      }
+      final n = to - from;
+      return n <= 0 ? 0 : sum / n;
+    }
+
+    double waterOn(String d) => share(waterTotalOn(d), _content.water.goalMl);
+    double proteinOnDay(String d) => share(proteinOn(d), _content.food.proteinTarget);
+    double routineOn(String d) {
+      final tasks = _content.routine;
+      if (tasks.isEmpty) return 0;
+      return share(
+          tasks.where((r) => _prefs.getBool(K.task(d, r.id)) ?? false).length, tasks.length);
+    }
+
+    // Training is counted in sets, and only over days that count: rest days
+    // and days dropped by exam mode are never held against you.
+    ({double done, double total}) trainingIn(int from, int to) {
+      var done = 0.0;
+      var total = 0.0;
+      for (var i = from; i < to; i++) {
+        final d = key(i);
+        final parsed = DateTime.tryParse(d);
+        if (parsed == null) continue;
+        final day = _content.workout.dayForWeekday(parsed.weekday);
+        if (day == null || day.isRest || !dayIsActive(day)) continue;
+        total += day.totalSets;
+        done += setsDoneOn(d, day.id);
+      }
+      return (done: done, total: total);
+    }
+
+    ({int logged, int onTime}) sleepIn(int from, int to) {
+      var logged = 0;
+      var onTime = 0;
+      for (var i = from; i < to; i++) {
+        final t = sleepTimeOn(key(i));
+        if (t == null) continue;
+        logged++;
+        if (bedtimeOnTime(bedtime: t, target: _content.sleep.target)) onTime++;
+      }
+      return (logged: logged, onTime: onTime);
+    }
+
+    final tNow = trainingIn(0, days);
+    final tPrev = trainingIn(days, days * 2);
+    final sNow = sleepIn(0, days);
+    final sPrev = sleepIn(days, days * 2);
+
+    final rows = <WeekRow>[
+      WeekRow(
+        id: 'water',
+        value: meanOf(0, days, waterOn),
+        previous: meanOf(days, days * 2, waterOn),
+        target: _content.water.goalMl > 0 ? cfg.waterTarget : 0,
+      ),
+      WeekRow(
+        id: 'protein',
+        value: meanOf(0, days, proteinOnDay),
+        previous: meanOf(days, days * 2, proteinOnDay),
+        target: _content.food.proteinTarget > 0 ? cfg.proteinTarget : 0,
+      ),
+      WeekRow(
+        id: 'routine',
+        value: meanOf(0, days, routineOn),
+        previous: meanOf(days, days * 2, routineOn),
+        target: _content.routine.isEmpty ? 0 : cfg.routineTarget,
+      ),
+      WeekRow(
+        id: 'training',
+        value: share(tNow.done, tNow.total),
+        previous: share(tPrev.done, tPrev.total),
+        // No training days at all in either window -> nothing to score.
+        target: (tNow.total > 0 || tPrev.total > 0) ? cfg.trainingTarget : 0,
+      ),
+      WeekRow(
+        id: 'sleep',
+        value: sNow.logged == 0 ? 0 : share(sNow.onTime, days),
+        previous: sPrev.logged == 0 ? 0 : share(sPrev.onTime, days),
+        target: (sNow.logged == 0 && sPrev.logged == 0) ? 0 : cfg.sleepTarget,
+      ),
+    ];
+
+    var sessionsDone = 0;
+    for (var i = 0; i < days; i++) {
+      final d = key(i);
+      final parsed = DateTime.tryParse(d);
+      if (parsed == null) continue;
+      final day = _content.workout.dayForWeekday(parsed.weekday);
+      if (day == null || day.isRest || !dayIsActive(day)) continue;
+      if (day.totalSets > 0 && setsDoneOn(d, day.id) >= day.totalSets) sessionsDone++;
+    }
+
+    return WeekReport(
+      days: days,
+      rows: rows,
+      records: recordsIn(days),
+      sessionsDone: sessionsDone,
+      sessionsTarget: weeklySessionTarget,
+      sleepLogged: sNow.logged,
+      sleepOnTime: sNow.onTime,
+    );
+  }
+
+  /// Personal records set inside the last [days] days, across the strength log.
+  int recordsIn(int days) {
+    var n = 0;
+    for (final e in _content.progress.strengthExercises) {
+      num? best;
+      for (final entry in logFor(K.strength(e.id))) {
+        final v = entry['v'];
+        if (v is! num) continue;
+        final isRecord = best == null || v > best;
+        if (isRecord) best = v;
+        if (!isRecord) continue;
+        final ago = daysAgo('${entry['d']}');
+        if (ago >= 0 && ago < days) n++;
+      }
+    }
+    return n;
+  }
+
+  /// Whole days between [dateKey] and today (negative for a future date).
+  int daysAgo(String dateKey) {
+    final d = DateTime.tryParse(dateKey);
+    if (d == null) return -1;
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day)
+        .difference(DateTime(d.year, d.month, d.day))
+        .inDays;
   }
 
   // progress logs  (json arrays of {"d": "2026-09-15", "v": 12})
@@ -496,7 +881,11 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> wipeAllData() async {
-    final keys = _prefs.getKeys().where((k) => k != K.lang && k != K.theme).toList();
+    // Language, theme and the currency symbol are settings, not training data.
+    final keys = _prefs
+        .getKeys()
+        .where((k) => k != K.lang && k != K.theme && k != K.currency)
+        .toList();
     for (final k in keys) {
       await _prefs.remove(k);
     }
