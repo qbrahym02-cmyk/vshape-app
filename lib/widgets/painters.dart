@@ -209,9 +209,14 @@ class WeekBars extends StatelessWidget {
     this.labels,
   });
 
+  /// One value per bar, oldest first (so the last bar is today).
   final List<double> values;
   final Color color;
+
+  /// Draws a goal line; the chart scales so the taller of (peak, goal) fits.
   final double? goal;
+
+  /// Height of the bar area - the weekday labels sit below it.
   final double height;
   final List<String>? labels;
 
@@ -220,69 +225,70 @@ class WeekBars extends StatelessWidget {
     if (values.isEmpty) return SizedBox(height: height);
     final g = goal;
     final peak = values.fold<double>(0, (m, v) => v > m ? v : m);
-    final top = (g != null && g > peak ? g : peak);
+    final top = (g != null && g > peak) ? g! : peak;
     final maxV = top <= 0 ? 1.0 : top;
-    final def = _defaultLabels(context);
-    final lab = labels ?? def;
+    final lab = labels ?? _defaultLabels(context);
+    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 9.5);
 
+    // The total height is fixed and every bar column *stretches* inside it, with
+    // the chart area as `Expanded`. Nothing has to size itself against an
+    // unbounded height - which is what a Column-in-Row does inside a ListView,
+    // and why the first version of this widget threw in the Food screen tests.
     return SizedBox(
       height: height + 16,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (var i = 0; i < values.length; i++)
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2.5),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(
-                        begin: 0,
-                        end: maxV == 0 ? 0 : (values[i] / maxV).clamp(0.0, 1.0),
-                      ),
-                      duration: const Duration(milliseconds: 450),
-                      curve: Curves.easeOut,
-                      builder: (context, v, _) => SizedBox(
-                        height: height,
-                        child: Stack(
-                          children: [
-                            // the filled bar, anchored to the bottom
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              height: height * (v == 0 ? 0.02 : v),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: values[i] <= 0
-                                      ? color.withValues(alpha: 0.15)
-                                      : color,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                              ),
-                            ),
-                            // the goal line
-                            if (g != null && g > 0)
+                    Expanded(
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: (values[i] / maxV).clamp(0.0, 1.0),
+                        ),
+                        duration: const Duration(milliseconds: 450),
+                        curve: Curves.easeOut,
+                        builder: (context, v, _) => LayoutBuilder(
+                          builder: (context, box) => Stack(
+                            children: [
+                              // the bar, anchored to the bottom
                               Positioned(
-                                bottom: height * (g / maxV).clamp(0.0, 1.0),
                                 left: 0,
                                 right: 0,
+                                bottom: 0,
+                                height: box.maxHeight * (v == 0 ? 0.03 : v),
                                 child: Container(
-                                  height: 1.4,
-                                  color: color.withValues(alpha: 0.4),
+                                  decoration: BoxDecoration(
+                                    color: values[i] <= 0
+                                        ? color.withValues(alpha: 0.15)
+                                        : color,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                 ),
                               ),
-                          ],
+                              // the goal line
+                              if (g != null && g > 0)
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: box.maxHeight * (g / maxV).clamp(0.0, 1.0),
+                                  child: Container(
+                                    height: 1.4,
+                                    color: color.withValues(alpha: 0.4),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      i < lab.length ? lab[i] : '',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 9.5),
-                    ),
+                    Text(i < lab.length ? lab[i] : '', style: labelStyle),
                   ],
                 ),
               ),
@@ -296,12 +302,10 @@ class WeekBars extends StatelessWidget {
     final ar = Directionality.of(context) == TextDirection.rtl;
     const arS = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح'];
     const enS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    // values are oldest-first, i.e. ending today
     final today = DateTime.now().weekday; // 1 = Monday
     final set = ar ? arS : enS;
     return [
-      for (var i = values.length - 1; i >= 0; i--)
-        set[((today - 1 - i) % 7 + 7) % 7],
+      for (var i = values.length - 1; i >= 0; i--) set[((today - 1 - i) % 7 + 7) % 7],
     ];
   }
 }
