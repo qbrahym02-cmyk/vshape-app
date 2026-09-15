@@ -208,8 +208,7 @@ class AppState extends ChangeNotifier {
   /// Keeps the "quick add" counter in sync with the slot checklist so both
   /// UIs always show the same number.
   Future<void> _syncQuickTotal() async {
-    final sum = _content.water.slots.fold<int>(
-        0, (s, e) => s + slotDone(e.id) * _content.water.glassMl);
+    final sum = waterFromSlots();
     if (sum > waterToday()) await _prefs.setInt(K.water(K.date()), sum);
   }
 
@@ -221,11 +220,22 @@ class AppState extends ChangeNotifier {
 
   int slotDone(String slotId) => _prefs.getInt(K.slot(K.date(), slotId)) ?? 0;
 
+  /// Millilitres recorded through the slot checklist.
+  int waterFromSlots() => _content.water.slots.fold<int>(
+      0, (s, e) => s + slotDone(e.id) * _content.water.glassMl);
+
   /// Total for today = max(sum of slots, quick-add counter) so both UIs agree.
   int waterTotal() {
-    final slots = _content.water.slots.fold<int>(
-        0, (s, e) => s + slotDone(e.id) * _content.water.glassMl);
+    final slots = waterFromSlots();
     final quick = waterToday();
+    return slots > quick ? slots : quick;
+  }
+
+  /// Same rule as [waterTotal] but for an arbitrary day (used by [streak]).
+  int waterTotalOn(String dateKey) {
+    final slots = _content.water.slots.fold<int>(
+        0, (s, e) => s + (_prefs.getInt(K.slot(dateKey, e.id)) ?? 0) * _content.water.glassMl);
+    final quick = _prefs.getInt(K.water(dateKey)) ?? 0;
     return slots > quick ? slots : quick;
   }
 
@@ -358,23 +368,30 @@ class AppState extends ChangeNotifier {
     await Reminders.apply(this);
   }
 
-  // streak
+  /// True when a day "counts": 60% of the water goal **or** any routine task.
+  ///
+  /// Uses [waterTotalOn] (not the raw quick-add counter) so a day filled in
+  /// through the slot checklist counts exactly like one filled through the
+  /// quick-add buttons - otherwise a perfectly good day breaks the streak.
+  bool dayCounts(String dateKey) {
+    if (waterTotalOn(dateKey) >= _content.water.goalMl * 0.6) return true;
+    return _content.routine.any((r) => _prefs.getBool(K.task(dateKey, r.id)) ?? false);
+  }
+
+  String keyFor(DateTime d) => '${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  /// Consecutive "counted" days ending today (today is allowed to be empty).
   int streak() {
     var n = 0;
     for (var i = 0; i < 400; i++) {
-      final d = DateTime.now().subtract(Duration(days: i));
-      final key = '${d.year.toString().padLeft(4, '0')}-'
-          '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-      final ok = (_prefs.getInt(K.water(key)) ?? 0) >= _content.water.goalMl * 0.6 ||
-          _content.routine.any((r) => _prefs.getBool(K.task(key, r.id)) ?? false);
+      final ok = dayCounts(keyFor(DateTime.now().subtract(Duration(days: i))));
       if (ok) {
         n++;
       } else if (i > 0) {
         break;
-      } else {
-        // today not finished yet: don't break the streak
-        continue;
       }
+      // i == 0 and not done yet: keep looking, today must not break the streak.
     }
     return n;
   }

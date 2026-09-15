@@ -84,26 +84,55 @@ class Native {
 
   static Future<void> keepScreenOnDuringWorkout(bool on) =>
       _ch.invokeMethod<void>('keepScreenOn', {'on': on}).catchError((_) {});
+
+  /// Fire a one-off local notification (used by the rest timer).
+  static Future<void> notify({
+    required String title,
+    required String body,
+    int id = 9001,
+  }) =>
+      _ch
+          .invokeMethod<void>('notify', {'id': id, 'title': title, 'body': body})
+          .catchError((_) {});
+
+  /// Short vibration, so the timer can be felt with the phone on the floor.
+  static Future<void> vibrate(int ms) =>
+      _ch.invokeMethod<void>('vibrate', {'ms': ms}).catchError((_) {});
 }
 
-/// Builds the reminder set from the (remotely updatable) content file and
-/// hands it to the native AlarmManager scheduler.
+/// Builds the reminder set from the (remotely updatable) content file and hands
+/// it to the native AlarmManager scheduler.
 class Reminders {
-  static Future<void> apply(AppState st) async {
-    if (!Platform.isAndroid) return;
-    final cfg = st.content.reminders;
-    final on = st.remindersOn && cfg.enabled;
-    if (!on) {
-      await Native.cancelAll();
-      return;
-    }
-    await Native.requestNotificationPermission();
-
-    final ar = st.isArabic;
+  /// Pure builder (no platform calls) so it can be unit-tested.
+  ///
+  /// Water reminders come from `water.slots`: a slot with `"remind": false` in
+  /// the content file is skipped, so editing content.json on GitHub really does
+  /// change what the phone reminds you about. `reminders.water` acts as an
+  /// extra list for times that have no slot of their own - a time that already
+  /// matches a reminding slot is ignored instead of being scheduled twice.
+  static List<Map<String, dynamic>> buildAlarms(AppContent c, bool ar) {
+    final cfg = c.reminders;
     final alarms = <Map<String, dynamic>>[];
     var id = 100;
 
+    final slotTimes = <String>{};
+    for (final s in c.water.slots) {
+      if (!s.remind) continue;
+      final t = s.time.trim();
+      if (!_timeRe.hasMatch(t)) continue;
+      slotTimes.add(_norm(t));
+      alarms.add({
+        'id': id++,
+        'hour': _h(t),
+        'minute': _m(t),
+        'title': Water.title(t, ar),
+        'body': Water.body(t, ar),
+        'slot': s.id,
+      });
+    }
+
     for (final t in cfg.water) {
+      if (slotTimes.contains(_norm(t))) continue;
       alarms.add({
         'id': id++,
         'hour': _h(t),
@@ -112,6 +141,7 @@ class Reminders {
         'body': Water.body(t, ar),
       });
     }
+
     alarms.add({
       'id': id++,
       'hour': _h(cfg.workout),
@@ -131,8 +161,24 @@ class Reminders {
           : '80% of growth hormone is released between 11 PM and 2 AM. Be asleep before 11.',
     });
 
-    await Native.scheduleDaily(alarms);
+    return alarms;
   }
+
+  static Future<void> apply(AppState st) async {
+    if (!Platform.isAndroid) return;
+    final cfg = st.content.reminders;
+    if (!(st.remindersOn && cfg.enabled)) {
+      await Native.cancelAll();
+      return;
+    }
+    await Native.requestNotificationPermission();
+    await Native.scheduleDaily(buildAlarms(st.content, st.isArabic));
+  }
+
+  static final RegExp _timeRe = RegExp(r'^\d{1,2}:\d{2}$');
+
+  /// "06:30" -> "6:30" so 06:30 and 6:30 are recognised as the same time.
+  static String _norm(String t) => '${_h(t)}:${_m(t)}';
 
   static int _h(String t) {
     final p = t.split(':');

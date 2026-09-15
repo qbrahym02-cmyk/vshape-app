@@ -8,6 +8,9 @@ name: Build & publish APK
 #   1. Push a tag like  v1.1.0+2   ->  git tag v1.1.0+2 && git push origin v1.1.0+2
 #      (any tag starting with 'v' triggers this workflow)
 #   2. GitHub -> Actions -> "Build & publish APK" -> Run workflow (manual)
+#
+# Before releasing: bump `version:` in pubspec.yaml AND write what changed in
+# RELEASE_NOTES.md - that text is what the user reads inside the app.
 
 on:
   push:
@@ -22,6 +25,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   FLUTTER_VERSION: '3.47.4'
@@ -38,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
@@ -59,6 +66,20 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
 
+      # The app ships content.json twice: the root copy is what the remote
+      # updater serves, assets/content/ is the offline fallback bundled in the
+      # APK. If they drift apart, a fresh install shows older content than a
+      # synced phone - so fail the build instead.
+      - name: Check content.json is in sync with the bundled asset
+        run: |
+          if ! diff -q content.json assets/content/content.json >/dev/null; then
+            echo "::error::content.json and assets/content/content.json differ."
+            echo "Run:  cp content.json assets/content/content.json   (then commit)"
+            diff -u assets/content/content.json content.json | head -40
+            exit 1
+          fi
+          echo "content.json in sync (version $(python3 -c 'import json;print(json.load(open("content.json"))["version"])'))"
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -71,17 +92,25 @@ jobs:
       # ------------------------------------------------------------------
       # Signing.  Two options, in order of preference:
       #   A) repository secrets: ANDROID_KEYSTORE_BASE64, KEYSTORE_PASSWORD,
-      #      KEY_ALIAS, KEY_PASSWORD
-      #   B) the keystore committed in android/keystore (works out of the box)
+      #      KEY_ALIAS, KEY_PASSWORD   -> used by CI
+      #   B) android/key.properties + android/keystore/*.jks present in the
+      #      working tree (a local build); both are git-ignored.
+      # If neither exists the release would be signed with the *debug* key and
+      # could not be installed over the current app - so the build stops.
+      #
+      # NOTE: the condition must test `secrets.*` directly. A step-level `env:`
+      # block is not visible to that step's own `if:`, which made the previous
+      # `if: ${{ env.KS_B64 != '' }}` always evaluate to false.
       # ------------------------------------------------------------------
-      - name: Prepare signing (from secrets, when present)
-        if: ${{ env.KS_B64 != '' }}
+      - name: Prepare signing (from secrets)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         env:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
           KS_KEY_PASS: ${{ secrets.KEY_PASSWORD }}
           KS_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
+          set -euo pipefail
           mkdir -p android/keystore
           printf '%s' "$KS_B64" | base64 -d > android/keystore/vsystem-release.jks
           {
@@ -90,6 +119,14 @@ jobs:
             echo "keyAlias=$KS_ALIAS"
             echo "storeFile=keystore/vsystem-release.jks"
           } > android/key.properties
+          test -s android/keystore/vsystem-release.jks || { echo "::error::keystore decoded to an empty file"; exit 1; }
+          echo "[signing] keystore ready: $(wc -c < android/keystore/vsystem-release.jks) bytes, alias=$KS_ALIAS"
+
+      - name: Fail early when nothing can sign the release
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 == '' && hashFiles('android/key.properties') == '' }}
+        run: |
+          echo "::error::No signing material: set the ANDROID_KEYSTORE_BASE64 / KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD secrets."
+          exit 1
 
       - name: Build release APK (universal)
         run: flutter build apk --release
@@ -115,6 +152,9 @@ jobs:
           echo "versionName=$NAME" >> "$GITHUB_ENV"
           echo "versionCode=$CODE" >> "$GITHUB_ENV"
 
+          # versionCode WITHOUT the per-ABI offset: this is what the in-app
+          # updater compares against (it strips the offset from the installed
+          # build too). Never write 2004 here for version 1.0.3+4.
           printf '{"versionName":"%s","versionCode":%s,"flutter":"%s"}\n' \
                  "$NAME" "$CODE" "$FLUTTER_VERSION" > dist/version.json
           cat dist/version.json
@@ -138,7 +178,11 @@ jobs:
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}+{1}', env.versionName, env.versionCode) }}
           name: V-System ${{ env.versionName }} (${{ env.versionCode }})
-          generate_release_notes: true
+          # RELEASE_NOTES.md is shown inside the app on the update card, so it
+          # is written for the user (bilingual), not for developers. It always
+          # exists in the repo, which keeps `body_path` unconditional.
+          body_path: RELEASE_NOTES.md
+          generate_release_notes: false
           files: |
             dist/*.apk
             dist/version.json

@@ -205,6 +205,48 @@ void main() {
       expect(st.lastLogValue('str_table_row'), isNull);
     });
 
+    test('streak: water from the schedule stations counts (regression)', () async {
+      // Filling the stations only (no quick-add) used to leave the raw
+      // w_<date> counter at 0, so a fully-drunk day broke the streak.
+      final glass = st.content.water.glassMl;
+      final y = st.keyFor(DateTime.now().subtract(const Duration(days: 1)));
+      for (final slot in st.content.water.slots) {
+        await st.prefs.setInt(K.slot(y, slot.id), slot.glasses);
+      }
+      expect(st.prefs.getInt(K.water(y)) ?? 0, 0, reason: 'precondition: quick-add untouched');
+      expect(st.waterTotalOn(y), greaterThanOrEqualTo(st.content.water.goalMl));
+      expect(st.dayCounts(y), isTrue);
+      expect(st.streak(), 1, reason: 'yesterday counted, today is still empty');
+      expect(glass, greaterThan(0));
+    });
+
+    test('streak: an empty day breaks the run', () async {
+      final y = st.keyFor(DateTime.now().subtract(const Duration(days: 1)));
+      final d2 = st.keyFor(DateTime.now().subtract(const Duration(days: 2)));
+      await st.prefs.setInt(K.water(d2), st.content.water.goalMl);
+      await st.addWater(st.content.water.goalMl); // today
+      expect(st.dayCounts(y), isFalse);
+      expect(st.streak(), 1, reason: 'today counts, yesterday was empty -> run stops');
+    });
+
+    test('streak: one routine task is enough for the day', () async {
+      final y = st.keyFor(DateTime.now().subtract(const Duration(days: 1)));
+      final taskId = st.content.routine.first.id;
+      await st.prefs.setBool(K.task(y, taskId), true);
+      expect(st.dayCounts(y), isTrue);
+      expect(st.streak(), 1);
+    });
+
+    test('streak: counts a long unbroken run', () async {
+      for (var i = 1; i <= 5; i++) {
+        final d = st.keyFor(DateTime.now().subtract(Duration(days: i)));
+        await st.prefs.setInt(K.water(d), st.content.water.goalMl);
+      }
+      expect(st.streak(), 5);
+      await st.addWater(st.content.water.goalMl);
+      expect(st.streak(), 6);
+    });
+
     test('bilingual text resolves both ways', () {
       final note = st.content.water.note;
       expect(note.t(true), isNot(note.t(false)));

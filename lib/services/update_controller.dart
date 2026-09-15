@@ -116,26 +116,46 @@ class UpdateController extends ChangeNotifier {
 
 /// Small helper used by [main] to do a silent update check once per day.
 class UpdateChecker {
-  static const _key = 'update_seen_code';
+  /// One GitHub call per [minInterval] while an update is already known.
+  /// When nothing is pending we re-check after [freshInterval] instead, so a
+  /// release published in the afternoon is offered the same day.
+  static const minInterval = Duration(hours: 20);
+  static const freshInterval = Duration(hours: 6);
+
+  /// Pure decision logic (kept separate so it is testable without a device):
+  /// both codes must already have the per-ABI offset stripped.
+  static bool isNewer({required int latestCode, required int installedCode}) =>
+      latestCode > installedCode;
 
   static Future<void> maybeNotify(AppState st) async {
     final prefs = st.prefs;
     final now = DateTime.now().millisecondsSinceEpoch;
     final last = prefs.getInt(K.lastUpdateCheck) ?? 0;
-    if (now - last < const Duration(hours: 20).inMilliseconds) return;
 
-    final info = await UpdateService.latest(abi: await Native.deviceAbi());
-    await prefs.setInt(K.lastUpdateCheck, now);
+    ReleaseInfo? info = st.pendingUpdate;
+    final threshold =
+        info == null ? freshInterval.inMilliseconds : minInterval.inMilliseconds;
+    if (now - last >= threshold) {
+      try {
+        info = await UpdateService.latest(abi: await Native.deviceAbi());
+      } catch (_) {
+        info = st.pendingUpdate; // keep the previous result on a network error
+      }
+      await prefs.setInt(K.lastUpdateCheck, now);
+    }
     if (info == null) return;
 
     final cur = await Native.versionCode();
     final abi = await Native.deviceAbi();
-    final normalized = cur - ReleaseInfo.abiOffsetFor(abi);
-    if (info.normalizedCode > normalized &&
-        (prefs.getInt(_key) ?? 0) < info.normalizedCode) {
-      await prefs.setInt(_key, info.normalizedCode);
+    final installed = cur - ReleaseInfo.abiOffsetFor(abi);
+
+    if (isNewer(latestCode: info.normalizedCode, installedCode: installed)) {
+      // Deliberately *not* remembered as "seen": the green strip has to come
+      // back on the next launch, otherwise an update silently never arrives.
       st.pendingUpdate = info;
       st.ping();
+    } else {
+      st.pendingUpdate = null;
     }
   }
 }

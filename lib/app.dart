@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/app_state.dart';
 import 'core/theme.dart';
 import 'screens/home_shell.dart';
+import 'widgets/rest_timer.dart';
 import 'widgets/scope.dart';
 
 class VSystemApp extends StatelessWidget {
@@ -37,7 +38,9 @@ class VSystemApp extends StatelessWidget {
                 textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
                 child: MediaQuery(
                   data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
-                  child: child ?? const SizedBox.shrink(),
+                  // App-level so the rest countdown survives tab switches and
+                  // pushed routes (Progress, Rules, Settings...).
+                  child: RestTimerScope(child: child ?? const SizedBox.shrink()),
                 ),
               );
             },

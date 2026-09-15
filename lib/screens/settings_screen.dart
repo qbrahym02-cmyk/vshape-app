@@ -190,7 +190,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(l.remindersOn, style: Theme.of(context).textTheme.bodyMedium),
                 subtitle: Text(
-                  '${st.content.reminders.water.join(' · ')}  |  🏋️ ${st.content.reminders.workout}  |  😴 ${st.content.reminders.sleep}',
+                  '${_waterTimes(st).join(' · ')}  |  🏋️ ${st.content.reminders.workout}'
+                  '  |  😴 ${st.content.reminders.sleep}',
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
                 activeThumbColor: C.amber,
@@ -238,6 +239,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  /// The times that will actually ring: water alarms come from the schedule
+  /// slots (skipping `remind: false`) plus any extra times in `reminders.water`.
+  /// Reading `reminders.water` alone would show times that never fire.
+  static List<String> _waterTimes(AppState st) {
+    final alarms = Reminders.buildAlarms(st.content, st.isArabic);
+    final water = alarms.where((a) => a['slot'] != null || a['title'].toString().contains('💧'));
+    final out = water
+        .map((a) => '${a['hour']}:${'${a['minute']}'.padLeft(2, '0')}')
+        .toList()
+      ..sort();
+    return out.isEmpty ? st.content.reminders.water : out;
   }
 
   String _fmt(DateTime d) =>

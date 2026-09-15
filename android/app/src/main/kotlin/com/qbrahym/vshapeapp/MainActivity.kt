@@ -149,6 +149,24 @@ class MainActivity : FlutterActivity() {
                     result.success(if (abis.isNotEmpty()) abis[0] else "")
                 }
 
+                "notify" -> {
+                    val id = (call.argument<Number>("id"))?.toInt() ?: 9001
+                    val title = call.argument<String>("title") ?: "V-System"
+                    val body = call.argument<String>("body") ?: ""
+                    try {
+                        Alarms.notifyNow(this, id, title, body)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.success(false)
+                    }
+                }
+
+                "vibrate" -> {
+                    val ms = (call.argument<Number>("ms"))?.toLong() ?: 400L
+                    Alarms.vibrate(this, ms.coerceIn(0L, 5000L))
+                    result.success(true)
+                }
+
                 "keepScreenOn" -> {
                     val on = call.argument<Boolean>("on") ?: false
                     runOnUiThread {

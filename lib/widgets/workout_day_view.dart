@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../core/models.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
+import '../widgets/rest_timer.dart';
 import '../widgets/scope.dart';
 
 /// Reusable body of a training day: exercise cards with tappable set boxes.
@@ -182,7 +183,8 @@ class _ExerciseCardState extends State<ExerciseCard> {
           runSpacing: 8,
           children: [
             Pill('${ex.sets} × ${ex.reps.t(st.isArabic)}', color: C.violet, icon: Icons.repeat_rounded),
-            Pill('${ex.restS}${l.seconds} ${l.rest}', color: C.blue, icon: Icons.timer_outlined),
+            // tap it -> the 90 s rest countdown starts (see widgets/rest_timer.dart)
+            RestPill(seconds: ex.restS, label: ex.name.t(st.isArabic)),
             Pill('${l.tempo}: ${ex.tempo}', color: C.amber, icon: Icons.speed_rounded),
           ],
         ),

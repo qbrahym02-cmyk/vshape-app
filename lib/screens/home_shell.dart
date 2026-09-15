@@ -6,6 +6,7 @@ import '../screens/more_screen.dart';
 import '../screens/today_screen.dart';
 import '../screens/training_screen.dart';
 import '../screens/water_screen.dart';
+import '../widgets/rest_timer.dart';
 import '../widgets/scope.dart';
 
 class HomeShell extends StatefulWidget {
@@ -43,49 +44,76 @@ class HomeShellState extends State<HomeShell> {
       const MoreScreen(key: PageStorageKey('more')),
     ];
 
-    return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: IndexedStack(index: _index, children: pages),
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (st.pendingUpdate != null) _UpdateStrip(onTap: () => go(4)),
-          Container(height: 1, color: t.dividerColor.withValues(alpha: 0.5)),
-          NavigationBar(
-            selectedIndex: _index,
-            onDestinationSelected: (i) => setState(() => _index = i),
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.today_rounded),
-                label: l.today,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.water_drop_outlined),
-                selectedIcon: const Icon(Icons.water_drop, color: C.cyan),
-                label: l.water,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.restaurant_outlined),
-                selectedIcon: const Icon(Icons.restaurant, color: C.orange),
-                label: l.food,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.fitness_center_outlined),
-                selectedIcon: const Icon(Icons.fitness_center, color: C.violet),
-                label: l.training,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.more_horiz_rounded),
-                label: l.more,
+    // The rest timer lives in an app-level scope so it keeps counting while
+    // you move between tabs; its bar is parked right above the nav bar so it
+    // never covers content.
+    final rest = RestTimerScope.maybeOf(context);
+
+    Widget shell() => Scaffold(
+          body: SafeArea(
+            bottom: false,
+            child: IndexedStack(index: _index, children: pages),
+          ),
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (rest != null) _RestTimerHost(controller: rest),
+              if (st.pendingUpdate != null) _UpdateStrip(onTap: () => go(4)),
+              Container(height: 1, color: t.dividerColor.withValues(alpha: 0.5)),
+              NavigationBar(
+                selectedIndex: _index,
+                onDestinationSelected: (i) => setState(() => _index = i),
+                destinations: [
+                  NavigationDestination(
+                    icon: const Icon(Icons.today_rounded),
+                    label: l.today,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.water_drop_outlined),
+                    selectedIcon: const Icon(Icons.water_drop, color: C.cyan),
+                    label: l.water,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.restaurant_outlined),
+                    selectedIcon: const Icon(Icons.restaurant, color: C.orange),
+                    label: l.food,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.fitness_center_outlined),
+                    selectedIcon: const Icon(Icons.fitness_center, color: C.violet),
+                    label: l.training,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.more_horiz_rounded),
+                    label: l.more,
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    );
+        );
+
+    if (rest == null) return shell();
+    return AnimatedBuilder(animation: rest, builder: (context, _) => shell());
   }
+}
+
+/// Renders the floating countdown only while a rest is running.
+class _RestTimerHost extends StatelessWidget {
+  const _RestTimerHost({required this.controller});
+
+  final RestTimerController controller;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: controller,
+        builder: (context, _) => controller.running
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                child: RestTimerBar(controller: controller),
+              )
+            : const SizedBox.shrink(),
+      );
 }
 
 class _UpdateStrip extends StatelessWidget {
