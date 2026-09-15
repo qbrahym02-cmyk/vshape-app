@@ -225,7 +225,7 @@ class WeekBars extends StatelessWidget {
     if (values.isEmpty) return SizedBox(height: height);
     final g = goal;
     final peak = values.fold<double>(0, (m, v) => v > m ? v : m);
-    final top = (g != null && g > peak) ? g! : peak;
+    final top = (g != null && g > peak) ? g : peak;
     final maxV = top <= 0 ? 1.0 : top;
     final lab = labels ?? _defaultLabels(context);
     final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 9.5);
