@@ -29,25 +29,17 @@ int _i(dynamic v, [int d = 0]) => v is num ? v.toInt() : int.tryParse('$v') ?? d
 
 List<dynamic> _list(dynamic v) => v is List ? v : const <dynamic>[];
 
-List<String> _strListAr(dynamic v) {
+/// Coerces a JSON list of strings (or of {"ar":..,"en":..} objects) into
+/// a plain list of strings for the requested language.
+List<String> _biStrings(dynamic v, bool wantArabic) {
+  if (v is! List) return const <String>[];
   final out = <String>[];
-  for (final e in _list(v)) {
+  for (final e in v) {
     if (e is Map) {
-      out.add((e['ar'] ?? e['en'] ?? '').toString());
-    } else {
-      out.add(e.toString());
-    }
-  }
-  return out;
-}
-
-List<String> _strListEn(dynamic v) {
-  final out = <String>[];
-  for (final e in _list(v)) {
-    if (e is Map) {
-      out.add((e['en'] ?? e['ar'] ?? '').toString());
-    } else {
-      out.add(e.toString());
+      final pick = wantArabic ? (e['ar'] ?? e['en']) : (e['en'] ?? e['ar']);
+      out.add('$pick');
+    } else if (e != null) {
+      out.add('$e');
     }
   }
   return out;
@@ -59,7 +51,25 @@ class BiList {
   final List<String> en;
   const BiList(this.ar, this.en);
 
-  factory BiList.from(dynamic v) => BiList(_strListAr(v), _strListEn(v));
+  /// Accepts three shapes:
+  ///   {"ar": ["..",".."], "en": ["..",".."]}   <- used by exercise steps
+  ///   [{"ar":"..","en":".."}, ...]             <- used by the "avoid" list
+  ///   ["..", ".."]                             <- plain strings (both langs)
+  factory BiList.from(dynamic v) {
+    if (v is Map) {
+      final ar = _biStrings(v['ar'], true);
+      final en = _biStrings(v['en'], false);
+      if (ar.isEmpty && en.isEmpty) {
+        final flat = _biStrings(v, true);
+        return BiList(flat, flat);
+      }
+      return BiList(ar.isEmpty ? en : ar, en.isEmpty ? ar : en);
+    }
+    if (v is List) {
+      return BiList(_biStrings(v, true), _biStrings(v, false));
+    }
+    return const BiList(<String>[], <String>[]);
+  }
 
   List<String> t(bool isAr) => isAr ? ar : en;
   bool get isEmpty => ar.isEmpty && en.isEmpty;

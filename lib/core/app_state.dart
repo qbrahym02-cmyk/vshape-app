@@ -98,6 +98,9 @@ class AppState extends ChangeNotifier {
     return st;
   }
 
+  @visibleForTesting
+  static Future<String> debugReadAsset() => _readAsset();
+
   static Future<String> _readAsset() async {
     try {
       return await rootBundle.loadString(kAssetContent);

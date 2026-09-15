@@ -1,0 +1,215 @@
+// Smoke tests.
+//
+// Two layers:
+//   1. every screen must build (Arabic + English) without throwing or
+//      overflowing badly - checked by pumping the screen and asserting that no
+//      exception escaped;
+//   2. the counting logic behind the UI (water, protein, sets, streak, logs).
+//
+// SharedPreferences performs real async platform work which the fake-async
+// zone inside testWidgets blocks, so every async call runs in tester.runAsync.
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vshape_app/core/app_state.dart';
+import 'package:vshape_app/screens/food_screen.dart';
+import 'package:vshape_app/screens/more_screen.dart';
+import 'package:vshape_app/screens/progress_screen.dart';
+import 'package:vshape_app/screens/rules_screen.dart';
+import 'package:vshape_app/screens/settings_screen.dart';
+import 'package:vshape_app/screens/today_screen.dart';
+import 'package:vshape_app/screens/training_screen.dart';
+import 'package:vshape_app/screens/water_screen.dart';
+import 'package:vshape_app/widgets/scope.dart';
+
+Future<AppState> _boot({bool arabic = true}) async {
+  SharedPreferences.setMockInitialValues(<String, Object>{});
+  // Answer every platform-channel call with null instead of hanging forever:
+  // the native helpers all treat a null reply as "feature unavailable".
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(const MethodChannel('vshape/native'), (call) async => null);
+  final st = await AppState.boot();
+  await st.setArabic(arabic);
+  return st;
+}
+
+Future<AppState> _pumpScreen(WidgetTester tester, Widget screen, {bool arabic = true}) async {
+  late AppState st;
+  await tester.runAsync(() async => st = await _boot(arabic: arabic));
+  await tester.pumpWidget(
+    MaterialApp(
+      locale: st.locale,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: Directionality(
+        textDirection: st.isArabic ? TextDirection.rtl : TextDirection.ltr,
+        child: AppScope(state: st, child: screen),
+      ),
+    ),
+  );
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 800));
+  return st;
+}
+
+void main() {
+  // ---------------------------------------------------------------- screens --
+  group('screens build', () {
+    final cases = <String, Widget Function()>{
+      'Today': () => const TodayScreen(),
+      'Water': () => const WaterScreen(),
+      'Food': () => const FoodScreen(),
+      'Training': () => const TrainingScreen(),
+      'More': () => const MoreScreen(),
+      'Progress': () => const ProgressScreen(),
+      'Rules': () => const RulesScreen(),
+    };
+
+    for (final entry in cases.entries) {
+      testWidgets('${entry.key} (Arabic)', (tester) async {
+        await _pumpScreen(tester, entry.value());
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('${entry.key} (English)', (tester) async {
+        await _pumpScreen(tester, entry.value(), arabic: false);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('Settings builds', (tester) async {
+      // SettingsScreen talks to the platform channel lazily, so it is pumped
+      // the same way; missing plugin replies are swallowed by design.
+      await _pumpScreen(tester, const SettingsScreen());
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  // ------------------------------------------------------------------ state --
+  group('AppState logic', () {
+    late AppState st;
+
+    setUp(() async {
+      st = await _boot();
+    });
+
+    test('content is loaded from the bundled asset', () {
+      expect(st.content.version, greaterThan(0));
+      expect(st.content.workout.days.length, 7);
+      expect(st.content.food.meals.length, 5);
+      expect(st.content.routine, isNotEmpty);
+      expect(st.isArabic, isTrue);
+    });
+
+    test('water: quick add and slot counters never disagree', () async {
+      expect(st.waterTotal(), 0);
+
+      await st.addWater(500);
+      expect(st.waterTotal(), 500);
+
+      await st.bumpSlot('wake', 2, up: true);
+      await st.bumpSlot('wake', 2, up: true);
+      // two 500 ml glasses == the 500 ml already counted, so the total is 1000
+      expect(st.slotDone('wake'), 2);
+      expect(st.waterTotal(), 1000);
+
+      await st.toggleSlot('wake', 2); // full -> cleared
+      expect(st.slotDone('wake'), 0);
+
+      await st.addWater(-10000);
+      expect(st.waterToday(), 0);
+    });
+
+    test('water goal is inside the 3.5-4 L protocol', () {
+      final w = st.content.water;
+      expect(w.goalMl, inInclusiveRange(3500, 4000));
+      expect(w.slots.fold<int>(0, (s, e) => s + e.glasses), greaterThanOrEqualTo(7));
+    });
+
+    test('food: protein is proportional to the ticked items', () async {
+      expect(st.proteinEaten(), 0);
+      final breakfast = st.content.food.meals.firstWhere((m) => m.id == 'breakfast');
+
+      await st.toggleMealItem('breakfast', 0);
+      final one = st.proteinEaten();
+      expect(one, greaterThan(0));
+      expect(one, lessThan(breakfast.proteinG));
+
+      for (var i = 1; i < breakfast.items.length; i++) {
+        await st.toggleMealItem('breakfast', i);
+      }
+      expect(st.mealDone('breakfast'), isTrue);
+      expect(st.proteinEaten(), greaterThanOrEqualTo(breakfast.proteinG));
+      expect(st.kcalEaten(), greaterThan(0));
+    });
+
+    test('planned protein covers the 150 g target', () {
+      expect(st.content.food.proteinTarget, 150);
+      expect(st.content.food.plannedProtein, greaterThanOrEqualTo(150));
+    });
+
+    test('workout: sets are tracked per day', () async {
+      final monday = st.content.workout.dayForWeekday(1)!;
+      expect(monday.exercises, isNotEmpty);
+      expect(st.setsDone(monday.id), 0);
+
+      await st.toggleSet(monday.exercises.first.id, 0);
+      expect(st.setsDone(monday.id), 1);
+      await st.toggleSet(monday.exercises.first.id, 0);
+      expect(st.setsDone(monday.id), 0);
+
+      await st.toggleDayDone(monday.id);
+      expect(st.dayDoneToday(monday.id), isTrue);
+    });
+
+    test('every weekday maps to exactly one session', () {
+      for (var d = 1; d <= 7; d++) {
+        expect(st.content.workout.dayForWeekday(d), isNotNull, reason: 'weekday $d');
+      }
+      // training days have exercises, rest days have a plan
+      final training = st.content.workout.days.where((d) => !d.isRest).toList();
+      expect(training.length, 5);
+      for (final d in training) {
+        expect(d.exercises, isNotEmpty);
+        expect(d.totalSets, greaterThan(0));
+        for (final e in d.exercises) {
+          expect(e.steps.ar, isNotEmpty, reason: e.id);
+          expect(e.steps.en, isNotEmpty, reason: e.id);
+          expect(e.sets, greaterThan(0));
+        }
+      }
+    });
+
+    test('routine: all items have unique ids and a time', () {
+      final ids = st.content.routine.map((r) => r.id).toList();
+      expect(ids.toSet().length, ids.length);
+      for (final r in st.content.routine) {
+        expect(RegExp(r'^\d{1,2}:\d{2}$').hasMatch(r.time), isTrue, reason: r.id);
+      }
+    });
+
+    test('logs keep one entry per day and expose the latest value', () async {
+      await st.appendLog('str_table_row', 8);
+      expect(st.logFor('str_table_row').length, 1);
+      await st.appendLog('str_table_row', 14); // same day -> replaces
+      expect(st.logFor('str_table_row').length, 1);
+      expect(st.lastLogValue('str_table_row'), 14);
+
+      await st.removeLogEntry('str_table_row', K.date());
+      expect(st.logFor('str_table_row'), isEmpty);
+      expect(st.lastLogValue('str_table_row'), isNull);
+    });
+
+    test('bilingual text resolves both ways', () {
+      final note = st.content.water.note;
+      expect(note.t(true), isNot(note.t(false)));
+      expect(note.t(true), contains('ماء'));
+      expect(note.t(false), contains('water'));
+    });
+  });
+}
