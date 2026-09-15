@@ -179,8 +179,11 @@ jobs:
       # A tag push always publishes. A manual run publishes unless the operator
       # explicitly unticked `publish_release` - the string comparison keeps that
       # working whichever way Actions hands the boolean over.
+      # Any v* tag publishes - EXCEPT pre-release tags (they contain '-'), so a
+      # throwaway compile-check tag like v1.0.5-rc3+6 can never become
+      # `releases/latest` and confuse the in-app updater.
       - name: Publish GitHub Release
-        if: ${{ startsWith(github.ref, 'refs/tags/') || (inputs.publish_release != false && inputs.publish_release != 'false') }}
+        if: ${{ (startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')) || (inputs.publish_release != false && inputs.publish_release != 'false') }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}+{1}', env.versionName, env.versionCode) }}
