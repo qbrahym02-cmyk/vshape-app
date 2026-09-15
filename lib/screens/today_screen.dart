@@ -5,6 +5,7 @@ import '../core/models.dart';
 import '../core/theme.dart';
 import '../screens/home_shell.dart';
 import '../widgets/common.dart';
+import '../widgets/daily_cards.dart';
 import '../widgets/painters.dart';
 import '../widgets/scope.dart';
 
@@ -91,6 +92,14 @@ class TodayScreen extends StatelessWidget {
           ),
           const Gap(16),
 
+          // ------------- exam mode, deload warning, morning check-in --------
+          const ExamModeBanner(),
+          const DeloadBanner(),
+          if (!c.checkin.isEmpty) ...[
+            const CheckInCard(),
+            const Gap(16),
+          ],
+
           // ---------------- today's workout ----------------
           if (today != null) ...[
             _TodayWorkoutCard(day: today, onOpen: onOpenWorkout),
@@ -152,6 +161,14 @@ class TodayScreen extends StatelessWidget {
             ],
           ),
           const Gap(16),
+
+          // ---------------- growth sleep + monthly photo ----------------
+          const SleepCard(),
+          const Gap(16),
+          if (!c.progress.photoCheckpoint.isEmpty) ...[
+            const PhotoCheckpointCard(),
+            const Gap(16),
+          ],
 
           if (tasksDone == tasks.length && tasks.isNotEmpty && waterPct >= 1 && proteinPct >= 1)
             InfoBanner(l.nothingLeft, color: C.green, icon: Icons.emoji_events_rounded)
@@ -366,6 +383,11 @@ class _TodayWorkoutCard extends StatelessWidget {
     final total = day.totalSets;
     final pct = total == 0 ? (day.isRest ? 1.0 : 0.0) : done / total;
 
+    // Exam mode can drop this day; the morning rating can trim it.
+    final paused = !st.dayIsActive(day);
+    final drop = paused ? 0 : st.setsToDropToday;
+    final accent = day.isRest ? C.green : (paused ? C.amber : C.violet);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -378,11 +400,9 @@ class _TodayWorkoutCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: AlignmentDirectional.centerStart,
               end: AlignmentDirectional.centerEnd,
-              colors: day.isRest
-                  ? [C.green.withValues(alpha: 0.16), C.green.withValues(alpha: 0.04)]
-                  : [C.violet.withValues(alpha: 0.20), C.violet.withValues(alpha: 0.04)],
+              colors: [accent.withValues(alpha: 0.20), accent.withValues(alpha: 0.04)],
             ),
-            border: Border.all(color: (day.isRest ? C.green : C.violet).withValues(alpha: 0.35)),
+            border: Border.all(color: accent.withValues(alpha: 0.35)),
           ),
           child: Row(
             children: [
@@ -392,14 +412,20 @@ class _TodayWorkoutCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l.todayWorkout, style: Theme.of(context).textTheme.labelSmall),
+                    Text(
+                      paused ? l.examDropped : l.todayWorkout,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(color: paused ? C.amber : null),
+                    ),
                     const SizedBox(height: 2),
                     Text(day.focus.t(st.isArabic),
                         style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 7),
                     BarProgress(
                       value: pct,
-                      color: day.isRest ? C.green : C.violet,
+                      color: accent,
                       height: 6,
                     ),
                     const SizedBox(height: 5),
@@ -409,6 +435,21 @@ class _TodayWorkoutCard extends StatelessWidget {
                           : '$done/$total ${l.setsWord}',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    if (drop >= 99) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        st.isArabic ? '🤒 اليوم راحة كاملة — لا تتدرّب' : '🤒 Full rest today - do not train',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: C.red),
+                      ),
+                    ] else if (drop > 0) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        st.isArabic
+                            ? '🌡️ احذف $drop مجموعة من كل تمرين اليوم'
+                            : '🌡️ Drop $drop set from every exercise today',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: C.orange),
+                      ),
+                    ],
                   ],
                 ),
               ),

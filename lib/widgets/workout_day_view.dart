@@ -59,6 +59,10 @@ class WorkoutDayView extends StatelessWidget {
     final doneSets = st.setsDone(day.id);
     final totalSets = day.totalSets;
 
+    // Exam mode pauses days it does not keep; the morning rating trims volume.
+    final paused = !st.dayIsActive(day);
+    final dropSets = paused ? 0 : st.setsToDropToday;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -73,6 +77,35 @@ class WorkoutDayView extends StatelessWidget {
               Text(st.t(c.restRule),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: C.amber)),
             ],
+          ),
+          const Gap(12),
+        ],
+        if (paused) ...[
+          InfoBanner(
+            st.isArabic
+                ? '🎓 وضع الامتحانات: هذا اليوم مؤجَّل. تقدر تتمرّنه لو حابب — لكنه لا يُحسب ضمن جلسات الأسبوع.'
+                : '🎓 Exam mode: this day is paused. You can still train it - it simply does not count towards the week.',
+            color: C.amber,
+            icon: Icons.school_rounded,
+          ),
+          const Gap(12),
+        ],
+        if (dropSets >= 99) ...[
+          InfoBanner(
+            st.isArabic
+                ? '🤒 تقييمك اليوم يقول راحة كاملة. العضل يُبنى وأنت نائم، لا وأنت تتمرن منهكاً.'
+                : '🤒 Your check-in says full rest today. Muscle is built while you sleep, not while you train wrecked.',
+            color: C.red,
+            icon: Icons.sick_rounded,
+          ),
+          const Gap(12),
+        ] else if (dropSets > 0) ...[
+          InfoBanner(
+            st.isArabic
+                ? '🌡️ حسب تقييمك اليوم: احذف $dropSets مجموعة من كل تمرين، وكمّل الباقي بنفس الإيقاع.'
+                : '🌡️ Based on your check-in: drop $dropSets set from every exercise and keep the same tempo.',
+            color: C.orange,
+            icon: Icons.trending_down_rounded,
           ),
           const Gap(12),
         ],
@@ -295,6 +328,8 @@ class DayStrip extends StatelessWidget {
           final sel = d.id == selectedId;
           final isToday = d.day == todayWeekday;
           final done = st.dayDoneToday(d.id);
+          // Exam mode mutes the days it drops, so the 3-day week reads at a glance.
+          final paused = !st.dayIsActive(d);
           return GestureDetector(
             onTap: () => onSelect(d.id),
             child: AnimatedContainer(
@@ -305,21 +340,32 @@ class DayStrip extends StatelessWidget {
                 color: sel ? C.violet.withValues(alpha: 0.16) : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: sel ? C.violet : (isToday ? C.amber.withValues(alpha: 0.6) : Theme.of(context).dividerColor),
+                  color: sel
+                      ? C.violet
+                      : paused
+                          ? C.amber.withValues(alpha: 0.35)
+                          : (isToday ? C.amber.withValues(alpha: 0.6) : Theme.of(context).dividerColor),
                   width: sel ? 1.8 : 1.2,
                 ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(d.emoji, style: const TextStyle(fontSize: 17)),
+                  Opacity(
+                    opacity: paused && !sel ? 0.45 : 1,
+                    child: Text(d.emoji, style: const TextStyle(fontSize: 17)),
+                  ),
                   const SizedBox(height: 3),
                   Text(
                     l.weekdayShort(d.day),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
-                      color: sel ? C.violet : Theme.of(context).textTheme.bodyMedium?.color,
+                      color: sel
+                          ? C.violet
+                          : paused
+                              ? C.amber.withValues(alpha: 0.6)
+                              : Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -328,7 +374,11 @@ class DayStrip extends StatelessWidget {
                     height: 7,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: done ? C.green : (isToday ? C.amber : Colors.transparent),
+                      color: done
+                          ? C.green
+                          : paused
+                              ? C.amber.withValues(alpha: 0.30)
+                              : (isToday ? C.amber : Colors.transparent),
                       border: Border.all(
                         color: done || isToday ? Colors.transparent : Theme.of(context).dividerColor,
                       ),

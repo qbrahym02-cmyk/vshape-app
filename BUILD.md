@@ -30,7 +30,7 @@ cd vshape_app
 
 flutter doctor          # تأكد أن Android toolchain ✓
 flutter pub get
-flutter test            # اختبارات سريعة على ملف المحتوى
+flutter test --concurrency=2   # الاختبارات (التوازي الافتراضي يجوّع اختبارات المؤقّت)
 flutter build apk --release
 ```
 
@@ -57,19 +57,19 @@ flutter build apk --release --split-per-abi
 
 ```bash
 # 1) عدّل pubspec.yaml
-version: 1.0.5+6          # الاسم 1.0.5 ورقم النسخة 6 (لازم يزيد)
+version: 1.1.0+7          # الاسم 1.1.0 ورقم النسخة 7 (لازم يزيد)
 
 # 2) اكتب وش تغيّر للمستخدم في RELEASE_NOTES.md (يظهر داخل التطبيق على بطاقة التحديث)
 
 # 3) ارفع ونشر
-git commit -am "release 1.0.5"
-git tag v1.0.5+6
+git commit -am "release 1.1.0"
+git tag v1.1.0+7
 git push origin main --tags
 ```
 
 Actions يبني وينشر Release فيه:
 - `V-System-universal.apk`
-- `version.json` → `{"versionName":"1.0.5","versionCode":6,...}`  ← **بدون** إزاحة المعالج
+- `version.json` → `{"versionName":"1.1.0","versionCode":7,...}`  ← **بدون** إزاحة المعالج
 - `V-System-arm64-v8a.apk` / `armeabi-v7a` / `x86_64`
 - نص الإصدار من `RELEASE_NOTES.md`
 - `checksums.sha256`

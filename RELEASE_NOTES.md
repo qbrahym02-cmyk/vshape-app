@@ -1,151 +1,79 @@
-# 🆕 وش الجديد في 1.0.5
+# 🆕 وش الجديد في 1.1.0
 
-## 🎨 رسم توضيحي لكل تمرين
-كل تمرين من الـ٢٠ صار له رسم يوضّح الوضعية — **والأداة مرسومة معه**: الحقيبة، الطاولة في التجديف، الكرسي في الغطس، إطار الباب في السحب، وقوارير الماء في الرفع الجانبي.
-صغير في بطاقة التمرين، وكبير داخل «طريقة التنفيذ» جنب الخطوات.
-> مرسوم برمجياً (Vector) وليس صوراً → **حجم التطبيق ما زاد ولا بايت**، وواضح في الفاتح والداكن وبأي مقاس.
+نفس خطتك بالظبط — نفس الطعام والتمارين والمواعيد — لكن بأدوات تخلّي الالتزام أسهل، والميزانية أذكى، والسلامة مضمونة.
 
-## 🧮 بروتين وسعرات بدقة (مو تقدير)
-- **كل صنف** صار له رقمه: ٤ بيضات = ٢٤ جم بروتين / ٣٠٠ سعرة. قبل كان الرقم يُقسَّم بالتساوي على أصناف الوجبة.
-- أهداف الوجبات ما تغيّرت (١٦٠ جم بروتين / ٢٩٠٠ سعرة).
-- رقم كل صنف يظهر تحته، وعلى بطاقة الوجبة `المأكول / الهدف` للسعرات والبروتين.
+## 📅 تقرير الأسبوع
+رقم واحد صريح: نسبة التزامك في آخر ٧ أيام عبر ٥ خانات (ماء · بروتين · روتين · تمرين · نوم)، ومقارنتها بالأسبوع اللي قبله، وتحديد **أضعف خانة** تركّز عليها الأسبوع الجاي. من «المزيد ← تقرير الأسبوع».
 
-## ➕ إضافات سريعة (أكل خارج الخطة)
-١٢ صنف بأزرار +/− : بيضة، ٥٠ جم جبن قريش، كوب حليب، زبادي، تونة/سردين، رغيف خبز، موزة، ٣ تمرات، بطاطس، شوربة عدس، أرز/مكرونة، فول سوداني — تُحسب فوراً مع يومك.
+## 🎓 وضع الامتحانات
+الدراسة أولاً. مفتاح واحد في الإعدادات يخفض الأسبوع إلى **٣ جلسات** (السبت دفع · الأحد سحب · الاثنين أرجل) — وهي أهم ٣ جلسات لبناء الـ V. بقية الأيام تبهت في الجدول ولا تُحسب ضدك في التقرير، ومعاها ٥ قواعد للأسبوع المخفّف.
 
-## 📈 رسم آخر ٧ أيام
-بروتين (مع خط هدف ١٥٠ جم) وسعرات (مع خط ٣٠٠٠) + عدد الأيام المسجّلة ومتوسط البروتين.
+## 😴 نوم النمو
+٨٠٪ من هرمون النمو يُفرز بين ١١ مساءً و٢ فجراً. سجّل ساعة نومك كل صباح بضغطة واحدة (٢٢:١٥ / ٢٢:٤٥ / ٢٣:٠٠ / ٢٣:٣٠ / ٠٠:٣٠ أو وقت حر) — والتطبيق يحسب **سلسلة النوم** 🔥 ويقول لك بكم دقيقة تأخرت. النوم بعد منتصف الليل يُحسب متأخراً.
 
-## 🧩 ودجت الشاشة الرئيسية
-ماء + تقدّمه، بروتين، سعرات، سلسلة الأيام 🔥، وتمرين اليوم مع شريط المجموعات — **بدون فتح التطبيق**.
-يتحدّث مع كل ضغطة، ويرجع بعد إعادة التشغيل. الإضافة: ضغط مطول على الشاشة ← «ودجت» ← V-System.
-وفي **الإعدادات**: معاينة حيّة + «تحديث الودجت الآن» + الشرح.
+## 🌡️ تقييم اليوم
+٣٠ ثانية قبل التمرين: من «🚀 جاهز تماماً» إلى «🤒 مرهق/مريض». التطبيق يقول لك بالضبط كم مجموعة تحذف اليوم، ولو نزل تقييمك يومين ورا بعض يقترح **أسبوع تخفيف (Deload)** بدل ما تتصاب.
 
-> بياناتك محفوظة — التحديث يركّب فوق النسخة الحالية. المحتوى صار **v4**.
+## 💰 حاسبة سعر البروتين
+اكتب سعر كل مصدر في منطقتك مرة واحدة (بيضة، ١٠٠ جم عدس، لتر حليب…). التطبيق:
+- يرتّب المصادر من **الأرخص للأغلى** حسب ثمن كل **٢٠ جم بروتين**؛
+- يبني **أرخص سلة** تصل لهدف ١٥٠ جم بحدود يومية واقعية (٦ بيضات، ٢ لتر حليب، ٣٠٠ جم قريش)؛
+- يقول لك بصراحة لو أسعارك ما توصلش للهدف.
+رمز العملة يتغيّر من نفس البطاقة (ج.م، ر.س، €…).
 
----
+## ⚖️ حاسبة وزن الحقيبة
+كم قارورة؟ ماء ولا رمل؟ الحاسبة تعطيك الوزن الكلي فوراً (الرمل ١.٦ كجم/لتر مقابل ١.٠ للماء)، و**المدى الآمن لجسمك** (١٠–٢٠٪ من وزنك)، وحكم: خفيف / مناسب / ثقيل — مع خطوات التعبئة الخمسة.
 
-# 🆕 What's new in 1.0.5
+## 🛡️ بوابة أمان طاولة السفرة
+قبل أول تجديف طاولة تظهر **٩ خطوات لتأمين الطاولة ١٠٠٪**: نوع الطاولة، اختبار الوزن الكامل ٣ مرات، الحائط، الأرض، القبضة، تثبيت إضافي، وضعية الجسم، مساعد في أول أسبوع، و٣ تكرارات اختبار. إقرار واحد يُحفظ، والبطاقة تفضل خضراء للمراجعة.
 
-## 🎨 An illustration for every exercise
-All 20 exercises show the correct position, **with the equipment drawn in**: backpack, table for rows, chair for dips, door frame for pull-ins, water bottles for lateral raises. Small on the card, large next to the steps.
-> Drawn as vectors, not pictures: **the APK did not grow by a single byte**; sharp in light/dark mode at any size.
+## 📸 صورة يوم ١٥ + فحوصات الشهر
+تذكير بالصورة الشهرية من يوم ١٥ مع checklist (نفس الإضاءة، نفس الوقت، ٣ لقطات، نفس الملابس، بلا شفط بطن)، و٤ فحوصات شهرية تُعلَّم لكل شهر على حدة: صورة · ملابس · قياسات · أقصى تكرارات.
 
-## 🧮 Exact protein / kcal counting
-Every meal **item** now has its own numbers (4 eggs = 24 g protein / 300 kcal) instead of splitting the meal evenly. Meal targets unchanged (160 g / 2900 kcal).
+## 🏆 لحظة الرقم القياسي
+أي رقم أفضل في سجل القوة يفتح احتفالاً حقيقياً — لأنه الدليل الوحيد على البناء العضلي بلا ميزان ولا مقاس خصر.
 
-## ➕ Quick extras
-12 off-plan foods with +/- steppers (egg, cottage cheese, milk, yogurt, tuna, bread, banana, dates, potato, lentil soup, rice/pasta, peanuts) - counted instantly.
+## 🧪 تحت الغطاء
+- كل الحسابات في `lib/core/plan_math.dart` (بلا أي اعتماد على Flutter) + **٤٢ اختباراً جديداً** — المجموع **١٠٤** اختبارات.
+- المحتوى **v5**: كل الأقسام الجديدة تُقرأ من `content.json`، ومحتوى v4 القديم يخفي الميزات بدل ما يكسر التطبيق.
+- CI: `flutter test --concurrency=2` — ما فيش اختبارات تتسابق بعد كدا.
 
-## 📈 7-day chart
-Protein (150 g goal line) and kcal (3000), plus logged days and protein average.
-
-## 🧩 Home-screen widget
-Water + progress, protein, kcal, streak 🔥 and today's session with set progress - without opening the app. Updates on every tap and survives reboots. Settings has a live preview, manual refresh and how-to-add steps.
-
-> Your data is untouched - the update installs over the current app. Content is now **v4**.
+> بياناتك محفوظة — التحديث يركّب فوق النسخة الحالية.
 
 ---
 
-# 📦 1.0.4 — وش الجديد
+# 🆕 What's new in 1.1.0
 
-## 🎨 رسوم توضيحية لكل تمرين
-كل تمرين من الـ٢٠ صار له رسم يوضّح الوضعية الصحيحة — **والأداة مرسومة معه**: الحقيبة على ظهرك/بيدك، الطاولة في التجديف، الكرسي في الغطس، إطار الباب في السحب، وقوارير الماء في الرفع الجانبي.
-الرسم مصغّر في بطاقة التمرين، وكبير داخل «طريقة التنفيذ» جنب الخطوات.
-> مرسوم برمجياً (Vector) وليس صوراً → **حجم الـ APK ما زاد ولا بايت**، وواضح في الوضع الفاتح والداكن وبأي مقاس.
+Same plan - same food, same exercises, same clock - with new tools that make adherence easier, the budget smarter and the setup safer.
 
-## 🧮 عدّاد سعرات وبروتين دقيق (مو تقريبي)
-- **كل صنف** في الوجبات صار له رقمه الخاص (مثلاً: ٤ بيضات = ٢٤ جم بروتين / ٣٠٠ سعرة). قبل كان العدد يُقسَّم بالتساوي على الأصناف، فالرقم كان تقريبي.
-- المجاميع ما تغيّرت: نفس أهداف الوجبات (١٦٠ جم بروتين / ٢٩٠٠ سعرة).
-- يظهر لك تحت كل صنف رقمه، وعلى بطاقة الوجبة `ما أكلته / الهدف`.
+## 📅 Weekly report
+One honest number: your adherence over the last 7 days across 5 columns (water · protein · routine · training · sleep), compared with the previous week, plus the **weakest column** to fix next.
 
-## ➕ إضافات سريعة (أكل خارج الخطة)
-١٢ صنف جاهز بأزرار +/− : بيضة، ٥٠ جم جبن قريش، كوب حليب، زبادي، علبة تونة/سردين، رغيف خبز، موزة، ٣ تمرات، بطاطس، شوربة عدس، أرز/مكرونة، فول سوداني.
-أي شي تاكله خارج الخطة اضغطه — ويُنحسب فوراً مع بروتين وسعرات اليوم.
+## 🎓 Exam mode
+Study first. One switch cuts the week to **3 sessions** (Sat push · Sun pull · Mon legs) - the three that build the V. Dropped days fade out and are never counted against you.
 
-## 📈 رسم آخر ٧ أيام
-عمدان: بروتين (مع خط الهدف ١٥٠ جم) وسعرات (مع خط ٣٠٠٠)، تحتهم عدد الأيام المسجّلة ومتوسط البروتين. تشوف أسبوعك كامل بلمحة.
+## 😴 Growth sleep
+80% of growth hormone is released between 11 PM and 2 AM. Log your bedtime in one tap; the app keeps a **sleep streak** 🔥 and tells you how many minutes late you were. After midnight counts as late.
 
-## 🧩 ودجت الشاشة الرئيسية
-ماء + تقدّمه، بروتين، سعرات، سلسلة الأيام 🔥، وتمرين اليوم مع شريط المجموعات — **على شاشتك بدون ما تفتح التطبيق**.
-- يتحدّث تلقائياً مع كل ضغطة في التطبيق، ويرجع بعد إعادة تشغيل الجوال.
-- الإضافة: اضغط مطولاً على الشاشة الرئيسية ← «ودجت» ← V-System ← اسحبه.
-- في **الإعدادات** فيه معاينة حيّة + زر «تحديث الودجت الآن» + الشرح.
+## 🌡️ Daily check-in
+From "🚀 fully ready" to "🤒 ill". The app tells you exactly how many sets to drop, and two low days in a row trigger a **deload** suggestion instead of an injury.
 
-## 🛡️ حماية إضافية في البناء
-البناء يفشل تلقائياً لو اختلف `content.json` (اللي يجيك عن بُعد) عن النسخة المدمجة في التطبيق — مستحيل تنزل نسخة بمحتوى قديم بالغلط.
+## 💰 Protein price calculator
+Price each source once. The app ranks them by the **cost of 20 g of protein**, builds the **cheapest basket** that reaches 150 g within realistic daily caps, and tells you honestly if your prices cannot get there. The currency symbol is editable.
 
-> المحتوى صار **v4**. بياناتك محفوظة كما هي — التحديث يركّب فوق النسخة الحالية.
+## ⚖️ Backpack load calculator
+Bottles + sand or water -> total kilos (sand is 1.6 kg/L versus 1.0 for water), your **safe window** (10-20% of bodyweight) and a verdict: light / good / heavy.
 
----
+## 🛡️ Table-row safety gate
+Before your first table row: a **9-step checklist** to secure the table 100%, acknowledged once and kept green for review.
 
-# 📦 1.0.4 — What's new
+## 📸 Photo on the 15th + monthly checks
+A monthly photo reminder from the 15th with the same-light checklist, plus 4 monthly ticks stored per month.
 
-## 🎨 An illustration for every exercise
-All 20 exercises now show the correct position - **with the equipment drawn in**: the backpack on your back/in your hand, the table for rows, the chair for dips, the door frame for pull-ins, water bottles for lateral raises. Small on the card, large next to the steps.
-> Drawn as vectors, not pictures: **the APK did not grow by a single byte**, and it stays sharp in light/dark mode at any size.
+## 🏆 Personal-record moment
+A better number in the strength log now gets a celebration - the only proof of growth that needs no scale.
 
-## 🧮 Exact kcal / protein counting
-Every meal **item** now has its own numbers (4 eggs = 24 g protein / 300 kcal). It used to split the meal evenly, so the count was approximate. Meal targets are unchanged (160 g protein / 2900 kcal).
+## 🧪 Under the hood
+All the maths lives in `lib/core/plan_math.dart` (no Flutter dependency) with **42 new tests** (104 total). Content is **v5**; old v4 content hides the new features instead of breaking. CI now runs `flutter test --concurrency=2`.
 
-## ➕ Quick extras
-12 ready-made off-plan foods with +/- steppers (egg, cottage cheese, milk, yogurt, tuna, bread, banana, dates, potato, lentil soup, rice/pasta, peanuts). Tap what you ate and it counts instantly.
-
-## 📈 7-day chart
-Protein (with the 150 g goal line) and kcal (with 3000), plus logged days and your protein average.
-
-## 🧩 Home-screen widget
-Water + progress, protein, kcal, streak 🔥 and today's session with its set progress - on your home screen without opening the app. Updates on every tap, survives reboots. Settings has a live preview, a manual refresh and how-to-add steps.
-
-## 🛡️ Extra build guard
-The build now fails if the remote `content.json` and the copy bundled in the app differ - a stale APK can no longer be published by accident.
-
-> Content is now **v4**. Your data is untouched - the update installs over the current app.
-
----
-
-# 📦 1.0.3 — وش الجديد
-
-## ⏱️ مؤقّت راحة حقيقي
-اضغط على «٩٠ ث راحة» في أي تمرين → يبدأ عدّ تنازلي دائري، يشتغل حتى لو غيّرت التبويب.
-فيه **+30 ثانية**، **إيقاف مؤقت**، **تخطي** — وعند النهاية اهتزاز + صوت + تنبيه، عشان تعرف وأنت ممدّد على الأرض أن الراحة خلصت.
-
-## 🔥 عدّاد الأيام المتتالية صار صادقاً
-قبل: لو عبّيت ماءك من **محطات الجدول** بدل زر «إضافة سريعة»، اليوم ما كان يُحسب — فينكسر العدّاد رغم أنك شربت ٣.٧٥ لتر.
-الحين: أي طريقة تعبئة تُحسب، واليوم ما ينكسر.
-
-## ⚙️ الإعدادات تعرض الحقيقة
-قسم التنبيهات صار يعرض الأوقات التي **ستدق فعلاً** (من محطات الجدول + الأوقات الزائدة)، بدل قائمة `reminders.water` وحدها.
-
-## 🔐 أمان
-كلمة مرور مفتاح التوقيع كانت مكتوبة نصّاً في `BUILD.md` داخل مستودع عام — انحذفت، والوثائق توضح أن المفتاح في Secrets فقط.
-
-## 🔔 تنبيهات الماء تتبع الملف فعلاً
-علامة `"remind": false` لأي محطة في `content.json` صارت تُحترم — قبل كان التطبيق يتجاهلها وينبّهك على كل المحطات.
-والتنبيه صار يعيد جدولة نفسه **بنفس الدقة** كل يوم (قبل: من اليوم الثاني يبدأ يتأخر بسبب وضع Doze).
-
-## 📦 التحديث صار يوصلك فعلاً
-الشريط الأخضر «فيه نسخة جديدة» يرجع في كل تشغيل حتى تحدّث — قبل كان يظهر **مرة واحدة** في العمر، وإذا ما ضغطت عليه ما رجع.
-وصار يفحص أسرع (كل ~٦ ساعات) لما ما يكون فيه تحديث معلّق.
-
----
-
-# 📦 1.0.3 — What's new
-
-## ⏱️ A real rest timer
-Tap the “90 s rest” chip on any exercise → a circular countdown starts and keeps running across tabs, with **+30 s**, **pause** and **skip**. When it ends you get a vibration, a sound and a notification, so you know the rest is over even lying on the floor.
-
-## 🔥 The streak counter is honest now
-Filling your water through the **schedule stations** instead of the quick-add buttons used to break the streak even though you drank all 3.75 L. Both paths count now.
-
-## ⚙️ Settings tell the truth
-The reminders row now lists the times that will **actually ring** (schedule stations + extra times) instead of only `reminders.water`.
-
-## 🔐 Security
-The keystore password was written in plain text inside `BUILD.md` in a public repo. It is gone, and the docs now state the key lives only in Actions secrets.
-
-## 🔔 Water reminders follow the content file
-`"remind": false` on a station in `content.json` is honoured (it used to be ignored), and each reminder re-arms itself **with the same exactness** daily instead of drifting later under Doze.
-
-## 📦 Updates actually reach you
-The green “new version available” strip comes back on every launch until you update — it used to appear once and never again. Checks also run sooner (~6 h) when nothing is pending.
+> Your data is kept - the update installs over the current build.

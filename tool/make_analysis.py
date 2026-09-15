@@ -176,6 +176,57 @@ A("- مؤشرات التقدم: %d · سجل القوة: %d حركات · الق
 A("")
 A("---")
 A("")
+# ---------------------------------------------------------- v1.1.0 (new) ----
+em = c.get('exam_mode', {})
+sl = c.get('sleep', {})
+ci = c.get('checkin', {})
+pt = f.get('price_tool', {})
+bl = c['backpack'].get('load', {})
+gates = wk.get('safety_gates', [])
+mc = c['progress'].get('monthly_checks', [])
+rp = c.get('report', {})
+priced = [s for s in f.get('protein_sources', []) if s.get('id')]
+
+A("### 🆕 إضافات المحتوى v5 (إصدار التطبيق 1.1.0)")
+A("")
+A("ستة أقسام جديدة في `content.json`، كلها ثنائية اللغة وقيمها الافتراضية آمنة")
+A("(تطبيق قديم يقرأ محتوى جديد لا ينكسر، ومحتوى قديم يخفي الميزة بدل أن يتعطل):")
+A("")
+if em:
+    A("- **وضع الامتحانات** `%s`: يبقي %d جلسات من أصل %d أيام تدريب (%s)."
+      % ('exam_mode', em.get('sessions_per_week', 0),
+         len([d for d in days if not d.get('is_rest')]),
+         ', '.join(em.get('keep_days', []))))
+if sl:
+    A("- **نوم النمو** `%s`: هدف `%s` وإقفال شاشات `%s` — يُحسب منه سلسلة نوم يومية."
+      % ('sleep', sl.get('target'), sl.get('screens_off')))
+if ci:
+    A("- **تقييم اليوم** `%s`: %d مستويات، عتبة التعب %s، وتخفيف تلقائي بعد %s أيام منخفضة."
+      % ('checkin', len(ci.get('levels', [])), ci.get('sore_threshold'), ci.get('deload_after_days')))
+if pt:
+    A("- **حاسبة سعر البروتين** `food.price_tool`: %d مصدراً صار لها `id` وبروتين لكل وحدة وحد يومي،"
+      % len(priced))
+    A("  فيُحسب ثمن كل %d جم بروتين وتُبنى أرخص سلة تصل لـ%d جم."
+      % (pt.get('per_grams', 20), f.get('protein_g_target', 150)))
+if bl:
+    A("- **حاسبة وزن الحقيبة** `%s`: قارورة %d مل، رمل %s كجم/لتر، ومدى آمن %s٪ من وزن الجسم."
+      % ('backpack.load', bl.get('bottle_ml', 1500), bl.get('sand_kg_per_l'),
+         (bl.get('body_pct') or [10, 20])[1]))
+if gates:
+    A("- **بوابات الأمان** `%s`: %d بوابة (%s) تغطي %s تمريناً، تُقر مرة واحدة."
+      % ('workout.safety_gates', len(gates), ', '.join(g['id'] for g in gates),
+         sum(len(g.get('exercise_ids', [])) for g in gates)))
+if mc:
+    A("- **فحوصات الشهر** `%s`: %d مؤشرات تُخزَّن لكل `yyyy-MM` على حدة."
+      % ('progress.monthly_checks', len(mc)))
+if rp:
+    A("- **تقرير الأسبوع** `%s`: ٥ خانات (ماء/بروتين/روتين/تمرين/نوم) بأهداف %s."
+      % ('report', ', '.join('%d%%' % round(v * 100) for v in (rp.get('targets') or {}).values())))
+A("")
+A("المنطق الحسابي كله في `lib/core/plan_math.dart` (بلا أي اعتماد على Flutter) ومختبَر")
+A("في `test/plan_math_test.dart`، بينما `lib/core/app_state.dart` يربطه بالتخزين فقط.")
+A("")
+
 A("## 4) نقاط قوة حقيقية في التنفيذ")
 A("")
 A("1. **نماذج متسامحة** — `AppContent.fromMap` يعطي قيمة افتراضية لكل حقل، و`BiList.from`")

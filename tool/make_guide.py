@@ -235,6 +235,148 @@ A("")
 A("> ⚠️ **لمرة واحدة:** النسخ `1.0.2` و`1.0.3` فيها خلل في حساب رقم النسخة فلا يظهر لها")
 A("> الشريط الأخضر. ثبّت **1.0.4 أو أحدث** يدوياً من صفحة Releases، وبعدها كل التحديثات ذاتية.")
 A("")
+# ---------------------------------------------------------- v1.1.0 (new) ----
+em = c.get('exam_mode', {})
+sl = c.get('sleep', {})
+ci = c.get('checkin', {})
+pt = f.get('price_tool', {})
+bl = c['backpack'].get('load', {})
+gates = wk.get('safety_gates', [])
+pc = c['progress'].get('photo_checkpoint', {})
+mc = c['progress'].get('monthly_checks', [])
+rp = c.get('report', {})
+
+
+def _ar(d, k='ar'):
+    v = d.get(k, {}) if isinstance(d, dict) else {}
+    return v.get('ar', '') if isinstance(v, dict) else ''
+
+
+def _num(v, fallback=0):
+    return v if isinstance(v, (int, float)) else fallback
+
+
+A("---")
+A("")
+A("## ✨ جديد 1.1.0 — أدوات الالتزام والميزانية والأمان")
+A("")
+if ci:
+    A("### 🌡️ %s" % _ar(ci, 'title'))
+    A("")
+    A("> %s" % _ar(ci, 'note'))
+    A("")
+    A("| | التقييم | ماذا يقول لك التطبيق |")
+    A("|---|---|---|")
+    for lv in ci.get('levels', []):
+        A("| %s | **%s** | %s |" % (lv.get('emoji', ''), _ar(lv, 'label'), _ar(lv, 'advice')))
+    A("")
+    A("تقييم ≤ **%s** يومين ورا بعض = %s" % (_num(ci.get('sore_threshold'), 3), _ar(ci, 'deload_note')))
+    A("")
+if sl:
+    A("### 😴 %s" % _ar(sl, 'title'))
+    A("")
+    A("> %s" % _ar(sl, 'note'))
+    A("")
+    A("- **الهدف:** نوم قبل `%s` · إقفال الشاشات `%s` · %s ساعات على الأقل."
+      % (sl.get('target', '23:00'), sl.get('screens_off', '22:30'), _num(sl.get('hours_min'), 8)))
+    A("- تسجّل ساعة نومك كل صباح بضغطة، والتطبيق يحسب **سلسلة النوم** 🔥 ويقارنها بهدف ١١ مساءً.")
+    A("")
+if em:
+    A("### 🎓 %s" % _ar(em, 'title'))
+    A("")
+    A("> %s" % _ar(em, 'note'))
+    A("")
+    _keep = {d['id']: d for d in days}
+    _kept = [_keep[i] for i in em.get('keep_days', []) if i in _keep]
+    A("**الجلسات الباقية (%d):** %s"
+      % (_num(em.get('sessions_per_week'), len(_kept)),
+         ' · '.join('%s %s' % (d['emoji'], names[d['day']]) for d in _kept)))
+    A("")
+    for i, r in enumerate(em.get('rules', {}).get('ar', []), 1):
+        A("%d. %s" % (i, r))
+    A("")
+if pt:
+    A("### 💰 %s" % _ar(pt, 'title'))
+    A("")
+    A("> %s" % _ar(pt, 'note'))
+    A("")
+    A("| المصدر | الوحدة | بروتين الوحدة | الحد اليومي |")
+    A("|---|---|---|---|")
+    for s in f.get('protein_sources', []):
+        if 'id' not in s:
+            continue
+        A("| %s | %s | %s جم | %s |"
+          % (s['name']['ar'], s.get('unit', {}).get('ar', ''),
+             _num(s.get('protein_per_unit_g')), s.get('max_units_label', {}).get('ar', '')))
+    A("")
+    A("التطبيق يحسب **ثمن كل %d جم بروتين** من كل مصدر ويرتّبها من الأرخص للأغلى،"
+      " ثم يبني أرخص سلة تصل لـ**%d جم** مع احترام الحدود اليومية."
+      % (_num(pt.get('per_grams'), 20), _num(f.get('protein_g_target'), 150)))
+    A("")
+if bl:
+    A("### ⚖️ %s" % _ar(bl, 'title'))
+    A("")
+    A("> %s" % _ar(bl, 'note'))
+    A("")
+    _pct = bl.get('body_pct', [10, 20])
+    A("- القارورة = %d مل · الماء %s كجم/لتر · الرمل %s كجم/لتر · الحقيبة نفسها %s كجم."
+      % (_num(bl.get('bottle_ml'), 1500), _num(bl.get('water_kg_per_l'), 1),
+         _num(bl.get('sand_kg_per_l'), 1.6), _num(bl.get('bag_kg'), 1)))
+    A("- المدى الآمن لجسمك: **%s٪ – %s٪** من وزنك." % (_num(_pct[0], 10), _num(_pct[1], 20)))
+    A("")
+    for i, s in enumerate(bl.get('steps', {}).get('ar', []), 1):
+        A("%d. %s" % (i, s))
+    A("")
+    A("> ⚠️ %s" % _ar(bl, 'warning'))
+    A("")
+for g in gates:
+    A("### %s %s" % (g.get('emoji', '🛡️'), _ar(g, 'title')))
+    A("")
+    A("> %s" % _ar(g, 'why'))
+    A("")
+    A("**يمس التمارين:** %s" % ', '.join('`%s`' % x for x in g.get('exercise_ids', [])))
+    A("")
+    for i, s in enumerate(g.get('checklist', {}).get('ar', []), 1):
+        A("%d. %s" % (i, s))
+    A("")
+    A("> 🚨 %s" % _ar(g, 'danger'))
+    A("")
+if pc:
+    A("### 📸 %s" % _ar(pc, 'title'))
+    A("")
+    A("> %s" % _ar(pc, 'note'))
+    A("")
+    A("يظهر في التطبيق من يوم **%s** في كل شهر حتى تعلّم عليه." % _num(pc.get('day_of_month'), 15))
+    A("")
+    for i, s in enumerate(pc.get('checklist', {}).get('ar', []), 1):
+        A("%d. %s" % (i, s))
+    A("")
+if mc:
+    A("### 🗓️ فحوصات الشهر")
+    A("")
+    A("أربعة مؤشرات تُعلَّم مرة كل شهر (التعليم يُحفظ لكل شهر على حدة):")
+    A("")
+    for m in mc:
+        A("- %s **%s**" % (m.get('emoji', ''), _ar(m, 'title')))
+    A("")
+if rp:
+    A("### 📅 %s" % _ar(rp, 'title'))
+    A("")
+    A("> %s" % _ar(rp, 'note'))
+    A("")
+    tg = rp.get('targets', {})
+    A("| الخانة | الهدف الأسبوعي |")
+    A("|---|---|")
+    for k, lab in [('water_pct', '💧 الماء'), ('protein_pct', '🍗 البروتين'),
+                   ('routine_pct', '⏰ الروتين'), ('training_pct', '🏋️ التمرين'),
+                   ('sleep_pct', '😴 النوم')]:
+        if k in tg:
+            A("| %s | %d%% |" % (lab, round(tg[k] * 100)))
+    A("")
+    for _i, _pr in enumerate(rp.get('praise', {}).get('ar', []), 1):
+        A("%d. %s" % (_i, _pr))
+    A("")
+
 A("---")
 A("")
 A("## 🩺 ملاحظة طبية")

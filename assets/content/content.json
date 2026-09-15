@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "updated_at": "2026-09-16",
   "app": {
     "name": {
@@ -378,6 +378,17 @@
         "note": {
           "ar": "أرخص وأفضل بروتين حيواني على الإطلاق.",
           "en": "The cheapest and best animal protein, period."
+        },
+        "id": "eggs",
+        "protein_per_unit_g": 6.5,
+        "unit": {
+          "ar": "بيضة",
+          "en": "egg"
+        },
+        "max_units": 6,
+        "max_units_label": {
+          "ar": "٦ بيضات",
+          "en": "6 eggs"
         }
       },
       {
@@ -393,6 +404,17 @@
         "note": {
           "ar": "العدس مع الأرز أو المكرونة = بروتين متكامل يعادل اللحم.",
           "en": "Lentils + rice or pasta = a complete protein rivaling meat."
+        },
+        "id": "legumes",
+        "protein_per_unit_g": 8.5,
+        "unit": {
+          "ar": "١٠٠ جم مطبوخ",
+          "en": "100 g cooked"
+        },
+        "max_units": 4,
+        "max_units_label": {
+          "ar": "٤ أكواب مطبوخة",
+          "en": "4 cooked cups"
         }
       },
       {
@@ -408,6 +430,17 @@
         "note": {
           "ar": "كنز البروتين بطيء الهضم.",
           "en": "A treasure of slow-digesting protein."
+        },
+        "id": "cottage",
+        "protein_per_unit_g": 11.5,
+        "unit": {
+          "ar": "١٠٠ جم",
+          "en": "100 g"
+        },
+        "max_units": 3,
+        "max_units_label": {
+          "ar": "٣٠٠ جم",
+          "en": "300 g"
         }
       },
       {
@@ -423,6 +456,17 @@
         "note": {
           "ar": "أرخص طريقة توصل لـ١٥٠ جم بروتين.",
           "en": "The cheapest way to reach 150 g of protein."
+        },
+        "id": "milk",
+        "protein_per_unit_g": 32.0,
+        "unit": {
+          "ar": "لتر",
+          "en": "litre"
+        },
+        "max_units": 2,
+        "max_units_label": {
+          "ar": "٢ لتر",
+          "en": "2 litres"
         }
       },
       {
@@ -438,6 +482,17 @@
         "note": {
           "ar": "تقطيعها في البيت أرخص من الصدور الجاهزة، والعظم يصير مرقة.",
           "en": "Portion it at home: cheaper than ready breast, and the bones become broth."
+        },
+        "id": "chicken",
+        "protein_per_unit_g": 22.0,
+        "unit": {
+          "ar": "١٠٠ جم",
+          "en": "100 g"
+        },
+        "max_units": 4,
+        "max_units_label": {
+          "ar": "٤٠٠ جم",
+          "en": "400 g"
         }
       },
       {
@@ -453,6 +508,17 @@
         "note": {
           "ar": "أرخص بروتين في العالم ويضاهي اللحم.",
           "en": "The cheapest protein in the world, and it matches meat."
+        },
+        "id": "soy",
+        "protein_per_unit_g": 36.0,
+        "unit": {
+          "ar": "١٠٠ جم جاف",
+          "en": "100 g dry"
+        },
+        "max_units": 1,
+        "max_units_label": {
+          "ar": "١٠٠ جم جاف",
+          "en": "100 g dry"
         }
       },
       {
@@ -468,6 +534,17 @@
         "note": {
           "ar": "لما ميزانية الأسبوع تسمح فقط.",
           "en": "Only when the weekly budget allows."
+        },
+        "id": "tuna",
+        "protein_per_unit_g": 22.0,
+        "unit": {
+          "ar": "علبة",
+          "en": "can"
+        },
+        "max_units": 2,
+        "max_units_label": {
+          "ar": "٢ علبة",
+          "en": "2 cans"
         }
       }
     ],
@@ -616,6 +693,25 @@
           "kcal": 170
         }
       ]
+    },
+    "price_tool": {
+      "title": {
+        "ar": "حاسبة سعر البروتين",
+        "en": "Protein price calculator"
+      },
+      "note": {
+        "ar": "اكتب سعر كل مصدر في منطقتك مرة واحدة. التطبيق يرتّبها من الأرخص للأغلى، يحسب ثمن كل ٢٠ جم بروتين، ويبني لك أرخص سلة تصل لهدف اليوم (١٥٠ جم) — لأن البروتين الرخيص ليس دائماً العدس: أحياناً الحليب أرخص.",
+        "en": "Enter what each source costs where you live, once. The app ranks them cheapest first, prices 20 g of protein from each, and builds the cheapest basket that reaches today's 150 g target - because the cheapest protein is not always lentils: sometimes milk wins."
+      },
+      "per_grams": 20,
+      "currency_default": {
+        "ar": "ج.م",
+        "en": "EGP"
+      },
+      "basket_note": {
+        "ar": "السلة محسوبة بحدود أكل واقعية في اليوم (٦ بيضات، ٢ لتر حليب، ٣٠٠ جم قريش…). خذها كدليل سعر، ونوّع: البيض يومياً + العدس/الفول ٤ مرات أسبوعياً + الحليب كل يوم.",
+        "en": "The basket respects realistic daily caps (6 eggs, 2 litres of milk, 300 g cottage cheese...). Use it as a price guide and vary it: eggs daily, legumes four times a week, milk every day."
+      }
     }
   },
   "workout": {
@@ -1456,7 +1552,93 @@
           }
         ]
       }
+    ],
+    "safety_gates": [
+      {
+        "id": "table_row",
+        "emoji": "🛡️",
+        "exercise_ids": [
+          "table_row",
+          "table_row2"
+        ],
+        "title": {
+          "ar": "أمان طاولة السفرة",
+          "en": "Dining-table safety"
+        },
+        "why": {
+          "ar": "تجديف الطاولة أقوى تمرين لعرض الظهر عندك — وأخطر تمرين لو الطاولة انقلبت. أمّنّها مرة واحدة بعناية، وتكفيك الـ٦ أشهر كلها.",
+          "en": "The table row is the strongest back-width builder you have - and the most dangerous exercise if the table flips. Secure it carefully once and it covers all six months."
+        },
+        "checklist": {
+          "ar": [
+            "اختر أثقل طاولة عندك: خشب مصمت. طاولة الزجاج ممنوعة تماماً، والطاولات الخفيفة ذات الأرجل الرفيعة كذلك.",
+            "اختبر الثبات: ضع كامل وزنك على الحافة التي ستتمسك بها ٣ مرات. لو تحركت الطاولة أو ارتفعت رجل = ليست آمنة.",
+            "ادفع أحد جانبي الطاولة حتى يلاصق الحائط، فيصعب انزلاقها ناحيتك.",
+            "نظّف الأرض: لا سجادة متحركة ولا بلاط مبلل ولا ألعاب. منشفة أو فرشة تحت ظهرك تكفي.",
+            "امسك من تحت الحافة بقبضة علوية والمعصم مستقيم. لا تلف الحافة بمنشفة أو شرشف ينزلق.",
+            "أضف ثقلاً فوق الطاولة (كتب أو قوارير الرمل) لتثبيتها أكثر — لكن لا تجعلها أعلى من أن تصلها.",
+            "جسمك مستقيم كالمسطرة: كعبان على الأرض، أرداف مشدودة، واسحب صدرك إلى أسفل الطاولة — لا ترفع وسطك.",
+            "في أول أسبوع: اجعل شخصاً يمسك الطاولة، أو سند رجلك بقاعدتها.",
+            "أول مجموعة ٣ تكرارات فقط للاختبار قبل أن تعتمد عليها."
+          ],
+          "en": [
+            "Pick your heaviest table: solid wood. Glass tables are banned outright, and so are light ones with thin legs.",
+            "Test it: put your full bodyweight on the edge you will grip, three times. If the table shifts or a leg lifts, it is not safe.",
+            "Push one side of the table flush against a wall so it cannot slide towards you.",
+            "Clear the floor: no loose rug, no wet tiles, no toys. A towel or mat under your back is enough.",
+            "Grip under the edge with an overhand grip and straight wrists. Never wrap a slippery towel or sheet around the edge.",
+            "Add load on top of the table (books or sand bottles) to pin it down - but not so high that you cannot reach the edge.",
+            "Keep your body straight as a ruler: heels down, glutes tight, pull your chest to the underside - never hitch your hips up.",
+            "For the first week have someone hold the table, or brace your foot against its base.",
+            "Make your first set 3 test reps before you commit to it."
+          ]
+        },
+        "confirm": {
+          "ar": "أمّنت الطاولة — أفهم الوضعيات والمخاطر",
+          "en": "Table secured - I understand the positions and the risks"
+        },
+        "danger": {
+          "ar": "لو سمعت طقطقة أو حسيت انزلاقاً في أي تكرار: انزل فوراً وبدّل إلى تجديف الحقيبة المنحني حتى تصلح التثبيت.",
+          "en": "If you hear a crack or feel any slip on a rep: get down immediately and switch to bent-over bag rows until the setup is fixed."
+        }
+      }
     ]
+  },
+  "exam_mode": {
+    "title": {
+      "ar": "وضع الامتحانات",
+      "en": "Exam mode"
+    },
+    "subtitle": {
+      "ar": "الدراسة أولاً — ٣ جلسات فقط في الأسبوع",
+      "en": "Study first - only 3 sessions a week"
+    },
+    "note": {
+      "ar": "التمرين يجب أن يزيد تركيزك في الدراسة لا أن يأكلك. فعّل الوضع وقت الامتحانات فيبقى السبت (دفع) والأحد (سحب) والاثنين (أرجل) فقط — وهي أهم ٣ جلسات لبناء الـ V — وتسقط بقية الأيام بلا ذنب ولا كسر للسلسلة.",
+      "en": "Training should sharpen your focus, not eat it. Turn this on during exams and only Saturday (push), Sunday (pull) and Monday (legs) remain - the three sessions that build the V - while the rest of the week drops away with no guilt and no broken streak."
+    },
+    "keep_days": [
+      "sat",
+      "sun",
+      "mon"
+    ],
+    "sessions_per_week": 3,
+    "rules": {
+      "ar": [
+        "نم ٨ ساعات: النوم وقت الامتحانات يثبّت الحفظ ويبني العضل في نفس الوقت.",
+        "لا تخفض البروتين ولا الماء — الخفض يكون في حجم التمرين فقط.",
+        "اجعل الجلسة ٤٥ دقيقة كحد أقصى، وابدأ مباشرة بلا موبايل.",
+        "امشِ ١٠ دقائق بعد كل وجبة كبيرة: تنشيط للدماغ قبل المذاكرة.",
+        "بعد آخر امتحان ارجع للجدول الكامل تدريجياً خلال أسبوع واحد."
+      ],
+      "en": [
+        "Sleep 8 hours: during exams sleep both consolidates memory and builds muscle.",
+        "Never cut protein or water - only the training volume drops.",
+        "Cap the session at 45 minutes and start straight away, no phone.",
+        "Walk 10 minutes after every big meal: brain activation before studying.",
+        "After the last exam, return to the full week gradually over one week."
+      ]
+    }
   },
   "routine": [
     {
@@ -1628,6 +1810,101 @@
       "category": "sleep"
     }
   ],
+  "sleep": {
+    "title": {
+      "ar": "نوم النمو",
+      "en": "Growth sleep"
+    },
+    "note": {
+      "ar": "٨٠٪ من هرمون النمو يُفرز بين ١١ مساءً و٢ فجراً — وأنت في نوم عميق فقط. لو سهرت، أنت ترمي تمرين اليوم في القمامة.",
+      "en": "80% of growth hormone is released between 11 PM and 2 AM - and only during deep sleep. Stay up late and you throw today's training in the bin."
+    },
+    "target": "23:00",
+    "screens_off": "22:30",
+    "hours_min": 8,
+    "tip": {
+      "ar": "سجّل ساعة نومك كل صباح بثانية واحدة — التطبيق يحسب لك «سلسلة النوم» وهي أصدق مؤشر على أن عضلك يكبر.",
+      "en": "Log your bedtime every morning in one second - the app keeps a sleep streak, the most honest sign that you are actually growing."
+    }
+  },
+  "checkin": {
+    "title": {
+      "ar": "تقييم اليوم",
+      "en": "Today's check-in"
+    },
+    "note": {
+      "ar": "٣٠ ثانية قبل التمرين: كيف جسمك اليوم؟ التطبيق يقترح حجم اليوم المناسب، ويحذرك لو تراكمت التعب يومين ورا بعض.",
+      "en": "Thirty seconds before training: how does your body feel? The app suggests the right volume for today and warns you when fatigue stacks up two days in a row."
+    },
+    "sore_threshold": 3,
+    "deload_after_days": 2,
+    "deload_note": {
+      "ar": "يومين ورا بعض بتقييم منخفض = أسبوع تخفيف (Deload): مجموعة أقل لكل تمرين ونوم أكثر. التخفيف جزء من البناء وليس تراجعاً.",
+      "en": "Two low days in a row = a deload week: one set less per exercise and more sleep. Deloading is part of building, not a setback."
+    },
+    "levels": [
+      {
+        "value": 5,
+        "emoji": "🚀",
+        "label": {
+          "ar": "جاهز تماماً",
+          "en": "Fully ready"
+        },
+        "advice": {
+          "ar": "تدرّب بالوزن المعتاد وزِد تكراراً لو قدرت.",
+          "en": "Train at your usual load and add a rep if you can."
+        }
+      },
+      {
+        "value": 4,
+        "emoji": "💪",
+        "label": {
+          "ar": "كويس",
+          "en": "Good"
+        },
+        "advice": {
+          "ar": "الجدول كما هو مكتوب.",
+          "en": "Run the plan exactly as written."
+        }
+      },
+      {
+        "value": 3,
+        "emoji": "😐",
+        "label": {
+          "ar": "عادي — نوم ناقص أو ضغط دراسة",
+          "en": "Meh - short sleep or study stress"
+        },
+        "advice": {
+          "ar": "احذف مجموعة واحدة من كل تمرين وكمّل.",
+          "en": "Drop one set from every exercise and carry on."
+        }
+      },
+      {
+        "value": 2,
+        "emoji": "🥴",
+        "label": {
+          "ar": "ألم عضلي واضح (DOMS)",
+          "en": "Clearly sore (DOMS)"
+        },
+        "advice": {
+          "ar": "مشي ٢٠ دقيقة + إطالة خفيفة، أو درّب الجزء الذي لا يؤلمك فقط.",
+          "en": "A 20-minute walk plus light stretching, or train only what does not hurt."
+        }
+      },
+      {
+        "value": 1,
+        "emoji": "🤒",
+        "label": {
+          "ar": "مرهق أو مريض",
+          "en": "Wiped out or ill"
+        },
+        "advice": {
+          "ar": "راحة كاملة. يوم الراحة لا يكسر تقدمك — الإصابة هي التي تكسره.",
+          "en": "Full rest. A rest day never breaks progress - an injury does."
+        }
+      }
+    ]
+  },
   "backpack": {
     "title": {
       "ar": "تجهيز الحقيبة (أمان + وزن)",
@@ -1654,7 +1931,45 @@
         "ar": "طاولة السفرة: تأكد أنها ثقيلة ولن تنقلب عليك قبل كل مجموعة.",
         "en": "Dining table: confirm it is heavy and cannot flip onto you before every set."
       }
-    ]
+    ],
+    "load": {
+      "title": {
+        "ar": "حاسبة وزن الحقيبة",
+        "en": "Backpack load calculator"
+      },
+      "note": {
+        "ar": "الرمل أثقل من الماء: لتر الرمل المبلول ≈ ١.٦ كجم مقابل ١ كجم للماء. املأ القوارير بالرمل أولاً ثم كمّلها ماءً — وزن أكبر بنفس الحجم.",
+        "en": "Sand beats water: a litre of wet sand is about 1.6 kg versus 1 kg for water. Fill the bottles with sand first, then top them up with water - more load in the same space."
+      },
+      "bottle_ml": 1500,
+      "bag_kg": 1.0,
+      "water_kg_per_l": 1.0,
+      "sand_kg_per_l": 1.6,
+      "body_pct": [
+        10,
+        20
+      ],
+      "steps": {
+        "ar": [
+          "اجمع ٣ أو ٤ قوارير بلاستيك ١.٥ لتر فارغة.",
+          "املأ ثلثي كل قارورة رملاً (من أي أرض بناء أو حديقة) وهزّها حتى يستقر.",
+          "كمّل القارورة ماءً وأغلقها بإحكام، ثم لفّها بشريط لاصق لو الغطاء ضعيف.",
+          "رتّب القوارير في قاع الحقيبة ملاصقة لظهرك (لا بعيدة عنه) حتى لا تشد كتفيك.",
+          "ضع منشفة بين القوارير وظهرك، وأغلق حزام الصدر والحزام الوسطي."
+        ],
+        "en": [
+          "Collect 3 or 4 empty 1.5 L plastic bottles.",
+          "Fill two thirds of each with sand (any building site or garden) and shake it down.",
+          "Top up with water, close tightly, and tape the cap if it feels weak.",
+          "Pack the bottles at the bottom, close to your back (not away from it) so they do not pull your shoulders.",
+          "Put a towel between the bottles and your spine, and fasten the chest and waist straps."
+        ]
+      },
+      "warning": {
+        "ar": "لا تحمل أكثر من ٢٠٪ من وزن جسمك في تجديف الحقيبة، ولا تزيد الوزن إلا بعد أن تتقن الحركة بالإيقاع ٣-١-١.",
+        "en": "Never carry more than 20% of your bodyweight for bag rows, and only add load once the 3-1-1 tempo is clean."
+      }
+    }
   },
   "progress": {
     "title": {
@@ -1794,7 +2109,101 @@
           "en": "Arm (cm)"
         }
       }
+    ],
+    "photo_checkpoint": {
+      "day_of_month": 15,
+      "title": {
+        "ar": "صورة يوم ١٥",
+        "en": "Photo on the 15th"
+      },
+      "note": {
+        "ar": "المرآة تكذب كل يوم لأنك ترى نفسك باستمرار. الصورة الشهرية بنفس الإضاءة هي الدليل الصادق الوحيد على أن الـ V يتكوّن.",
+        "en": "The mirror lies daily because you see yourself all the time. A monthly photo in the same light is the only honest proof that the V is forming."
+      },
+      "checklist": {
+        "ar": [
+          "نفس المكان ونفس الإضاءة: ضوء نهار من نفس النافذة أفضل من الفلاش.",
+          "نفس الوقت: صباحاً قبل الأكل وبعد الحمام.",
+          "٣ لقطات: أمام، جانب، ظهر — بنفس الوقوف والكتف مرتاح.",
+          "نفس الملابس (شورت ثابت) — لا تغيّر المقاس بين الشهور.",
+          "لا تشفط بطنك ولا ترفع كتفك: الصورة الصادقة أهم من الصورة الجميلة.",
+          "اجعل لها مجلداً واحداً في الاستوديو باسم V-System حتى تقارن بسرعة."
+        ],
+        "en": [
+          "Same place, same light: daylight from the same window beats a flash.",
+          "Same time: morning, before eating, after a shower.",
+          "Three shots: front, side, back - same stance, shoulders relaxed.",
+          "Same clothing (one fixed pair of shorts) - do not change size between months.",
+          "Do not suck in your belly or shrug: an honest photo beats a pretty one.",
+          "Keep them in one album named V-System so comparison takes seconds."
+        ]
+      }
+    },
+    "monthly_checks": [
+      {
+        "id": "photo",
+        "emoji": "📸",
+        "title": {
+          "ar": "صورة الشهر (يوم ١٥)",
+          "en": "Monthly photo (the 15th)"
+        }
+      },
+      {
+        "id": "clothes",
+        "emoji": "👕",
+        "title": {
+          "ar": "اختبار الملابس",
+          "en": "The clothes test"
+        }
+      },
+      {
+        "id": "measure",
+        "emoji": "📏",
+        "title": {
+          "ar": "القياسات (اختياري)",
+          "en": "Measurements (optional)"
+        }
+      },
+      {
+        "id": "strength_test",
+        "emoji": "📈",
+        "title": {
+          "ar": "أقصى تكرارات تجديف الطاولة",
+          "en": "Max table-row reps"
+        }
+      }
     ]
+  },
+  "report": {
+    "title": {
+      "ar": "تقرير الأسبوع",
+      "en": "Weekly report"
+    },
+    "note": {
+      "ar": "نسبة التزامك الحقيقية في آخر ٧ أيام مقابل الأسبوع الذي قبله — ماء، بروتين، روتين، تمرين، نوم. الرقم لا يكذب ولا يجامل.",
+      "en": "Your real adherence over the last 7 days versus the week before - water, protein, routine, training, sleep. Numbers do not flatter you."
+    },
+    "targets": {
+      "water_pct": 0.9,
+      "protein_pct": 0.85,
+      "routine_pct": 0.7,
+      "training_pct": 0.8,
+      "sleep_pct": 0.7
+    },
+    "praise": {
+      "ar": [
+        "٩٠٪ فأكثر: أسبوع ممتاز — هذا هو الإيقاع الذي يبني الـ V.",
+        "٧٠-٨٩٪: أسبوع جيد. حدّد أضعف خانة وانتصر فيها وحدها الأسبوع الجاي.",
+        "٥٠-٦٩٪: متوسط. التسريب غالباً في النوم أو الماء — ابدأ بهما.",
+        "أقل من ٥٠٪: أسبوع صعب. لا تستسلم: رجّع يومين كاملين فقط، والباقي يتبعهما."
+      ],
+      "en": [
+        "90% or more: an excellent week - this is the pace that builds the V.",
+        "70-89%: a good week. Pick your weakest column and win that one alone next week.",
+        "50-69%: average. The leak is usually sleep or water - start there.",
+        "Under 50%: a hard week. Do not quit: recover two full days only, the rest follows."
+      ]
+    }
   },
   "rules": [
     {
