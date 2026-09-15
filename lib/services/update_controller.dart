@@ -41,7 +41,7 @@ class UpdateController extends ChangeNotifier {
     notifyListeners();
     try {
       await loadCurrent();
-      latest = await UpdateService.latest();
+      latest = await UpdateService.latest(abi: await Native.deviceAbi());
       if (latest == null && !silent) {
         error = _state.isArabic
             ? 'ما لقيت نسخة منشورة على GitHub (أو ما فيه إنترنت).'
@@ -115,7 +115,7 @@ class UpdateChecker {
     final last = prefs.getInt(K.lastUpdateCheck) ?? 0;
     if (now - last < const Duration(hours: 20).inMilliseconds) return;
 
-    final info = await UpdateService.latest();
+    final info = await UpdateService.latest(abi: await Native.deviceAbi());
     await prefs.setInt(K.lastUpdateCheck, now);
     if (info == null) return;
 

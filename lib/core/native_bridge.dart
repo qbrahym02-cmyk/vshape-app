@@ -31,6 +31,16 @@ class Native {
     return v is num ? v.toInt() : int.tryParse('$v') ?? 1;
   }
 
+  /// Primary supported ABI of this device, e.g. "arm64-v8a".
+  static Future<String> deviceAbi() async {
+    try {
+      final r = await _ch.invokeMethod<String>('deviceAbi');
+      return r ?? '';
+    } catch (_) {
+      return '';
+    }
+  }
+
   static Future<bool> canRequestUnknownSources() async {
     try {
       return await _ch.invokeMethod<bool>('canRequestUnknownSources') ?? false;

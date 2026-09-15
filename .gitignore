@@ -49,6 +49,7 @@ app.*.map.json
 
 # --- project specific -------------------------------------------------------
 android/local.properties
+android/keystore/
 android/.gradle/
 .toolchain/
 design/*.png

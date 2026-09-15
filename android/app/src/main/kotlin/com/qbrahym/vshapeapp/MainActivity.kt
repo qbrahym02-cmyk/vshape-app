@@ -144,6 +144,11 @@ class MainActivity : FlutterActivity() {
                     result.success(Alarms.load(this).map { it.toMap() })
                 }
 
+                "deviceAbi" -> {
+                    val abis = Build.SUPPORTED_ABIS
+                    result.success(if (abis.isNotEmpty()) abis[0] else "")
+                }
+
                 "keepScreenOn" -> {
                     val on = call.argument<Boolean>("on") ?: false
                     runOnUiThread {

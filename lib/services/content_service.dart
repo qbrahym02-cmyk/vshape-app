@@ -40,6 +40,7 @@ class ReleaseInfo {
   final String notes;
   final String apkUrl;
   final int apkSize;
+  final String abi;
 
   ReleaseInfo({
     required this.tagName,
@@ -49,6 +50,7 @@ class ReleaseInfo {
     required this.notes,
     required this.apkUrl,
     required this.apkSize,
+    this.abi = 'universal',
   });
 }
 
@@ -66,7 +68,10 @@ class UpdateService {
   static final _tagRe = RegExp(r'(\d+)\.(\d+)\.(\d+)(?:\+(\d+))?');
 
   /// Returns null when there is no published release yet (or the network fails).
-  static Future<ReleaseInfo?> latest() async {
+  ///
+  /// When [abi] is given (e.g. "arm64-v8a") and the release publishes a
+  /// per-ABI APK, that smaller file is preferred over the universal one.
+  static Future<ReleaseInfo?> latest({String abi = ''}) async {
     final res = await _dio.get<dynamic>(apiLatest);
     if (res.statusCode != 200 || res.data == null) return null;
     final j = (res.data as Map).cast<String, dynamic>();
@@ -75,19 +80,40 @@ class UpdateService {
     String apkUrl = '';
     String versionJsonUrl = '';
     int size = 0;
+    String chosenAbi = 'universal';
+    String universalUrl = '';
+    int universalSize = 0;
+    String abiUrl = '';
+    int abiSize = 0;
+
     for (final a in assets) {
       final am = (a as Map).cast<String, dynamic>();
       final name = (am['name'] ?? '').toString().toLowerCase();
       final url = (am['browser_download_url'] ?? '').toString();
       if (name.endsWith('.apk') && url.isNotEmpty) {
-        // prefer a universal apk when several are published
-        if (apkUrl.isEmpty || name.contains('universal')) {
-          apkUrl = url;
-          size = (am['size'] as num?)?.toInt() ?? 0;
+        final assetSize = (am['size'] as num?)?.toInt() ?? 0;
+        if (abi.isNotEmpty && name.contains(abi.toLowerCase())) {
+          abiUrl = url;
+          abiSize = assetSize;
+        } else if (name.contains('universal') || name == 'app-release.apk') {
+          universalUrl = url;
+          universalSize = assetSize;
+        } else if (universalUrl.isEmpty) {
+          universalUrl = url;
+          universalSize = assetSize;
         }
       } else if (name == 'version.json') {
         versionJsonUrl = url;
       }
+    }
+    if (abiUrl.isNotEmpty) {
+      apkUrl = abiUrl;
+      size = abiSize;
+      chosenAbi = abi;
+    } else if (universalUrl.isNotEmpty) {
+      apkUrl = universalUrl;
+      size = universalSize;
+      chosenAbi = 'universal';
     }
     if (apkUrl.isEmpty) {
       // fall back to the release web page
@@ -126,6 +152,7 @@ class UpdateService {
       notes: (j['body'] ?? '').toString(),
       apkUrl: apkUrl,
       apkSize: size,
+      abi: chosenAbi,
     );
   }
 

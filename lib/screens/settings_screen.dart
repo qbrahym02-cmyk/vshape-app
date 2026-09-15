@@ -459,8 +459,10 @@ class _UpdateCard extends StatelessWidget {
                           ),
                         ),
                         if (u.latest!.apkSize > 0)
-                          Text('${(u.latest!.apkSize / 1048576).toStringAsFixed(1)} MB',
-                              style: Theme.of(context).textTheme.labelSmall),
+                          Text(
+                            '${(u.latest!.apkSize / 1048576).toStringAsFixed(1)} MB · ${u.latest!.abi}',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
                       ],
                     ),
                     if (u.latest!.notes.trim().isNotEmpty) ...[
