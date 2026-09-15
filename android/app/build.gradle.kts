@@ -1,3 +1,4 @@
+import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -8,19 +9,41 @@ plugins {
 }
 
 // ---------------------------------------------------------------------------
-// Release signing.  Create android/key.properties with:
+// Release signing.
+//
+// Create android/key.properties with:
 //   storePassword=...
 //   keyPassword=...
 //   keyAlias=...
-//   storeFile=<path to the .jks, relative to android/app/>
-// If the file is missing the build falls back to the debug key so that
+//   storeFile=<path to the .jks>       (absolute, or relative to android/)
+//
+// If the file is missing, the build falls back to the debug key so that
 // `flutter build apk` never fails on a fresh clone.
 // ---------------------------------------------------------------------------
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
-val hasKeystore = keystorePropertiesFile.exists()
+var hasKeystore = keystorePropertiesFile.exists()
 if (hasKeystore) {
     FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
+    val storePath = (keystoreProperties["storeFile"] ?: "").toString()
+    val storeFile = if (File(storePath).isAbsolute) {
+        File(storePath)
+    } else {
+        File(rootProject.projectDir, storePath)
+    }
+    hasKeystore = storeFile.exists()
+    println("[signing] keystore = ${storeFile.absolutePath} (found=$hasKeystore)")
+    if (!hasKeystore) {
+        println("[signing] WARNING: keystore missing -> the release build will use the debug key.")
+    }
+} else {
+    println("[signing] android/key.properties missing -> using the debug key for release builds.")
+}
+
+/** Resolve the keystore path: absolute as-is, otherwise relative to android/. */
+fun resolveKeystore(raw: String): File {
+    val f = File(raw)
+    return if (f.isAbsolute) f else File(rootProject.projectDir, raw)
 }
 
 android {
@@ -35,7 +58,7 @@ android {
 
     defaultConfig {
         applicationId = "com.qbrahym.vsystem"
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -46,7 +69,7 @@ android {
             create("release") {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
+                storeFile = resolveKeystore(keystoreProperties["storeFile"] as String)
                 storePassword = keystoreProperties["storePassword"] as String
             }
         }
