@@ -52,6 +52,20 @@ class ReleaseInfo {
     required this.apkSize,
     this.abi = 'universal',
   });
+
+  /// `flutter build apk --split-per-abi` adds an ABI offset to versionCode
+  /// (armeabi-v7a +1000, arm64-v8a +2000, x86_64 +3000).  Strip it so that a
+  /// per-ABI build and the universal build compare equal.
+  int get normalizedCode => versionCode - abiOffsetFor(abi);
+
+  static int abiOffsetFor(String abi) {
+    final a = abi.toLowerCase();
+    if (a.contains('armeabi')) return 1000;
+    if (a.contains('arm64')) return 2000;
+    if (a.contains('x86_64')) return 3000;
+    if (a.contains('x86')) return 4000;
+    return 0;
+  }
 }
 
 class UpdateService {

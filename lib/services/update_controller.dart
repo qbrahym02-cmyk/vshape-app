@@ -25,13 +25,22 @@ class UpdateController extends ChangeNotifier {
   bool needsUnknownSources = false;
   CancelToken? _cancel;
 
+  /// Installed versionCode with the per-ABI offset removed.
+  int get normalizedCurrent =>
+      currentCode - ReleaseInfo.abiOffsetFor(_installedAbi);
+
+  String _installedAbi = '';
+
   bool get hasUpdate =>
-      latest != null && latest!.versionCode > currentCode && (latest!.apkUrl.isNotEmpty);
+      latest != null &&
+      latest!.apkUrl.isNotEmpty &&
+      latest!.normalizedCode > normalizedCurrent;
 
   Future<void> loadCurrent() async {
     final p = await Native.packageInfo();
     currentCode = (p['versionCode'] as num?)?.toInt() ?? 1;
     currentName = (p['versionName'] ?? '1.0.0').toString();
+    _installedAbi = await Native.deviceAbi();
     notifyListeners();
   }
 
@@ -120,8 +129,11 @@ class UpdateChecker {
     if (info == null) return;
 
     final cur = await Native.versionCode();
-    if (info.versionCode > cur && (prefs.getInt(_key) ?? 0) < info.versionCode) {
-      await prefs.setInt(_key, info.versionCode);
+    final abi = await Native.deviceAbi();
+    final normalized = cur - ReleaseInfo.abiOffsetFor(abi);
+    if (info.normalizedCode > normalized &&
+        (prefs.getInt(_key) ?? 0) < info.normalizedCode) {
+      await prefs.setInt(_key, info.normalizedCode);
       st.pendingUpdate = info;
       st.ping();
     }

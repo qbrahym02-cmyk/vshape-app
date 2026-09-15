@@ -433,7 +433,8 @@ class _UpdateCard extends StatelessWidget {
           emoji: '📦',
           title: l.appUpdate,
           accent: C.blue,
-          subtitle: '${l.currentVersion}: ${u.currentName} (${u.currentCode})',
+          subtitle:
+              '${l.currentVersion}: ${u.currentName} (code ${u.currentCode})',
           children: [
             if (u.error != null) ...[
               InfoBanner(u.error!, color: C.red, icon: Icons.error_outline_rounded),
