@@ -57,21 +57,26 @@ flutter build apk --release --split-per-abi
 
 ```bash
 # 1) عدّل pubspec.yaml
-version: 1.1.0+2          # الاسم 1.1.0 ورقم النسخة 2 (لازم يزيد)
+version: 1.0.3+4          # الاسم 1.0.3 ورقم النسخة 4 (لازم يزيد)
 
 # 2) ارفع ونشر
-git commit -am "release 1.1.0"
-git tag v1.1.0+2
+git commit -am "release 1.0.3"
+git tag v1.0.3+4
 git push origin main --tags
 ```
 
 Actions يبني وينشر Release فيه:
 - `V-System-universal.apk`
-- `version.json` → `{"versionName":"1.1.0","versionCode":2,...}`
+- `version.json` → `{"versionName":"1.0.3","versionCode":4,...}`
 - `checksums.sha256`
 
 التطبيق يفحص `releases/latest` كل ~٢٠ ساعة، ويقارن `versionCode`، ويعرض
-**تنزيل وتثبيت** إذا فيه نسخة أحدث.
+**تنزيل وتثبيت** إذا فيه نسخة أحدث. ويختار تلقائياً الـ APK المطابق لمعالج الجوال
+(`arm64-v8a` مثلاً) بدلاً من النسخة العامة الأكبر.
+
+> **تنبيه versionCode:** عند استخدام `--split-per-abi` تضيف Flutter إزاحة للمعالج
+> (armeabi-v7a +1000، arm64-v8a +2000، x86_64 +3000). لذلك نسخة arm64 من `1.0.2+3`
+> تحمل versionCode = 2003. التطبيق يطبّع الرقم (يطرح الإزاحة) قبل المقارنة.
 
 > **مهم:** `versionCode` لازم يزيد في كل إصدار، وإلا التطبيق ما يشوف التحديث.
 
