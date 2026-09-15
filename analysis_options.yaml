@@ -1,0 +1,10 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+  errors:
+    # Interpolations such as '${d}_$id' legitimately need braces because '_' is
+    # a valid Dart identifier character.
+    unnecessary_brace_in_string_interps: ignore

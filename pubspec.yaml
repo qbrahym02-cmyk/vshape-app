@@ -1,0 +1,39 @@
+name: vshape_app
+description: "V-System - a pre-set daily lifestyle system: routine, water, food and home workouts."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  dio: ^5.7.0
+  shared_preferences: ^2.3.3
+  path_provider: ^2.1.5
+  url_launcher: ^6.3.1
+
+# objective_c >= 9.4 uses an `Architecture.arm64e` member that this Dart SDK
+# does not expose yet; it is an Apple-only transitive dep, so pin it back.
+dependency_overrides:
+  objective_c: 9.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/content/content.json
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo.ttf
+        - asset: assets/fonts/Cairo.ttf
+          weight: 700

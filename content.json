@@ -1,0 +1,1754 @@
+{
+  "version": 3,
+  "updated_at": "2026-09-15",
+  "app": {
+    "name": {
+      "ar": "نظام V",
+      "en": "V-System"
+    },
+    "tagline": {
+      "ar": "٦ أشهر · جسم V · بدون صالة رياضية · بميزانية محدودة",
+      "en": "6 months · V-shape body · no gym · on a budget"
+    },
+    "profile": {
+      "age": 15,
+      "height_cm": [
+        185,
+        190
+      ],
+      "weight_kg": [
+        80,
+        85
+      ],
+      "goal": {
+        "ar": "V-Shape في ٦ أشهر",
+        "en": "V-Shape in 6 months"
+      }
+    }
+  },
+  "water": {
+    "goal_ml": 3750,
+    "glass_ml": 500,
+    "min_ml": 3500,
+    "max_ml": 4000,
+    "note": {
+      "ar": "عضلاتك ٧٥٪ ماء. لو تشرب قليل، العضلة تكون «منفسة» وضعيفة وما تكبر. وزنك ٨٠ كغ + تمرين = ٣.٥ إلى ٤ لتر يومياً (٧-٨ زجاجات).",
+      "en": "Your muscles are 75% water. Under-hydrated muscles look flat and grow slower. At 80 kg + training you need 3.5-4 L per day (7-8 bottles)."
+    },
+    "slots": [
+      {
+        "id": "wake",
+        "time": "06:30",
+        "glasses": 2,
+        "title": {
+          "ar": "عند الاستيقاظ",
+          "en": "On waking up"
+        },
+        "why": {
+          "ar": "لتر كامل فوراً لتنشيط الأعضاء وغسل بقايا الليل.",
+          "en": "A full litre immediately to wake up your organs."
+        },
+        "remind": true
+      },
+      {
+        "id": "school",
+        "time": "10:00",
+        "glasses": 2,
+        "title": {
+          "ar": "في المدرسة",
+          "en": "At school"
+        },
+        "why": {
+          "ar": "خذ معك زجاجة كبيرة. الجفاف = قلة تركيز في الحصص.",
+          "en": "Take a big bottle with you. Dehydration kills focus in class."
+        },
+        "remind": true
+      },
+      {
+        "id": "lunch",
+        "time": "15:00",
+        "glasses": 1,
+        "title": {
+          "ar": "مع الغداء",
+          "en": "With lunch"
+        },
+        "why": {
+          "ar": "زجاجة مع الوجبة تساعد الهضم وامتصاص البروتين.",
+          "en": "One bottle with the meal helps digestion and protein uptake."
+        },
+        "remind": true
+      },
+      {
+        "id": "workout",
+        "time": "17:30",
+        "glasses": 2,
+        "title": {
+          "ar": "أثناء التمرين",
+          "en": "During the workout"
+        },
+        "why": {
+          "ar": "رشفات صغيرة بين كل مجموعة والأخرى، لا تجرع مرة وحدة.",
+          "en": "Small sips between sets, don't chug it all at once."
+        },
+        "remind": true
+      },
+      {
+        "id": "night",
+        "time": "21:30",
+        "glasses": 1,
+        "title": {
+          "ar": "قبل النوم",
+          "en": "Before sleep"
+        },
+        "why": {
+          "ar": "قبل النوم بوقت كافٍ حتى لا تصحى للحمام وتقطع نومك العميق.",
+          "en": "Early enough that you don't wake up for the bathroom and break deep sleep."
+        },
+        "remind": false
+      }
+    ]
+  },
+  "food": {
+    "kcal_target": [
+      2800,
+      3000
+    ],
+    "protein_g_target": 150,
+    "budget_rule": {
+      "ar": "لما الميزانية تضيق: زِد العدس والفول والحليب. هذه أشياء ما تفلسك وتبني عضل.",
+      "en": "When money is tight: add more lentils, fava beans and milk. Cheap, and they still build muscle."
+    },
+    "meals": [
+      {
+        "id": "breakfast",
+        "time": "06:45",
+        "title": {
+          "ar": "الإفطار (قبل المدرسة)",
+          "en": "Breakfast (before school)"
+        },
+        "subtitle": {
+          "ar": "طاقة وثبات",
+          "en": "Energy & stability"
+        },
+        "protein_g": 45,
+        "kcal": 800,
+        "items": [
+          {
+            "name": {
+              "ar": "٤ بيضات (مسلوقة أو مقلية بملعقة زيت)",
+              "en": "4 eggs (boiled, or fried in 1 tsp oil)"
+            },
+            "qty": "4"
+          },
+          {
+            "name": {
+              "ar": "كوب كبير فول مدمس + زيت زيتون وكمون",
+              "en": "Big cup of fava beans + olive oil & cumin"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "رغيف خبز بلدي أو أسمر",
+              "en": "1 loaf of whole-wheat / baladi bread"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "كوبان حليب",
+              "en": "2 cups of milk"
+            },
+            "qty": "2"
+          }
+        ],
+        "tip": {
+          "ar": "أرخص ٤٥ جرام بروتين في يومك. لا تتخطاها أبداً.",
+          "en": "The cheapest 45 g of protein in your day. Never skip it."
+        }
+      },
+      {
+        "id": "school_snack",
+        "time": "10:30",
+        "title": {
+          "ar": "سناكس المدرسة (الفسحة)",
+          "en": "School snack (break time)"
+        },
+        "subtitle": {
+          "ar": "جهّزها من البيت",
+          "en": "Prep it at home"
+        },
+        "protein_g": 20,
+        "kcal": 350,
+        "items": [
+          {
+            "name": {
+              "ar": "ساندويتش جبن قريش مع طماطم",
+              "en": "Cottage-cheese sandwich with tomato"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "أو كوب ترمس / حمص مسلوق (علبة من البيت)",
+              "en": "Or a cup of lupini / boiled chickpeas (box from home)"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "موزة أو برتقالة",
+              "en": "1 banana or orange"
+            },
+            "qty": "1"
+          }
+        ],
+        "tip": {
+          "ar": "الترمُس بروتينه خرافي وسعره ولا شيء. اسلقه مرة في الأسبوع ووزّعه على علب.",
+          "en": "Lupini beans: insane protein, almost free. Boil a batch weekly and portion it out."
+        }
+      },
+      {
+        "id": "lunch",
+        "time": "15:00",
+        "title": {
+          "ar": "الغداء (بعد المدرسة)",
+          "en": "Lunch (after school)"
+        },
+        "subtitle": {
+          "ar": "تعافي وبناء",
+          "en": "Recovery & growth"
+        },
+        "protein_g": 45,
+        "kcal": 900,
+        "items": [
+          {
+            "name": {
+              "ar": "طبق كبير مكرونة أو أرز",
+              "en": "Big plate of pasta or rice"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "السر: اخلطها بعدس أو حمص مهروس (كشري) أو كوب شوربة عدس",
+              "en": "The trick: mix in lentils / mashed chickpeas (koshary) or a cup of lentil soup"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "ربع دجاجة (فخذ + صدر) أو علبة تونة/سردين",
+              "en": "Quarter chicken (thigh + breast) or a tin of tuna/sardines"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "سلطة خيار وطماطم",
+              "en": "Cucumber & tomato salad"
+            },
+            "qty": "1"
+          }
+        ],
+        "tip": {
+          "ar": "اشترِ دجاجة كاملة وقطّعها في البيت: أرخص بكثير من الصدور الجاهزة، واستخدم العظم لعمل مرقة للأرز.",
+          "en": "Buy a whole chicken and portion it at home: far cheaper than pre-cut breast, and use the bones for rice broth."
+        }
+      },
+      {
+        "id": "pre_workout",
+        "time": "16:30",
+        "title": {
+          "ar": "قبل التمرين بساعة",
+          "en": "One hour pre-workout"
+        },
+        "subtitle": {
+          "ar": "قوة للرفع",
+          "en": "Lifting fuel"
+        },
+        "protein_g": 10,
+        "kcal": 300,
+        "items": [
+          {
+            "name": {
+              "ar": "٢ ثمرة بطاطس مسلوقة",
+              "en": "2 boiled potatoes"
+            },
+            "qty": "2"
+          },
+          {
+            "name": {
+              "ar": "بيضة مسلوقة",
+              "en": "1 boiled egg"
+            },
+            "qty": "1"
+          }
+        ],
+        "tip": {
+          "ar": "الكربوهيدرات هنا هي اللي تخليك ترفع الحقيبة بقوة في التمرين.",
+          "en": "These carbs are what let you move the backpack hard in the session."
+        }
+      },
+      {
+        "id": "dinner",
+        "time": "19:30",
+        "title": {
+          "ar": "العشاء (بعد التمرين)",
+          "en": "Dinner (post-workout)"
+        },
+        "subtitle": {
+          "ar": "بناء العضلات أثناء النوم",
+          "en": "Muscle building while you sleep"
+        },
+        "protein_g": 40,
+        "kcal": 550,
+        "items": [
+          {
+            "name": {
+              "ar": "٢٥٠ جرام جبن قريش (أو علبة زبادي كبيرة)",
+              "en": "250 g cottage cheese (or a big tub of yoghurt)"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "قطعة خبز أو حبة بطاطس",
+              "en": "Bread or 1 potato"
+            },
+            "qty": "1"
+          },
+          {
+            "name": {
+              "ar": "٢ بيضة",
+              "en": "2 eggs"
+            },
+            "qty": "2"
+          }
+        ],
+        "tip": {
+          "ar": "الجبن القريش بروتين بطيء الهضم: يغذي عضلاتك طوال الليل.",
+          "en": "Cottage cheese is slow-digesting protein: it feeds your muscles all night."
+        }
+      }
+    ],
+    "protein_sources": [
+      {
+        "name": {
+          "ar": "البيض",
+          "en": "Eggs"
+        },
+        "protein": {
+          "ar": "٦-٧ جم / بيضة",
+          "en": "6-7 g / egg"
+        },
+        "rank": 1,
+        "note": {
+          "ar": "أرخص وأفضل بروتين حيواني على الإطلاق.",
+          "en": "The cheapest and best animal protein, period."
+        }
+      },
+      {
+        "name": {
+          "ar": "العدس والفول والحمص والترمس",
+          "en": "Lentils, fava, chickpeas, lupini"
+        },
+        "protein": {
+          "ar": "٨-٩ جم / ١٠٠ جم مطبوخ",
+          "en": "8-9 g / 100 g cooked"
+        },
+        "rank": 2,
+        "note": {
+          "ar": "العدس مع الأرز أو المكرونة = بروتين متكامل يعادل اللحم.",
+          "en": "Lentils + rice or pasta = a complete protein rivaling meat."
+        }
+      },
+      {
+        "name": {
+          "ar": "الجبن القريش / الجبن الأبيض قليل الدسم",
+          "en": "Cottage cheese / low-fat white cheese"
+        },
+        "protein": {
+          "ar": "١١-١٢ جم / ١٠٠ جم",
+          "en": "11-12 g / 100 g"
+        },
+        "rank": 3,
+        "note": {
+          "ar": "كنز البروتين بطيء الهضم.",
+          "en": "A treasure of slow-digesting protein."
+        }
+      },
+      {
+        "name": {
+          "ar": "الحليب",
+          "en": "Milk"
+        },
+        "protein": {
+          "ar": "٣٢ جم / لتر",
+          "en": "32 g / litre"
+        },
+        "rank": 4,
+        "note": {
+          "ar": "أرخص طريقة توصل لـ١٥٠ جم بروتين.",
+          "en": "The cheapest way to reach 150 g of protein."
+        }
+      },
+      {
+        "name": {
+          "ar": "الدجاجة الكاملة",
+          "en": "Whole chicken"
+        },
+        "protein": {
+          "ar": "٢٠-٢٥ جم / ١٠٠ جم",
+          "en": "20-25 g / 100 g"
+        },
+        "rank": 5,
+        "note": {
+          "ar": "تقطيعها في البيت أرخص من الصدور الجاهزة، والعظم يصير مرقة.",
+          "en": "Portion it at home: cheaper than ready breast, and the bones become broth."
+        }
+      },
+      {
+        "name": {
+          "ar": "فول الصويا (من العطارة)",
+          "en": "Soy (from the spice shop)"
+        },
+        "protein": {
+          "ar": "٣٦ جم / ١٠٠ جم جاف",
+          "en": "36 g / 100 g dry"
+        },
+        "rank": 6,
+        "note": {
+          "ar": "أرخص بروتين في العالم ويضاهي اللحم.",
+          "en": "The cheapest protein in the world, and it matches meat."
+        }
+      },
+      {
+        "name": {
+          "ar": "التونة والسردين",
+          "en": "Tuna & sardines"
+        },
+        "protein": {
+          "ar": "٢٠-٢٥ جم / علبة",
+          "en": "20-25 g / tin"
+        },
+        "rank": 7,
+        "note": {
+          "ar": "لما ميزانية الأسبوع تسمح فقط.",
+          "en": "Only when the weekly budget allows."
+        }
+      }
+    ],
+    "avoid": [
+      {
+        "ar": "المشروبات الغازية (البيبسي) — لصّ الميزانية ولصّ العضلات",
+        "en": "Sodas — they rob your budget and your muscles"
+      },
+      {
+        "ar": "الشيبسي والحلويات والسكر",
+        "en": "Crisps, sweets and added sugar"
+      },
+      {
+        "ar": "اللحوم الحمراء الغالية والصدور «الفيلية» الجاهزة",
+        "en": "Expensive red meat and pre-cut 'fillet' breast"
+      },
+      {
+        "ar": "المكملات — أنت في سن ١٥ وما تحتاجها",
+        "en": "Supplements — at 15 you simply don't need them"
+      }
+    ]
+  },
+  "workout": {
+    "tempo_rule": {
+      "ar": "الإيقاع (Tempo): النزول ٣ ثوانٍ ← توقف ثانية ← الصعود ثانية واحدة. هذا يخلي التمرين الخفيف يحس ثقيلاً جداً.",
+      "en": "Tempo: 3 seconds down - 1 second pause - 1 second up. This makes a light exercise feel very heavy."
+    },
+    "rest_rule": {
+      "ar": "٩٠ ثانية راحة بين المجموعات. لا موبايل — تنفّس وامشِ قليلاً.",
+      "en": "90 seconds rest between sets. No phone - breathe and pace a little."
+    },
+    "equipment_note": {
+      "ar": "كل العدة: حقيبة المدرسة + طاولة السفرة + كرسي + قوارير ماء. لا صالة رياضية.",
+      "en": "All the equipment: your school backpack + the dining table + a chair + water bottles. No gym."
+    },
+    "days": [
+      {
+        "id": "sat",
+        "day": 6,
+        "emoji": "🔥",
+        "title": {
+          "ar": "السبت",
+          "en": "Saturday"
+        },
+        "focus": {
+          "ar": "صدر · كتف أمامي · ترايسبس (دفع)",
+          "en": "Chest · front delts · triceps (Push)"
+        },
+        "is_rest": false,
+        "exercises": [
+          {
+            "id": "pike_pushup",
+            "name": {
+              "ar": "ضغط الزاوية (Pike Push-ups)",
+              "en": "Pike Push-ups"
+            },
+            "target": {
+              "ar": "الكتف الأمامي",
+              "en": "Front delts"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "٨-١٢",
+              "en": "8-12"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "ارفع مؤخرتك للأعلى حتى يصير جسمك رقم ٨ (أو ٧).",
+                "انزل برأسك ليلمس الأرض أمام يديك — وليس بين يديك — فيتكوّن مثلث.",
+                "ادفع بقوة للأعلى وركّز على الكتف الأمامي."
+              ],
+              "en": [
+                "Pike your hips up so your body forms an 8 (or 7) shape.",
+                "Lower your head to touch the floor IN FRONT of your hands - not between them - forming a triangle.",
+                "Press back up hard and focus on the front delt."
+              ]
+            },
+            "note": {
+              "ar": "هذا التمرين يضرب الكتف الأمامي بشدة وهو أساس الـ V.",
+              "en": "This hammers the front delt and is a cornerstone of the V."
+            }
+          },
+          {
+            "id": "wide_pushup",
+            "name": {
+              "ar": "ضغط واسع (Wide Push-ups)",
+              "en": "Wide Push-ups"
+            },
+            "target": {
+              "ar": "الصدر",
+              "en": "Chest"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "١٠-١٥",
+              "en": "10-15"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "يداك أوسع من كتفيك بوضوح.",
+                "انزل ببطء ٣ ثوانٍ حتى يقارب صدرك الأرض.",
+                "ادفع للأعلى مع شدّ الصدر."
+              ],
+              "en": [
+                "Place your hands clearly wider than your shoulders.",
+                "Lower slowly for 3 seconds until your chest nears the floor.",
+                "Press up while squeezing the chest."
+              ]
+            },
+            "note": {
+              "ar": "النزول البطيء هو سر التضخيم بدون أوزان.",
+              "en": "The slow descent is the secret of growth without weights."
+            }
+          },
+          {
+            "id": "bag_floor_press",
+            "name": {
+              "ar": "ضغط أرضي بالحقيبة (Backpack Floor Press)",
+              "en": "Backpack Floor Press"
+            },
+            "target": {
+              "ar": "الصدر + الترايسبس",
+              "en": "Chest + triceps"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "حتى الفشل",
+              "en": "to failure"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "نم على ظهرك وثني ركبتيك.",
+                "ضع الحقيبة الثقيلة على صدرك وأمسكها من الجانبين.",
+                "ادفعها لأعلى حتى تستقيم ذراعاك ثم انزل ببطء."
+              ],
+              "en": [
+                "Lie on your back with knees bent.",
+                "Place the heavy backpack on your chest, gripping its sides.",
+                "Press it up until your arms lock out, then lower slowly."
+              ]
+            },
+            "note": {
+              "ar": "«حتى الفشل» = آخر تكرارين يكونان بصعوبة شديدة مع الحفاظ على الشكل.",
+              "en": "'To failure' = your last two reps are a real grind, but form stays clean."
+            }
+          },
+          {
+            "id": "chair_dips",
+            "name": {
+              "ar": "غطس الكرسي (Chair Dips)",
+              "en": "Chair Dips"
+            },
+            "target": {
+              "ar": "الترايسبس",
+              "en": "Triceps"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "١٠-١٥",
+              "en": "10-15"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "يداك على حافة كرسي ثابت أو طرف السرير.",
+                "مدّ رجليك للأمام وانزل بمؤخرتك نحو الأرض.",
+                "ادفع للأعلى حتى تستقيم الذراعان."
+              ],
+              "en": [
+                "Hands on the edge of a stable chair or the bed frame.",
+                "Legs out front, drop your hips toward the floor.",
+                "Press back up until the arms are straight."
+              ]
+            },
+            "note": {
+              "ar": "تأكد أن الكرسي لن ينزلق — اسنده بالحائط.",
+              "en": "Make sure the chair can't slide - brace it against a wall."
+            }
+          }
+        ]
+      },
+      {
+        "id": "sun",
+        "day": 7,
+        "emoji": "🦇",
+        "title": {
+          "ar": "الأحد",
+          "en": "Sunday"
+        },
+        "focus": {
+          "ar": "ظهر · بايسبس (سحب) — يوم الـ V الحقيقي",
+          "en": "Back · biceps (Pull) - the real V-shape day"
+        },
+        "is_rest": false,
+        "exercises": [
+          {
+            "id": "table_row",
+            "name": {
+              "ar": "تجديف الطاولة (Table Inverted Rows)",
+              "en": "Table Inverted Rows"
+            },
+            "target": {
+              "ar": "عرض الظهر (Lats)",
+              "en": "Back width (lats)"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "٨-١٢",
+              "en": "8-12"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "افحص الطاولة أولاً: لازم تكون ثقيلة وثابتة ولن تنقلب عليك.",
+                "ادخل تحت الطاولة وأمسك حافتها بيديك بعرض الكتفين.",
+                "جسمك مستقيم كالمسطرة من الرأس للكعب.",
+                "اسحب صدرك ليقترب من أسفل الطاولة، ثم انزل ٣ ثوانٍ."
+              ],
+              "en": [
+                "Check the table first: it must be heavy, stable and unable to flip onto you.",
+                "Slide under it and grip the edge, hands shoulder-width apart.",
+                "Keep your body rigid like a ruler from head to heels.",
+                "Pull your chest up toward the underside, then lower for 3 seconds."
+              ]
+            },
+            "note": {
+              "ar": "هذا هو بديل العقلة، وهو يبني عرض الظهر بشكل مذهل.",
+              "en": "This is your pull-up substitute and it builds back width amazingly."
+            }
+          },
+          {
+            "id": "bag_row",
+            "name": {
+              "ar": "تجديف الحقيبة (Backpack Bent-over Row)",
+              "en": "Backpack Bent-over Row"
+            },
+            "target": {
+              "ar": "الظهر · البايسبس",
+              "en": "Back · biceps"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "١٢-١٥ لكل يد",
+              "en": "12-15 per arm"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "انحنِ للأمام بزاوية ٤٥ درجة وظهرك مستقيم تماماً.",
+                "اسحب الحقيبة بيد واحدة نحو جيبك — وليس نحو صدرك.",
+                "ركّز على الكوع وهو يرجع للخلف."
+              ],
+              "en": [
+                "Hinge forward to about 45 degrees with a perfectly flat back.",
+                "Row the backpack with one hand toward your HIP - not your chest.",
+                "Focus on driving the elbow back."
+              ]
+            },
+            "note": {
+              "ar": "السحب نحو الجيب هو اللي يشغّل اللاتس فعلياً.",
+              "en": "Pulling to the hip is what actually fires the lats."
+            }
+          },
+          {
+            "id": "doorframe_pull",
+            "name": {
+              "ar": "سحب إطار الباب (Door Frame Pull-ins)",
+              "en": "Door Frame Pull-ins"
+            },
+            "target": {
+              "ar": "الظهر",
+              "en": "Back"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "١٥",
+              "en": "15"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "قف أمام إطار باب مفتوح وأمسك الإطار بيديك.",
+                "مل بجسمك للخلف حتى تستقيم ذراعاك.",
+                "اسحب جسمك للأمام باستخدام عضلات ظهرك."
+              ],
+              "en": [
+                "Stand in an open doorway and grip the frame with both hands.",
+                "Lean back until your arms are straight.",
+                "Pull your body forward using your back muscles."
+              ]
+            },
+            "note": {
+              "ar": "آمن تماماً وممتاز كإحماء أو إنهاء لليوم.",
+              "en": "Perfectly safe and great as a warm-up or finisher."
+            }
+          },
+          {
+            "id": "bag_curl",
+            "name": {
+              "ar": "بايسبس بالحقيبة (Backpack Curls)",
+              "en": "Backpack Biceps Curls"
+            },
+            "target": {
+              "ar": "البايسبس",
+              "en": "Biceps"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "١٢-١٥",
+              "en": "12-15"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "أمسك الحقيبة من الحزام أو من أسفلها.",
+                "ثبّت كوعك بجانب جسمك ولا تحرّكه.",
+                "ارفع ببطء ثم انزل ٣ ثوانٍ."
+              ],
+              "en": [
+                "Grip the backpack by its strap or from underneath.",
+                "Pin your elbow to your side and don't let it drift.",
+                "Curl up, then lower for 3 seconds."
+              ]
+            },
+            "note": {
+              "ar": "لا تتأرجح بالجسم — التحكم أهم من الوزن.",
+              "en": "Don't swing your body - control beats weight."
+            }
+          }
+        ]
+      },
+      {
+        "id": "mon",
+        "day": 1,
+        "emoji": "🦵",
+        "title": {
+          "ar": "الاثنين",
+          "en": "Monday"
+        },
+        "focus": {
+          "ar": "أرجل · بطن (أساس الهرمون)",
+          "en": "Legs · core (the hormonal foundation)"
+        },
+        "is_rest": false,
+        "exercises": [
+          {
+            "id": "goblet_squat",
+            "name": {
+              "ar": "سكوات الحقيبة (Backpack Goblet Squat)",
+              "en": "Backpack Goblet Squat"
+            },
+            "target": {
+              "ar": "الأرجل كاملة",
+              "en": "Full legs"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "١٥-٢٠",
+              "en": "15-20"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "احضن الحقيبة الثقيلة على صدرك.",
+                "انزل للأسفل كأنك ستجلس على كرسي.",
+                "اركبتاك تتجهان لأطراف أصابعك، وظهرك مستقيم."
+              ],
+              "en": [
+                "Hug the heavy backpack against your chest.",
+                "Drop down as if sitting onto a chair.",
+                "Knees track over your toes, back stays tall."
+              ]
+            },
+            "note": {
+              "ar": "تمرين الأرجل يفرز التستوستيرون الذي يكبّر النصف العلوي كله.",
+              "en": "Leg work releases the testosterone that grows your whole upper body."
+            }
+          },
+          {
+            "id": "bulgarian_split",
+            "name": {
+              "ar": "السكوات البلغاري (Bulgarian Split Squat)",
+              "en": "Bulgarian Split Squat"
+            },
+            "target": {
+              "ar": "الأفخاذ",
+              "en": "Quads / glutes"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "١٠-١٢ لكل رجل",
+              "en": "10-12 per leg"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "ضع قدمك الخلفية على كرسي أو طرف السرير.",
+                "انزل بجسمك بشكل عمودي حتى تقترب ركبتك من الأرض.",
+                "ادفع بكعب الرجل الأمامية."
+              ],
+              "en": [
+                "Rest your rear foot on a chair or the bed edge.",
+                "Drop straight down until your front knee is low.",
+                "Drive up through the front heel."
+              ]
+            },
+            "note": {
+              "ar": "هذا التمرين يبني أفخاذاً حديدية — لا تتخطاه لأنه صعب.",
+              "en": "This builds iron thighs - don't skip it because it hurts."
+            }
+          },
+          {
+            "id": "bag_rdl",
+            "name": {
+              "ar": "رفعة رومانية بالحقيبة (Backpack RDL)",
+              "en": "Backpack Romanian Deadlift"
+            },
+            "target": {
+              "ar": "خلف الفخذ · أسفل الظهر",
+              "en": "Hamstrings · lower back"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "١٥",
+              "en": "15"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "أمسك الحقيبة وركبتاك منحنيتان قليلاً.",
+                "ادفع مؤخرتك للخلف وأنزل الحقيبة على ساقيك حتى أسفل الركبة.",
+                "ستشعر بشد في خلف الفخذ — اصعد بشد المؤخرة."
+              ],
+              "en": [
+                "Hold the backpack with a soft knee bend.",
+                "Push your hips back and slide the bag down your legs to just below the knee.",
+                "You should feel a hamstring stretch - stand up by squeezing your glutes."
+              ]
+            },
+            "note": {
+              "ar": "لو انقوس ظهرك، خفّف الوزن فوراً.",
+              "en": "If your back rounds, lighten the load immediately."
+            }
+          },
+          {
+            "id": "leg_raise",
+            "name": {
+              "ar": "رفع الأرجل (Leg Raises)",
+              "en": "Leg Raises"
+            },
+            "target": {
+              "ar": "البطن السفلي",
+              "en": "Lower abs"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "١٥-٢٠",
+              "en": "15-20"
+            },
+            "rest_s": 60,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "نم على ظهرك ويداك تحت مؤخرتك.",
+                "ارفع رجليك مفرودتين حتى تصير عمودية.",
+                "انزل ببطء دون أن تلمس الأرض."
+              ],
+              "en": [
+                "Lie on your back, hands under your hips.",
+                "Raise straight legs until they point at the ceiling.",
+                "Lower slowly without letting your heels touch the floor."
+              ]
+            },
+            "note": {
+              "ar": "لا تدفع بأسفل ظهرك — البطن هو اللي يشتغل.",
+              "en": "Don't arch your lower back - the abs do the work."
+            }
+          }
+        ]
+      },
+      {
+        "id": "tue",
+        "day": 2,
+        "emoji": "🏃",
+        "title": {
+          "ar": "الثلاثاء",
+          "en": "Tuesday"
+        },
+        "focus": {
+          "ar": "راحة نشطة + مشي",
+          "en": "Active recovery + walking"
+        },
+        "is_rest": true,
+        "exercises": [],
+        "rest_plan": [
+          {
+            "ar": "لا تمرين اليوم — العضلات تكبر في يوم الراحة لا في يوم التمرين.",
+            "en": "No lifting today - muscles grow on rest days, not training days."
+          },
+          {
+            "ar": "امشِ ٣٠ دقيقة فقط (تحرق دهون وتحسّن الدورة الدموية).",
+            "en": "Just walk for 30 minutes (burns fat, improves circulation)."
+          },
+          {
+            "ar": "خذ حماماً دافئاً لترخية العضلات.",
+            "en": "Take a warm shower to relax the muscles."
+          },
+          {
+            "ar": "نم مبكراً — هذه ليلة هرمون النمو.",
+            "en": "Sleep early - this is a growth-hormone night."
+          }
+        ]
+      },
+      {
+        "id": "wed",
+        "day": 3,
+        "emoji": "🦇",
+        "title": {
+          "ar": "الأربعاء",
+          "en": "Wednesday"
+        },
+        "focus": {
+          "ar": "عرض الـ V (الكتف الجانبي + الظهر)",
+          "en": "V-width (side delts + back)"
+        },
+        "is_rest": false,
+        "exercises": [
+          {
+            "id": "table_row2",
+            "name": {
+              "ar": "تجديف الطاولة (Table Inverted Rows)",
+              "en": "Table Inverted Rows"
+            },
+            "target": {
+              "ar": "عرض الظهر",
+              "en": "Back width"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "حتى الفشل",
+              "en": "to failure"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "نفس تنفيذ يوم الأحد.",
+                "ثبّت الطاولة وتأكد أنها لن تنقلب.",
+                "اسحب ببطء وانزل ببطء أكثر."
+              ],
+              "en": [
+                "Same execution as Sunday.",
+                "Secure the table and be certain it cannot flip.",
+                "Pull slowly, lower even more slowly."
+              ]
+            },
+            "note": {
+              "ar": "سجّل عدد التكرارات — هذا مؤشر تقدمك الأساسي.",
+              "en": "Log your reps - this is your main progress KPI."
+            }
+          },
+          {
+            "id": "lateral_raise",
+            "name": {
+              "ar": "رفع جانبي بقوارير الماء (Lateral Raises)",
+              "en": "Water-Bottle Lateral Raises"
+            },
+            "target": {
+              "ar": "الكتف الجانبي — سر العرض",
+              "en": "Side delt - the width secret"
+            },
+            "sets": 5,
+            "reps": {
+              "ar": "١٥-٢٠",
+              "en": "15-20"
+            },
+            "rest_s": 60,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "استخدم قارورتين ماء (١ لتر أو ١.٥ لتر).",
+                "ارفعهما للجانب حتى مستوى الكتف فقط — لا أعلى.",
+                "تخيّل أنك تسكب الماء من إبريق (خنصر لأعلى قليلاً)."
+              ],
+              "en": [
+                "Use two water bottles (1 L or 1.5 L).",
+                "Raise them to the sides until they reach shoulder height only - no higher.",
+                "Imagine pouring water from a jug (pinkies slightly up)."
+              ]
+            },
+            "note": {
+              "ar": "هذا التمرين هو المسؤول الأول عن عرض الكتف. ٥ مجموعات إلزامية.",
+              "en": "This exercise is the #1 driver of shoulder width. 5 sets, non-negotiable."
+            }
+          },
+          {
+            "id": "bag_ohp",
+            "name": {
+              "ar": "ضغط كتف بالحقيبة (Backpack Overhead Press)",
+              "en": "Backpack Overhead Press"
+            },
+            "target": {
+              "ar": "الكتف الكامل",
+              "en": "Whole shoulder"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "١٠-١٢",
+              "en": "10-12"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "أمسك الحقيبة من أسفلها أمام صدرك وأنت واقف.",
+                "شدّ بطنك ومؤخرتك حتى لا ينقوس ظهرك.",
+                "ارفعها فوق رأسك حتى تستقيم الذراعان."
+              ],
+              "en": [
+                "Standing, hold the backpack from underneath at chest height.",
+                "Brace your abs and glutes so your back can't arch.",
+                "Press it overhead until your arms lock out."
+              ]
+            },
+            "note": {
+              "ar": "لو ثقل كثيراً، استخدم قارورتين ماء بدل الحقيبة.",
+              "en": "Too heavy? Use two water bottles instead."
+            }
+          },
+          {
+            "id": "superman",
+            "name": {
+              "ar": "سوبرمان سحب (Superman Pull-down)",
+              "en": "Superman Pull-down"
+            },
+            "target": {
+              "ar": "أسفل الظهر · إصلاح التقوس",
+              "en": "Lower back · posture fix"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "٢٠",
+              "en": "20"
+            },
+            "rest_s": 60,
+            "tempo": "2-1-1",
+            "steps": {
+              "ar": [
+                "نم على بطنك وذراعاك ممدودتان فوق رأسك.",
+                "ارفع صدرك وذراعيك عن الأرض معاً.",
+                "اسحب كوعيك للخلف والجانب ثم مدّهما مرة أخرى."
+              ],
+              "en": [
+                "Lie face down, arms extended overhead.",
+                "Lift your chest and arms off the floor together.",
+                "Pull your elbows back and wide, then re-extend."
+              ]
+            },
+            "note": {
+              "ar": "مهم جداً لطولك: يصلح تقوس الظهر فيظهر الطول الحقيقي.",
+              "en": "Crucial at your height: it fixes a rounded back so your real height shows."
+            }
+          }
+        ]
+      },
+      {
+        "id": "thu",
+        "day": 4,
+        "emoji": "💪",
+        "title": {
+          "ar": "الخميس",
+          "en": "Thursday"
+        },
+        "focus": {
+          "ar": "ضخ الدم (ذراعان + كتف خلفي)",
+          "en": "Pump day (arms + rear delts)"
+        },
+        "is_rest": false,
+        "exercises": [
+          {
+            "id": "diamond_pushup",
+            "name": {
+              "ar": "ضغط الماسة (Diamond Push-ups)",
+              "en": "Diamond Push-ups"
+            },
+            "target": {
+              "ar": "الترايسبس · منتصف الصدر",
+              "en": "Triceps · inner chest"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "حتى الفشل",
+              "en": "to failure"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "ضع يديك متلاصقتين تحت صدرك على شكل ماسة.",
+                "كوعاك قريبان من جسمك.",
+                "انزل ٣ ثوانٍ وادفع بقوة."
+              ],
+              "en": [
+                "Place your hands together under your chest forming a diamond.",
+                "Keep your elbows tucked close to your body.",
+                "Lower for 3 seconds, then press hard."
+              ]
+            },
+            "note": {
+              "ar": "لو صعب، افعلها على ركبتيك — الأهم هو الفشل العضلي.",
+              "en": "Too hard? Do them from your knees - reaching failure is what matters."
+            }
+          },
+          {
+            "id": "bag_curl2",
+            "name": {
+              "ar": "بايسبس بالحقيبة (Backpack Curls)",
+              "en": "Backpack Curls"
+            },
+            "target": {
+              "ar": "البايسبس",
+              "en": "Biceps"
+            },
+            "sets": 4,
+            "reps": {
+              "ar": "١٢-١٥",
+              "en": "12-15"
+            },
+            "rest_s": 90,
+            "tempo": "3-1-1",
+            "steps": {
+              "ar": [
+                "أمسك الحقيبة من الحزامين.",
+                "كوع ثابت بجانب الجسم.",
+                "ارفع ثم انزل ٣ ثوانٍ بدون تأرجح."
+              ],
+              "en": [
+                "Grip the backpack by both straps.",
+                "Elbows pinned to your sides.",
+                "Curl up, lower for 3 seconds, zero swinging."
+              ]
+            },
+            "note": {
+              "ar": "في آخر تكرارين، اعصر البايسبس ثانية كاملة في الأعلى.",
+              "en": "On the last two reps, squeeze a full second at the top."
+            }
+          },
+          {
+            "id": "reverse_angels",
+            "name": {
+              "ar": "ملائكة الثلج العكسية (Reverse Snow Angels)",
+              "en": "Reverse Snow Angels"
+            },
+            "target": {
+              "ar": "الكتف الخلفي · تقويم الظهر",
+              "en": "Rear delts · posture"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "٢٠",
+              "en": "20"
+            },
+            "rest_s": 60,
+            "tempo": "2-0-2",
+            "steps": {
+              "ar": [
+                "نم على بطنك وارفع صدرك قليلاً عن الأرض.",
+                "ابدأ وذراعاك فوق رأسك.",
+                "حرّكهما في قوس واسع إلى جانبيك ثم أرجعهما."
+              ],
+              "en": [
+                "Lie face down and lift your chest slightly off the floor.",
+                "Start with your arms overhead.",
+                "Sweep them in a wide arc out to your sides, then return."
+              ]
+            },
+            "note": {
+              "ar": "يضرب الكتف الخلفي ويصلح تقوس الظهر — لا تهمله.",
+              "en": "Hits the rear delt and fixes rounded shoulders - don't skip it."
+            }
+          },
+          {
+            "id": "plank",
+            "name": {
+              "ar": "البلانك (Plank)",
+              "en": "Plank"
+            },
+            "target": {
+              "ar": "البطن كله",
+              "en": "Whole core"
+            },
+            "sets": 3,
+            "reps": {
+              "ar": "٦٠ ثانية",
+              "en": "60 seconds"
+            },
+            "rest_s": 60,
+            "tempo": "ثابت",
+            "steps": {
+              "ar": [
+                "ساعداك على الأرض وكوعاك تحت كتفيك.",
+                "شدّ مؤخرتك وبطنك — جسمك خط مستقيم.",
+                "تنفّس ولا تحبس النفس."
+              ],
+              "en": [
+                "Forearms on the floor, elbows under your shoulders.",
+                "Squeeze glutes and abs - your body is one straight line.",
+                "Breathe; never hold your breath."
+              ]
+            },
+            "note": {
+              "ar": "لو ٦٠ ثانية صعبة، ابدأ بـ٣٠ وزد ٥ ثوانٍ كل أسبوع.",
+              "en": "If 60 s is too much, start at 30 s and add 5 s per week."
+            }
+          }
+        ]
+      },
+      {
+        "id": "fri",
+        "day": 5,
+        "emoji": "🧘",
+        "title": {
+          "ar": "الجمعة",
+          "en": "Friday"
+        },
+        "focus": {
+          "ar": "راحة تامة",
+          "en": "Full rest"
+        },
+        "is_rest": true,
+        "exercises": [],
+        "rest_plan": [
+          {
+            "ar": "راحة تامة — لا تمرين ولا مشي طويل.",
+            "en": "Full rest - no training, no long walks."
+          },
+          {
+            "ar": "راجع صورك وقارن تقدمك، واكتب خطة الأسبوع الجاي.",
+            "en": "Review your photos, compare progress, plan next week."
+          },
+          {
+            "ar": "نم ٩ ساعات كاملة. النوم جزء من التمرين.",
+            "en": "Get a full 9 hours. Sleep is part of the training."
+          }
+        ]
+      }
+    ]
+  },
+  "routine": [
+    {
+      "id": "wake",
+      "time": "06:30",
+      "emoji": "⏰",
+      "title": {
+        "ar": "استيقاظ",
+        "en": "Wake up"
+      },
+      "detail": {
+        "ar": "لا تسوّف المنبه. قوم فوراً.",
+        "en": "Don't snooze. Get up immediately."
+      },
+      "category": "sleep"
+    },
+    {
+      "id": "water_wake",
+      "time": "06:32",
+      "emoji": "💧",
+      "title": {
+        "ar": "لتر ماء فوراً",
+        "en": "1 litre of water immediately"
+      },
+      "detail": {
+        "ar": "زجاجتان قبل أي شيء ثاني.",
+        "en": "Two glasses before anything else."
+      },
+      "category": "water"
+    },
+    {
+      "id": "breakfast",
+      "time": "06:45",
+      "emoji": "🍳",
+      "title": {
+        "ar": "الإفطار الكامل (٤٥ جم بروتين)",
+        "en": "Full breakfast (45 g protein)"
+      },
+      "detail": {
+        "ar": "٤ بيضات + فول + خبز + كوبان حليب.",
+        "en": "4 eggs + fava beans + bread + 2 cups of milk."
+      },
+      "category": "food"
+    },
+    {
+      "id": "school",
+      "time": "07:30",
+      "emoji": "🎒",
+      "title": {
+        "ar": "المدرسة (٧:٣٠ ص - ٢:٠٠ م)",
+        "en": "School (7:30 AM - 2:00 PM)"
+      },
+      "detail": {
+        "ar": "خذ زجاجة الماء الكبيرة + سناكس الترمس/الجبن.",
+        "en": "Take the big water bottle + your lupini/cheese snack."
+      },
+      "category": "study"
+    },
+    {
+      "id": "water_school",
+      "time": "10:00",
+      "emoji": "💧",
+      "title": {
+        "ar": "زجاجتا ماء في المدرسة",
+        "en": "Two glasses of water at school"
+      },
+      "detail": {
+        "ar": "التركيز في الحصة يعتمد عليها.",
+        "en": "Your focus in class depends on it."
+      },
+      "category": "water"
+    },
+    {
+      "id": "lunch",
+      "time": "15:00",
+      "emoji": "🍛",
+      "title": {
+        "ar": "الغداء (تعافي)",
+        "en": "Lunch (recovery)"
+      },
+      "detail": {
+        "ar": "مكرونة/أرز + عدس + ربع دجاجة + سلطة.",
+        "en": "Pasta/rice + lentils + quarter chicken + salad."
+      },
+      "category": "food"
+    },
+    {
+      "id": "nap",
+      "time": "16:30",
+      "emoji": "😴",
+      "title": {
+        "ar": "قيلولة القوة (٢٠-٣٠ دقيقة فقط)",
+        "en": "Power nap (only 20-30 minutes)"
+      },
+      "detail": {
+        "ar": "لا تزد عن ٣٠ دقيقة حتى لا تخرب نوم الليل.",
+        "en": "Don't exceed 30 minutes or you'll wreck night sleep."
+      },
+      "category": "sleep"
+    },
+    {
+      "id": "pre_workout_meal",
+      "time": "16:40",
+      "emoji": "🥔",
+      "title": {
+        "ar": "وجبة ما قبل التمرين",
+        "en": "Pre-workout meal"
+      },
+      "detail": {
+        "ar": "٢ بطاطس مسلوقة + بيضة.",
+        "en": "2 boiled potatoes + 1 egg."
+      },
+      "category": "food"
+    },
+    {
+      "id": "workout",
+      "time": "17:30",
+      "emoji": "🏋️",
+      "title": {
+        "ar": "وقت التمرين",
+        "en": "Workout time"
+      },
+      "detail": {
+        "ar": "أفضل وقت: حرارة جسمك وقوتك في الذروة.",
+        "en": "The best slot: body temperature and strength peak here."
+      },
+      "category": "workout"
+    },
+    {
+      "id": "dinner_study",
+      "time": "19:30",
+      "emoji": "📚",
+      "title": {
+        "ar": "عشاء + دراسة",
+        "en": "Dinner + study"
+      },
+      "detail": {
+        "ar": "التمرين زاد تدفق الدم لدماغك — استغله في المذاكرة.",
+        "en": "Training boosted blood flow to your brain - use it for studying."
+      },
+      "category": "study"
+    },
+    {
+      "id": "screens_off",
+      "time": "22:30",
+      "emoji": "📵",
+      "title": {
+        "ar": "إغلاق الشاشات",
+        "en": "Screens off"
+      },
+      "detail": {
+        "ar": "الموبايل يدمر الميلاتونين المسؤول عن النوم.",
+        "en": "Your phone destroys the melatonin that drives sleep."
+      },
+      "category": "sleep"
+    },
+    {
+      "id": "sleep",
+      "time": "23:00",
+      "emoji": "🌙",
+      "title": {
+        "ar": "نوم عميق (١١:٠٠ م)",
+        "en": "Deep sleep (11:00 PM)"
+      },
+      "detail": {
+        "ar": "هرمون النمو يُفرز ٨٠٪ بين ١١ م و٢ ص وأنت نائم فقط. السهر = رمي تمرينك في الزبالة.",
+        "en": "80% of growth hormone is released between 11 PM and 2 AM, only while asleep. Staying up = throwing your training in the bin."
+      },
+      "category": "sleep"
+    }
+  ],
+  "backpack": {
+    "title": {
+      "ar": "تجهيز الحقيبة (أمان + وزن)",
+      "en": "Building your backpack (safety + load)"
+    },
+    "rules": [
+      {
+        "ar": "لا تضع الكتب مباشرة: زوايا الكتب الحادة تجرح ظهر الحقيبة من الداخل وتؤلم ظهرك.",
+        "en": "Never pack books directly: sharp corners tear the bag lining and dig into your spine."
+      },
+      {
+        "ar": "الحل الذكي: املأ ٣-٤ قوارير بلاستيك (١.٥ لتر) بالرمل والماء. الرمل أثقل بكثير ومجاني.",
+        "en": "The smart fix: fill 3-4 plastic bottles (1.5 L) with sand and water. Sand is far heavier and free."
+      },
+      {
+        "ar": "ضع القوارير داخل الحقيبة فتصير مبطنة وآمنة وثقيلة.",
+        "en": "Put the bottles inside the bag: it becomes padded, safe and heavy."
+      },
+      {
+        "ar": "أغلق دائماً حزام الصدر والحزام الوسطي أثناء التمرين حتى لا تنزلق الأكتاف.",
+        "en": "Always fasten the chest and waist straps while training so your shoulders can't slip."
+      },
+      {
+        "ar": "طاولة السفرة: تأكد أنها ثقيلة ولن تنقلب عليك قبل كل مجموعة.",
+        "en": "Dining table: confirm it is heavy and cannot flip onto you before every set."
+      }
+    ]
+  },
+  "progress": {
+    "title": {
+      "ar": "كيف تقيس تقدمك (بلا ميزان ولا شريط قياس)",
+      "en": "How to measure progress (no scale, no tape)"
+    },
+    "kpis": [
+      {
+        "id": "clothes",
+        "emoji": "👕",
+        "title": {
+          "ar": "اختبار الملابس",
+          "en": "The clothes test"
+        },
+        "detail": {
+          "ar": "البس تيشيرت ضيقاً قليلاً الآن. كل شهر لاحظ كيف يحس عند الكتف والصدر، وكيف يحس عند البطن.",
+          "en": "Wear a slightly tight t-shirt now. Every month notice how it feels at the shoulders/chest versus the belly."
+        },
+        "log": "note"
+      },
+      {
+        "id": "strength",
+        "emoji": "📈",
+        "title": {
+          "ar": "اختبار القوة",
+          "en": "The strength test"
+        },
+        "detail": {
+          "ar": "سجّل كم تكرار تجديف طاولة قدرت عليه. من ٨ تكرارات إلى ١٤ بنفس الوزن في شهر = أنت تبني عضل حتماً.",
+          "en": "Log your max table-row reps. Going from 8 to 14 reps at the same load in a month = you are definitely building muscle."
+        },
+        "log": "reps"
+      },
+      {
+        "id": "photo",
+        "emoji": "📸",
+        "title": {
+          "ar": "المرآة والصور",
+          "en": "Mirror & photos"
+        },
+        "detail": {
+          "ar": "صورة كل يوم ١٥ في الشهر، بنفس الإضاءة ونفس الوضع ونفس الملابس.",
+          "en": "A photo on the 15th of every month: same light, same pose, same clothes."
+        },
+        "log": "photo"
+      },
+      {
+        "id": "vascularity",
+        "emoji": "🩸",
+        "title": {
+          "ar": "أوردة الذراع",
+          "en": "Arm vascularity"
+        },
+        "detail": {
+          "ar": "مع نزول الدهون وزيادة العضل ستظهر خطوط على ساعديك والبايسبس.",
+          "en": "As fat drops and muscle grows, veins will start showing on your forearms and biceps."
+        },
+        "log": "note"
+      }
+    ],
+    "strength_log": {
+      "title": {
+        "ar": "سجل القوة",
+        "en": "Strength log"
+      },
+      "exercises": [
+        {
+          "id": "table_row",
+          "name": {
+            "ar": "تجديف الطاولة (أقصى تكرار)",
+            "en": "Table rows (max reps)"
+          }
+        },
+        {
+          "id": "wide_pushup",
+          "name": {
+            "ar": "ضغط واسع (أقصى تكرار)",
+            "en": "Wide push-ups (max reps)"
+          }
+        },
+        {
+          "id": "pike_pushup",
+          "name": {
+            "ar": "ضغط الزاوية (أقصى تكرار)",
+            "en": "Pike push-ups (max reps)"
+          }
+        },
+        {
+          "id": "goblet_squat",
+          "name": {
+            "ar": "سكوات الحقيبة (أقصى تكرار)",
+            "en": "Backpack squats (max reps)"
+          }
+        },
+        {
+          "id": "plank",
+          "name": {
+            "ar": "البلانك (ثواني)",
+            "en": "Plank (seconds)"
+          }
+        }
+      ]
+    },
+    "measurements": [
+      {
+        "id": "weight",
+        "name": {
+          "ar": "الوزن (كغ)",
+          "en": "Weight (kg)"
+        }
+      },
+      {
+        "id": "shoulders",
+        "name": {
+          "ar": "محيط الكتفين (سم)",
+          "en": "Shoulders (cm)"
+        }
+      },
+      {
+        "id": "chest",
+        "name": {
+          "ar": "محيط الصدر (سم)",
+          "en": "Chest (cm)"
+        }
+      },
+      {
+        "id": "waist",
+        "name": {
+          "ar": "محيط الخصر (سم)",
+          "en": "Waist (cm)"
+        }
+      },
+      {
+        "id": "arm",
+        "name": {
+          "ar": "محيط الذراع (سم)",
+          "en": "Arm (cm)"
+        }
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "ego",
+      "emoji": "🚨",
+      "severity": "high",
+      "title": {
+        "ar": "الأنا (Ego Lifting)",
+        "en": "Ego lifting"
+      },
+      "text": {
+        "ar": "لا تحاول رفع حقيبة ثقيلة جداً فتقوّس ظهرك. الإصابة في سن ١٥ قد تسبب لك آلاماً مزمنة مدى الحياة. التحكم في الوزن أهم من الوزن نفسه.",
+        "en": "Don't load the bag so heavy that your back rounds. An injury at 15 can become chronic pain for life. Controlling the weight matters more than the weight."
+      }
+    },
+    {
+      "id": "sugar",
+      "emoji": "🥤",
+      "severity": "high",
+      "title": {
+        "ar": "السكر والمشروبات الغازية",
+        "en": "Sugar & sodas"
+      },
+      "text": {
+        "ar": "هذه هي لصوص الميزانية ولصوص العضلات. اشترِ الحليب والبيض بدلاً من البيبسي والشيبسي.",
+        "en": "These rob both your budget and your muscles. Buy milk and eggs instead of soda and crisps."
+      }
+    },
+    {
+      "id": "patience",
+      "emoji": "⏳",
+      "severity": "mid",
+      "title": {
+        "ar": "الصبر الممل",
+        "en": "Boring patience"
+      },
+      "text": {
+        "ar": "في الأسبوعين الأولين ستحس بألم عضلي (DOMS) وتحس أنك ما تتغير. هذا طبيعي تماماً. التغيير البصري الحقيقي يبدأ من الشهر الثالث.",
+        "en": "For the first two weeks you'll be sore (DOMS) and feel unchanged. That's completely normal. Visible change starts around month three."
+      }
+    },
+    {
+      "id": "study",
+      "emoji": "📖",
+      "severity": "mid",
+      "title": {
+        "ar": "الدراسة أولاً",
+        "en": "Study comes first"
+      },
+      "text": {
+        "ar": "التمرين يجب أن يزيد تركيزك في الدراسة لا العكس. إذا عندك امتحانات، قلّل التمرين إلى ٣ أيام في الأسبوع فقط.",
+        "en": "Training should sharpen your focus, not ruin it. During exams, drop to just 3 sessions a week."
+      }
+    },
+    {
+      "id": "sleep",
+      "emoji": "🌙",
+      "severity": "high",
+      "title": {
+        "ar": "النوم قبل ١١",
+        "en": "Asleep before 11"
+      },
+      "text": {
+        "ar": "هرمون النمو يُفرز بنسبة ٨٠٪ بين ١١ مساءً و٢ فجراً — وفقط إذا كنت في نوم عميق. السهر يلغي تعب يومك كامل.",
+        "en": "80% of your growth hormone is released between 11 PM and 2 AM - and only in deep sleep. Staying up cancels the whole day's work."
+      }
+    }
+  ],
+  "philosophy": [
+    {
+      "emoji": "🧬",
+      "title": {
+        "ar": "أنت في النافذة الذهبية",
+        "en": "You're in the golden window"
+      },
+      "text": {
+        "ar": "في سن ١٥ جسمك يضخ هرمون النمو والتستوستيرون بشكل طبيعي لم يحدث في أي سن آخر. لا نحتاج منشطات — نحتاج فقط إعطاء جسمك سبباً للبناء (التمرين) ومواد بناء رخيصة (الطعام).",
+        "en": "At 15 your body floods with growth hormone and testosterone like never again. No drugs needed - just give your body a reason to build (training) and cheap building material (food)."
+      }
+    },
+    {
+      "emoji": "📏",
+      "title": {
+        "ar": "طولك ميزة وعيب",
+        "en": "Your height is a gift and a curse"
+      },
+      "text": {
+        "ar": "العيب: العضلة الطويلة تأخذ وقتاً لتبدو ممتلئة. الميزة: بمجرد أن تملأ الكتف والظهر ستبدو كالإله اليوناني، لأن الـ V-Shape على الطوال مرعب وجميل جداً.",
+        "en": "The curse: long muscles take longer to look full. The gift: once you fill out your shoulders and back you'll look like a Greek statue - a V-taper on a tall frame is spectacular."
+      }
+    },
+    {
+      "emoji": "💰",
+      "title": {
+        "ar": "اقتصاديات البروتين",
+        "en": "Protein economics"
+      },
+      "text": {
+        "ar": "البروتين ليس فقط في اللحوم الغالية. سنعتمد على ملوك البروتين الرخيص: البيض، العدس، الفول، الترمس، القريش، الحليب، الدجاجة الكاملة، الصويا.",
+        "en": "Protein isn't only in expensive meat. We rely on the kings of cheap protein: eggs, lentils, fava, lupini, cottage cheese, milk, whole chicken, soy."
+      }
+    }
+  ],
+  "reminders": {
+    "water": [
+      "06:32",
+      "10:00",
+      "13:00",
+      "15:05",
+      "17:30",
+      "21:30"
+    ],
+    "workout": "17:25",
+    "sleep": "22:30",
+    "enabled": true
+  }
+}

@@ -1,0 +1,128 @@
+name: Build & publish APK
+
+# Builds a signed release APK and publishes it as a GitHub Release.
+# The app's built-in updater reads that release and offers "download & install"
+# from inside the app - no sideloading from a computer, no Play Store needed.
+#
+# Trigger it in two ways:
+#   1. Push a tag like  v1.1.0+2   ->  git tag v1.1.0+2 && git push origin v1.1.0+2
+#   2. GitHub -> Actions -> "Build & publish APK" -> Run workflow (manual)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*+*'
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Also publish a GitHub Release (needed for the in-app updater)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: '3.47.4'
+  JAVA_VERSION: '17'
+
+jobs:
+  build:
+    name: Build release APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze (non-blocking)
+        run: flutter analyze --no-fatal-infos || true
+
+      - name: Run tests
+        run: flutter test
+
+      # ------------------------------------------------------------------
+      # Signing.  Two options, in order of preference:
+      #   A) repository secrets: ANDROID_KEYSTORE_BASE64, KEYSTORE_PASSWORD,
+      #      KEY_ALIAS, KEY_PASSWORD
+      #   B) the keystore committed in android/keystore (works out of the box)
+      # ------------------------------------------------------------------
+      - name: Prepare signing (from secrets, when present)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+          KS_KEY_PASS: ${{ secrets.KEY_PASSWORD }}
+          KS_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          mkdir -p android/keystore
+          printf '%s' "$KS_B64" | base64 -d > android/keystore/vsystem-release.jks
+          {
+            echo "storePassword=$KS_PASS"
+            echo "keyPassword=$KS_KEY_PASS"
+            echo "keyAlias=$KS_ALIAS"
+            echo "storeFile=keystore/vsystem-release.jks"
+          } > android/key.properties
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Prepare artefacts
+        run: |
+          set -e
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk dist/V-System-universal.apk
+
+          VER=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          NAME="${VER%%+*}"
+          CODE="${VER##*+}"
+          if [ "$NAME" = "$CODE" ]; then CODE=1; fi
+          echo "versionName=$NAME" >> "$GITHUB_ENV"
+          echo "versionCode=$CODE" >> "$GITHUB_ENV"
+
+          printf '{"versionName":"%s","versionCode":%s,"flutter":"%s"}\n' \
+                 "$NAME" "$CODE" "$FLUTTER_VERSION" > dist/version.json
+          cat dist/version.json
+
+          (cd dist && sha256sum *.apk > checksums.sha256 && cat checksums.sha256)
+          ls -lh dist
+
+      - name: Upload APK as a build artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: V-System-APK
+          path: |
+            dist/*.apk
+            dist/version.json
+            dist/checksums.sha256
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: ${{ startsWith(github.ref, 'refs/tags/') || inputs.publish_release }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('v{0}+{1}', env.versionName, env.versionCode) }}
+          name: V-System ${{ env.versionName }} (${{ env.versionCode }})
+          generate_release_notes: true
+          files: |
+            dist/V-System-universal.apk
+            dist/version.json
+            dist/checksums.sha256

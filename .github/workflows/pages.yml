@@ -1,0 +1,49 @@
+name: Publish content.json (GitHub Pages)
+
+# Publishes the root content.json to GitHub Pages so you have a second,
+# cache-friendly remote URL for the app's content updates:
+#   https://qbrahym02-cmyk.github.io/vshape-app/content.json
+#
+# The app defaults to the raw.githubusercontent URL; both point at the same
+# file, so use whichever you prefer in Settings -> Content file URL.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content.json'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp content.json _site/content.json
+          printf '<!doctype html><meta charset="utf-8"><title>V-System content</title><pre>%s</pre>' \
+            "$(cat content.json | head -c 200000)" > _site/index.html
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
