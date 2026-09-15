@@ -91,8 +91,11 @@ jobs:
       - name: Analyze (non-blocking)
         run: flutter analyze --no-fatal-infos || true
 
+      # The default concurrency (6 isolates) starves the tests that read the real
+      # wall clock - the rest-timer ones - on a 2 vCPU runner, and they then report
+      # "did not complete". Pinning it keeps the suite deterministic.
       - name: Run tests
-        run: flutter test
+        run: flutter test --concurrency=2
 
       # ------------------------------------------------------------------
       # Signing.  Two options, in order of preference:
