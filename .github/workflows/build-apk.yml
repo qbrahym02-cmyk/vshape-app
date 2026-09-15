@@ -66,7 +66,7 @@ jobs:
       #   B) the keystore committed in android/keystore (works out of the box)
       # ------------------------------------------------------------------
       - name: Prepare signing (from secrets, when present)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: ${{ env.KS_B64 != '' }}
         env:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
