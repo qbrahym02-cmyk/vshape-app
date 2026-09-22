@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <!-- Intentionally declared together (sideloaded app, not on Play):
+         SCHEDULE_EXACT_ALARM covers Android 12/12L (granted by default there),
+         USE_EXACT_ALARM auto-grants on 13+ so water/workout/sleep reminders
+         stay exact without a settings trip. Alarms.kt still falls back to
+         inexact scheduling when neither is permitted. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>

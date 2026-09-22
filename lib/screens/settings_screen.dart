@@ -359,6 +359,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await st.setContentUrl(ctrl.text);
       await st.syncContent();
     }
+    ctrl.dispose();
   }
 
   void _showHelp(BuildContext context) {

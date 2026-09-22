@@ -19,6 +19,7 @@ class RestTimerController extends ChangeNotifier {
   int _left = 0;
   bool _paused = false;
   String? _label;
+  bool _arabic = true;
 
   int get total => _total;
   int get left => _left;
@@ -28,9 +29,11 @@ class RestTimerController extends ChangeNotifier {
   double get progress => _total == 0 ? 0 : (1 - _left / _total).clamp(0.0, 1.0);
 
   /// Starts (or restarts) the countdown. [label] is shown next to the seconds,
-  /// e.g. the exercise name.
-  void start(int seconds, {String? label}) {
+  /// e.g. the exercise name. [arabic] localises the "rest is over"
+  /// notification.
+  void start(int seconds, {String? label, bool? arabic}) {
     final s = seconds.clamp(5, 3600);
+    if (arabic != null) _arabic = arabic;
     _total = s;
     _left = s;
     _label = label;
@@ -106,7 +109,7 @@ class RestTimerController extends ChangeNotifier {
     await Native.notify(
       id: 9101,
       title: '⏱️ V-System',
-      body: 'خلصت الراحة — المجموعة الجاية 💪',
+      body: _arabic ? 'خلصت الراحة — المجموعة الجاية 💪' : 'Rest is over - next set 💪',
     );
   }
 
@@ -272,13 +275,14 @@ class RestPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final st = context.st;
     final c = RestTimerScope.maybeOf(context);
     return GestureDetector(
       onTap: c == null
           ? null
           : () {
               HapticFeedback.selectionClick();
-              c.start(seconds, label: label);
+              c.start(seconds, label: label, arabic: st.isArabic);
             },
       child: Pill(
         '${seconds}${l.seconds} ${l.rest} ⏱',

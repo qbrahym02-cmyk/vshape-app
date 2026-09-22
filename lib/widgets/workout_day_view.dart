@@ -132,12 +132,17 @@ class WorkoutDayView extends StatelessWidget {
         Gap(totalSets > 0 ? 4 : 0),
         if (totalSets > 0)
           FilledButton.icon(
-            onPressed: () {
+            onPressed: () async {
               HapticFeedback.mediumImpact();
-              st.toggleDayDone(day.id);
+              // Snapshot first: dayDoneToday only reflects the new value after
+              // the async prefs write completes, so reading it right after the
+              // (un-awaited) toggle used to print the inverted message.
+              final wasDone = st.dayDoneToday(day.id);
+              await st.toggleDayDone(day.id);
+              if (!context.mounted) return;
               snack(
                 context,
-                st.dayDoneToday(day.id)
+                !wasDone
                     ? (st.isArabic ? 'تم تسجيل إنجاز اليوم 💪' : 'Session marked complete 💪')
                     : (st.isArabic ? 'ألغيت علامة الإنجاز' : 'Completion unmarked'),
                 color: C.violet,

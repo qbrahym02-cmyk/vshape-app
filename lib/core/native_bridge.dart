@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -10,11 +9,6 @@ import 'models.dart';
 /// All platform-channel traffic with the Kotlin side live here.
 class Native {
   static const MethodChannel _ch = MethodChannel('vshape/native');
-  static const EventChannel _dl = EventChannel('vshape/download_progress');
-
-  static Stream<Map<String, dynamic>> get downloadEvents => _dl
-      .receiveBroadcastStream()
-      .map((e) => (e as Map).cast<String, dynamic>());
 
   static Future<Map<String, dynamic>> packageInfo() async {
     try {
@@ -36,6 +30,21 @@ class Native {
     try {
       final r = await _ch.invokeMethod<String>('deviceAbi');
       return r ?? '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  /// "universal" when the installed APK ships every ABI (its versionCode
+  /// carries no per-ABI offset), otherwise the single ABI it was built for
+  /// (e.g. "arm64-v8a"). '' when the answer is unavailable - the updater then
+  /// falls back to a plain code heuristic.
+  ///
+  /// This is what makes versionCode comparison unambiguous: the Kotlin side
+  /// opens the installed APK and counts its `lib/<abi>/` folders.
+  static Future<String> buildFlavor() async {
+    try {
+      return await _ch.invokeMethod<String>('buildFlavor') ?? '';
     } catch (_) {
       return '';
     }
@@ -171,7 +180,14 @@ class Reminders {
       await Native.cancelAll();
       return;
     }
-    await Native.requestNotificationPermission();
+    // Best-effort permission ask, deliberately *not* awaited: if the system
+    // dialog gets dismissed without an answer, a pending future here would
+    // silently block the content sync and the update check that run right
+    // after boot. Alarms are scheduled regardless - Android 13+ simply
+    // suppresses the notifications while the permission is denied.
+    unawaited(Native.requestNotificationPermission()
+        .timeout(const Duration(seconds: 8), onTimeout: () => false)
+        .catchError((_) => false));
     await Native.scheduleDaily(buildAlarms(st.content, st.isArabic));
   }
 
@@ -199,18 +215,4 @@ class Water {
 
   static String body(String time, bool ar) =>
       ar ? 'اشرب زجاجة الآن — عضلاتك ٧٥٪ ماء.' : 'Drink a glass now - your muscles are 75% water.';
-}
-
-/// Tiny helper used by the settings screen to preview the JSON payload.
-String prettyJson(Map<String, dynamic> m) {
-  const e = JsonEncoder.withIndent('  ');
-  final s = e.convert(m);
-  return s.length > 4000 ? '${s.substring(0, 4000)}\n…' : s;
-}
-
-/// Convenience accessors so screens don't repeat `st.content.water...`.
-extension ContentX on AppContent {
-  WaterConfig get w => water;
-  FoodConfig get f => food;
-  WorkoutConfig get wk => workout;
 }

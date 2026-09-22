@@ -205,6 +205,7 @@ class _LogRow extends StatelessWidget {
         ],
       ),
     );
+    ctrl.dispose();
     if (res == null) return;
     // Read the history first: appendLog replaces an entry from the same day.
     final before = <num>[

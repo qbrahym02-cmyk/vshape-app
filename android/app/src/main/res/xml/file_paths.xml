@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <!-- Where UpdateService.download() writes the update APK
+         (getExternalStorageDirectory -> Android/data/<pkg>/files). -->
     <external-files-path name="updates" path="." />
-    <external-path name="external" path="." />
+    <!-- Fallback when no external storage exists (getApplicationDocumentsDirectory). -->
     <files-path name="internal" path="." />
     <cache-path name="cache" path="." />
 </paths>

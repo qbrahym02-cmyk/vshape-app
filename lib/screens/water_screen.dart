@@ -168,7 +168,11 @@ class _WaterSlotCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final st = context.st;
     final c = st.content.water;
-    final slot = c.slots.firstWhere((e) => e.id == slotId);
+    // The slot list can change under a running build when a content sync
+    // lands mid-frame; a missing id must not crash the tab.
+    final matches = c.slots.where((e) => e.id == slotId).toList();
+    if (matches.isEmpty) return const SizedBox.shrink();
+    final slot = matches.first;
     final done = st.slotDone(slotId);
     final complete = done >= slot.glasses;
     final t = Theme.of(context);

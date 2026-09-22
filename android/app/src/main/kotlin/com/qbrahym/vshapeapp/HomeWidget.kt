@@ -64,8 +64,12 @@ class HomeWidget : AppWidgetProvider() {
             val v = RemoteViews(ctx.packageName, R.layout.widget_vsystem)
             val ar = (d?.optString("lang", "ar") ?: "ar") == "ar"
 
-            fun s(key: String, arDefault: String, enDefault: String): String =
-                d?.optString(key) ?: if (ar) arDefault else enDefault
+            fun s(key: String, arDefault: String, enDefault: String): String {
+                // optString returns "" (not null) for a missing key, so the
+                // Kotlin defaults only apply when the value is missing *or* blank.
+                val v = d?.optString(key) ?: ""
+                return if (v.isNotBlank()) v else if (ar) arDefault else enDefault
+            }
 
             val water = d?.optString("water") ?: "0.0"
             val goal = d?.optString("waterGoal") ?: "3.8"

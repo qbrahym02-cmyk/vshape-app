@@ -31,6 +31,15 @@ int _i(dynamic v, [int d = 0]) => v is num ? v.toInt() : int.tryParse('$v') ?? d
 
 List<dynamic> _list(dynamic v) => v is List ? v : const <dynamic>[];
 
+/// JSON list of objects -> map list, skipping elements of a wrong type
+/// (a string, a number, null). One malformed entry in content.json must hide
+/// that single item - never reject the whole file.
+Iterable<Map<String, dynamic>> _maps(dynamic v) sync* {
+  for (final e in _list(v)) {
+    if (e is Map) yield e.cast<String, dynamic>();
+  }
+}
+
 /// Coerces a JSON list of strings (or of {"ar":..,"en":..} objects) into
 /// a plain list of strings for the requested language.
 List<String> _biStrings(dynamic v, bool wantArabic) {
@@ -177,7 +186,7 @@ class WaterConfig {
       minMl: _i(j['min_ml'], 3500),
       maxMl: _i(j['max_ml'], 4000),
       note: _txt(j['note']),
-      slots: [for (final e in _list(j['slots'])) WaterSlot.from((e as Map).cast<String, dynamic>())],
+      slots: [for (final e in _maps(j['slots'])) WaterSlot.from(e)],
     );
   }
 }
@@ -246,8 +255,7 @@ class ExtrasConfig {
   factory ExtrasConfig.from(Map<String, dynamic> j) => ExtrasConfig(
         note: _txt(j['note']),
         items: [
-          for (final e in _list(j['items']))
-            FoodExtra.from((e as Map).cast<String, dynamic>())
+          for (final e in _maps(j['items'])) FoodExtra.from(e)
         ],
       );
 }
@@ -281,8 +289,7 @@ class Meal {
         proteinG: _i(j['protein_g']),
         kcal: _i(j['kcal']),
         items: [
-          for (final e in _list(j['items']))
-            MealItem.from((e as Map).cast<String, dynamic>())
+          for (final e in _maps(j['items'])) MealItem.from(e)
         ],
         tip: _txt(j['tip']),
       );
@@ -409,10 +416,9 @@ class FoodConfig {
       kcalTarget: (kt is List && kt.length >= 2) ? [_i(kt[0], 2800), _i(kt[1], 3000)] : [2800, 3000],
       proteinTarget: _i(j['protein_g_target'], 150),
       budgetRule: _txt(j['budget_rule']),
-      meals: [for (final e in _list(j['meals'])) Meal.from((e as Map).cast<String, dynamic>())],
+      meals: [for (final e in _maps(j['meals'])) Meal.from(e)],
       sources: [
-        for (final e in _list(j['protein_sources']))
-          ProteinSource.from((e as Map).cast<String, dynamic>())
+        for (final e in _maps(j['protein_sources'])) ProteinSource.from(e)
       ]..sort((a, b) => a.rank.compareTo(b.rank)),
       avoid: BiList.from(j['avoid']),
       extras: ExtrasConfig.from(
@@ -496,8 +502,7 @@ class WorkoutDay {
         focus: _txt(j['focus']),
         isRest: j['is_rest'] == true,
         exercises: [
-          for (final e in _list(j['exercises']))
-            Exercise.from((e as Map).cast<String, dynamic>())
+          for (final e in _maps(j['exercises'])) Exercise.from(e)
         ],
         restPlan: BiList.from(j['rest_plan']),
       );
@@ -543,12 +548,10 @@ class WorkoutConfig {
         restRule: _txt(j['rest_rule']),
         equipmentNote: _txt(j['equipment_note']),
         days: [
-          for (final e in _list(j['days']))
-            WorkoutDay.from((e as Map).cast<String, dynamic>())
+          for (final e in _maps(j['days'])) WorkoutDay.from(e)
         ]..sort((a, b) => a.day.compareTo(b.day)),
         safetyGates: [
-          for (final e in _list(j['safety_gates']))
-            SafetyGate.from((e as Map).cast<String, dynamic>())
+          for (final e in _maps(j['safety_gates'])) SafetyGate.from(e)
         ],
       );
 }
@@ -755,21 +758,19 @@ class ProgressConfig {
     final sl = (j['strength_log'] as Map?)?.cast<String, dynamic>() ?? const {};
     return ProgressConfig(
       title: _txt(j['title']),
-      kpis: [for (final e in _list(j['kpis'])) Kpi.from((e as Map).cast<String, dynamic>())],
+      kpis: [for (final e in _maps(j['kpis'])) Kpi.from(e)],
       strengthTitle: _txt(sl['title']),
       strengthExercises: [
-        for (final e in _list(sl['exercises']))
-          LoggableItem.from((e as Map).cast<String, dynamic>())
+        for (final e in _maps(sl['exercises']))
+          LoggableItem.from(e)
       ],
       measurements: [
-        for (final e in _list(j['measurements']))
-          LoggableItem.from((e as Map).cast<String, dynamic>())
+        for (final e in _maps(j['measurements'])) LoggableItem.from(e)
       ],
       photoCheckpoint: PhotoCheckpoint.from(
           (j['photo_checkpoint'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{}),
       monthlyChecks: [
-        for (final e in _list(j['monthly_checks']))
-          MonthlyCheck.from((e as Map).cast<String, dynamic>())
+        for (final e in _maps(j['monthly_checks'])) MonthlyCheck.from(e)
       ],
     );
   }
@@ -1010,7 +1011,7 @@ class AppContent {
       workout: WorkoutConfig.from(m('workout')),
       examMode: ExamModeConfig.from(m('exam_mode')),
       routine: [
-        for (final e in _list(j['routine'])) RoutineItem.from((e as Map).cast<String, dynamic>())
+        for (final e in _maps(j['routine'])) RoutineItem.from(e)
       ]..sort((a, b) => a.time.compareTo(b.time)),
       sleep: SleepConfig.from(m('sleep')),
       checkin: CheckInConfig.from(m('checkin')),
@@ -1019,9 +1020,9 @@ class AppContent {
           (backpackMap['load'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{}),
       progress: ProgressConfig.from(m('progress')),
       report: ReportConfig.from(m('report')),
-      rules: [for (final e in _list(j['rules'])) Rule.from((e as Map).cast<String, dynamic>())],
+      rules: [for (final e in _maps(j['rules'])) Rule.from(e)],
       philosophy: [
-        for (final e in _list(j['philosophy'])) Philosophy.from((e as Map).cast<String, dynamic>())
+        for (final e in _maps(j['philosophy'])) Philosophy.from(e)
       ],
       reminders: ReminderConfig.from(m('reminders')),
       raw: j,
@@ -1095,8 +1096,7 @@ class CheckInConfig {
         soreThreshold: _i(j['sore_threshold'], 3),
         deloadAfterDays: _i(j['deload_after_days'], 2),
         levels: [
-          for (final e in _list(j['levels']))
-            CheckInLevel.from((e as Map).cast<String, dynamic>())
+          for (final e in _maps(j['levels'])) CheckInLevel.from(e)
         ],
       );
 }

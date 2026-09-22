@@ -28,8 +28,9 @@ class TodayScreen extends StatelessWidget {
     final protein = st.proteinEaten();
     final proteinPct = c.food.proteinTarget == 0 ? 0.0 : protein / c.food.proteinTarget;
 
-    final today = c.workout.dayForWeekday(now.weekday) ??
-        (c.workout.days.isNotEmpty ? c.workout.days.first : null);
+    // Only the day that actually matches today's weekday - a 6-day content
+    // plan must not present Monday's session as "today's workout".
+    final today = c.workout.dayForWeekday(now.weekday);
 
     return Scaffold(
       body: ListView(
@@ -454,8 +455,13 @@ class _TodayWorkoutCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(Icons.chevron_left_rounded,
-                  color: Theme.of(context).textTheme.bodySmall?.color),
+              // Forward chevron for the reading direction (Arabic is RTL).
+              Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left_rounded
+                    : Icons.chevron_right_rounded,
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
             ],
           ),
         ),

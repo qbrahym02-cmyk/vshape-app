@@ -1,7 +1,12 @@
 name: vshape_app
 description: "V-System - a pre-set daily lifestyle system: routine, water, food and home workouts."
 publish_to: 'none'
-version: 1.1.0+7
+
+# The +N is the versionCode the in-app updater compares.
+# NOTE: the jump from +7 to +5000 is deliberate and load-bearing: installs of
+# 1.0.2-1.1.0 subtract the per-ABI offset from this base code, so a normal
+# +8 could never look "newer" to them. 5000 clears that bar on every ABI.
+version: 1.2.0+5000
 
 environment:
   sdk: ^3.9.0
@@ -16,6 +21,7 @@ dependencies:
   shared_preferences: ^2.3.3
   path_provider: ^2.1.5
   url_launcher: ^6.3.1
+  crypto: ^3.0.6  # sha-256 verification of downloaded update APKs (pure Dart)
 
 # objective_c >= 9.4 uses an `Architecture.arm64e` member that this Dart SDK
 # does not expose yet; it is an Apple-only transitive dep, so pin it back.

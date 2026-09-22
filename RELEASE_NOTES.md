@@ -1,79 +1,57 @@
-# 🆕 وش الجديد في 1.1.0
+# 🆕 وش الجديد في 1.2.0
 
-نفس خطتك بالظبط — نفس الطعام والتمارين والمواعيد — لكن بأدوات تخلّي الالتزام أسهل، والميزانية أذكى، والسلامة مضمونة.
+هذا التحديث **يصل لكل المستخدمين القدامى** — حتى اللي على إصدارات 1.0.2 و1.0.3 اللي ما كان يظهر عندهم شريط التحديث أبداً. تركّب فوق نسختك الحالية وبياناتك محفوظة.
 
-## 📅 تقرير الأسبوع
-رقم واحد صريح: نسبة التزامك في آخر ٧ أيام عبر ٥ خانات (ماء · بروتين · روتين · تمرين · نوم)، ومقارنتها بالأسبوع اللي قبله، وتحديد **أضعف خانة** تركّز عليها الأسبوع الجاي. من «المزيد ← تقرير الأسبوع».
+## 🔄 المُحدِّث نفسه انصلح
+- **كل الأجهزة تشوف التحديثات الآن**: النسخ القديمة كانت تحسب رقم الإصدار غلط، فمستخدمو 1.0.2/1.0.3 ما كان يوصلهم إشعار أبداً، ومستخدمو النسخة الشاملة (universal) كان يشوفون «فيه نسخة جديدة» حتى وهم على آخر إصدار. الاتنين انصلحوا من الجذر.
+- **التحميل يتحقق بالبصمة (SHA-256)**: لو انقطع النت أو صار خلل في التنزيل، التطبيق يحذف الملف المعطوب ويعيد المحاولة — بدل ما يفشل المثبّت برسالة غامضة.
+- **ما يركّب ملف قديم بالغلط**: لو نزّلت نسخة وما ثبّتها، ثم طلعت نسخة أحدث، التطبيق يتخلص من الملف القديم تلقائياً.
+- **الشريط الأخضر يفتح بطاقة التحديث مباشرة** في الإعدادات — ما عاد تحتاج تدوّر عليها.
 
-## 🎓 وضع الامتحانات
-الدراسة أولاً. مفتاح واحد في الإعدادات يخفض الأسبوع إلى **٣ جلسات** (السبت دفع · الأحد سحب · الاثنين أرجل) — وهي أهم ٣ جلسات لبناء الـ V. بقية الأيام تبهت في الجدول ولا تُحسب ضدك في التقرير، ومعاها ٥ قواعد للأسبوع المخفّف.
+## 🧩 تحسينات الودجت
+- الودجت اللي تضيفه بعد فتح التطبيق يتحدث فوراً مع أول تفاعل (كان يعرض أرقام قديمة حتى تعيد تشغيل التطبيق).
+- وحدة البروتين «جم» ورا الرقم، و«راحة» في يوم الراحة — كانوا يطلعون فاضيين.
+- تحديث دوري كل ٣٠ دقيقة حتى لو التطبيق مقفول.
 
-## 😴 نوم النمو
-٨٠٪ من هرمون النمو يُفرز بين ١١ مساءً و٢ فجراً. سجّل ساعة نومك كل صباح بضغطة واحدة (٢٢:١٥ / ٢٢:٤٥ / ٢٣:٠٠ / ٢٣:٣٠ / ٠٠:٣٠ أو وقت حر) — والتطبيق يحسب **سلسلة النوم** 🔥 ويقول لك بكم دقيقة تأخرت. النوم بعد منتصف الليل يُحسب متأخراً.
-
-## 🌡️ تقييم اليوم
-٣٠ ثانية قبل التمرين: من «🚀 جاهز تماماً» إلى «🤒 مرهق/مريض». التطبيق يقول لك بالضبط كم مجموعة تحذف اليوم، ولو نزل تقييمك يومين ورا بعض يقترح **أسبوع تخفيف (Deload)** بدل ما تتصاب.
-
-## 💰 حاسبة سعر البروتين
-اكتب سعر كل مصدر في منطقتك مرة واحدة (بيضة، ١٠٠ جم عدس، لتر حليب…). التطبيق:
-- يرتّب المصادر من **الأرخص للأغلى** حسب ثمن كل **٢٠ جم بروتين**؛
-- يبني **أرخص سلة** تصل لهدف ١٥٠ جم بحدود يومية واقعية (٦ بيضات، ٢ لتر حليب، ٣٠٠ جم قريش)؛
-- يقول لك بصراحة لو أسعارك ما توصلش للهدف.
-رمز العملة يتغيّر من نفس البطاقة (ج.م، ر.س، €…).
-
-## ⚖️ حاسبة وزن الحقيبة
-كم قارورة؟ ماء ولا رمل؟ الحاسبة تعطيك الوزن الكلي فوراً (الرمل ١.٦ كجم/لتر مقابل ١.٠ للماء)، و**المدى الآمن لجسمك** (١٠–٢٠٪ من وزنك)، وحكم: خفيف / مناسب / ثقيل — مع خطوات التعبئة الخمسة.
-
-## 🛡️ بوابة أمان طاولة السفرة
-قبل أول تجديف طاولة تظهر **٩ خطوات لتأمين الطاولة ١٠٠٪**: نوع الطاولة، اختبار الوزن الكامل ٣ مرات، الحائط، الأرض، القبضة، تثبيت إضافي، وضعية الجسم، مساعد في أول أسبوع، و٣ تكرارات اختبار. إقرار واحد يُحفظ، والبطاقة تفضل خضراء للمراجعة.
-
-## 📸 صورة يوم ١٥ + فحوصات الشهر
-تذكير بالصورة الشهرية من يوم ١٥ مع checklist (نفس الإضاءة، نفس الوقت، ٣ لقطات، نفس الملابس، بلا شفط بطن)، و٤ فحوصات شهرية تُعلَّم لكل شهر على حدة: صورة · ملابس · قياسات · أقصى تكرارات.
-
-## 🏆 لحظة الرقم القياسي
-أي رقم أفضل في سجل القوة يفتح احتفالاً حقيقياً — لأنه الدليل الوحيد على البناء العضلي بلا ميزان ولا مقاس خصر.
+## 🛠️ إصلاحات دقيقة
+- رسالة «تم تسجيل الإنجاز» صارت صح (كانت تنعكس: تسجيل يظهر كإلغاء والإلغاء كتسجيل).
+- تنبيه «خلصت الراحة» صار بلغة التطبيق (كان عربي دائماً حتى للواجهة الإنجليزية).
+- محتوى `content.json` فيه عنصر غلط؟ التطبيق يتجاهل العنصر المعطوب ويكمل — بدل ما يرفق الملف كله.
+- سهم بطاقة التمرين يشاور الاتجاه الصحيح في الواجهتين.
 
 ## 🧪 تحت الغطاء
-- كل الحسابات في `lib/core/plan_math.dart` (بلا أي اعتماد على Flutter) + **٤٢ اختباراً جديداً** — المجموع **١٠٤** اختبارات.
-- المحتوى **v5**: كل الأقسام الجديدة تُقرأ من `content.json`، ومحتوى v4 القديم يخفي الميزات بدل ما يكسر التطبيق.
-- CI: `flutter test --concurrency=2` — ما فيش اختبارات تتسابق بعد كدا.
+- قناة `buildFlavor` الجديدة تقرأ نوع الملف المثبّت (شامل أو لمعالج واحد) من داخل الـ APK نفسه — فمقارنة الإصدارات صارت قطعية بلا تخمين.
+- رقم الإصدار قفز إلى **5000** عمداً: النسخ القديمة (1.0.2–1.1.0) تطرح إزاحة المعالج من الرقم، فأي رقم صغير ما كان يبين لها أبداً — 5000 يتجاوز هذا العائق لكل المعالجات.
+- المجموع **120** اختباراً، منها 16 اختبار انحدار يثبتون أن كل نسخة منشورة سابقاً (1.0.2 → 1.1.0، على كل المعالجات) تشوف هذا التحديث.
 
 > بياناتك محفوظة — التحديث يركّب فوق النسخة الحالية.
 
 ---
 
-# 🆕 What's new in 1.1.0
+# 🆕 What's new in 1.2.0
 
-Same plan - same food, same exercises, same clock - with new tools that make adherence easier, the budget smarter and the setup safer.
+This update **reaches every legacy install** - including 1.0.2/1.0.3 users who never saw the update strip. It installs over your current build and keeps your data.
 
-## 📅 Weekly report
-One honest number: your adherence over the last 7 days across 5 columns (water · protein · routine · training · sleep), compared with the previous week, plus the **weakest column** to fix next.
+## 🔄 The updater itself is fixed
+- **Every device now sees updates**: old versions mis-computed the version code, so 1.0.2/1.0.3 users were never offered anything, and universal-APK users saw "new version" even when up to date. Both are fixed at the root.
+- **Downloads are SHA-256 verified**: a truncated or corrupted file is deleted and reported instead of failing later inside the installer with a cryptic message.
+- **No stale installs**: if you downloaded an update but never installed it and a newer one shipped, the old file is dropped automatically.
+- **The green strip opens the update card directly** in Settings - no more hunting for it.
 
-## 🎓 Exam mode
-Study first. One switch cuts the week to **3 sessions** (Sat push · Sun pull · Mon legs) - the three that build the V. Dropped days fade out and are never counted against you.
+## 🧩 Widget improvements
+- A widget added after launching the app now updates on the very next tap (it used to show stale numbers until an app restart).
+- The protein unit "g" and the rest-day "rest" label no longer render blank.
+- The widget refreshes at least every 30 minutes even with the app closed.
 
-## 😴 Growth sleep
-80% of growth hormone is released between 11 PM and 2 AM. Log your bedtime in one tap; the app keeps a **sleep streak** 🔥 and tells you how many minutes late you were. After midnight counts as late.
-
-## 🌡️ Daily check-in
-From "🚀 fully ready" to "🤒 ill". The app tells you exactly how many sets to drop, and two low days in a row trigger a **deload** suggestion instead of an injury.
-
-## 💰 Protein price calculator
-Price each source once. The app ranks them by the **cost of 20 g of protein**, builds the **cheapest basket** that reaches 150 g within realistic daily caps, and tells you honestly if your prices cannot get there. The currency symbol is editable.
-
-## ⚖️ Backpack load calculator
-Bottles + sand or water -> total kilos (sand is 1.6 kg/L versus 1.0 for water), your **safe window** (10-20% of bodyweight) and a verdict: light / good / heavy.
-
-## 🛡️ Table-row safety gate
-Before your first table row: a **9-step checklist** to secure the table 100%, acknowledged once and kept green for review.
-
-## 📸 Photo on the 15th + monthly checks
-A monthly photo reminder from the 15th with the same-light checklist, plus 4 monthly ticks stored per month.
-
-## 🏆 Personal-record moment
-A better number in the strength log now gets a celebration - the only proof of growth that needs no scale.
+## 🛠️ Small fixes
+- The "session marked complete" message is no longer inverted.
+- The "rest is over" notification follows the app language instead of always Arabic.
+- A malformed element in `content.json` is skipped instead of rejecting the whole file.
+- The workout card chevron points the right way in both layouts.
 
 ## 🧪 Under the hood
-All the maths lives in `lib/core/plan_math.dart` (no Flutter dependency) with **42 new tests** (104 total). Content is **v5**; old v4 content hides the new features instead of breaking. CI now runs `flutter test --concurrency=2`.
+- A new `buildFlavor` channel reads the installed APK's own `lib/` folders (universal vs single-ABI), making version comparison deterministic.
+- The version code deliberately jumps to **5000**: legacy builds subtract the ABI offset from it, so a small number could never look newer to them - 5000 clears that bar on every ABI.
+- **120 tests** total, including 16 regression tests proving every previously published build (1.0.2 -> 1.1.0, every ABI) is offered this update.
 
 > Your data is kept - the update installs over the current build.

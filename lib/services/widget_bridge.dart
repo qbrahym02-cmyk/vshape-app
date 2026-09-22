@@ -84,6 +84,7 @@ class WidgetData {
       'waterPct': waterGoalMl == 0 ? 0 : (waterMl * 100 / waterGoalMl).round().clamp(0, 100),
       'protein': proteinG,
       'proteinGoal': proteinGoalG,
+      'proteinUnit': l('جم', 'g'),
       'kcal': kcal,
       'kcalGoal': kcalGoal,
       'streak': streak,
@@ -99,6 +100,7 @@ class WidgetData {
       'labelToday': l('تمرين اليوم', "Today's session"),
       'labelSets': l('مجموعات', 'sets'),
       'restDay': restDay,
+      'restLabel': l('راحة', 'rest'),
     };
   }
 }
@@ -113,7 +115,6 @@ class WidgetBridge {
   static const MethodChannel _ch = MethodChannel('vshape/native');
 
   static bool _installed = false;
-  static bool _probed = false;
 
   /// True once we know the user actually placed the widget on a home screen.
   static bool get installed => _installed;
@@ -125,14 +126,18 @@ class WidgetBridge {
     } catch (_) {
       _installed = false;
     }
-    _probed = true;
     return _installed;
   }
 
   /// Pushes the current numbers to every widget instance.
+  ///
+  /// Deliberately *not* gated on the probe result anymore: a widget added
+  /// after the app booted would otherwise keep showing stale numbers until
+  /// the next manual refresh, because the probe cache still said "nothing
+  /// installed". updateAll() is a no-op when no widget exists, so pushing
+  /// unconditionally is cheap and always correct.
   static Future<void> push(WidgetData data) async {
     if (!Platform.isAndroid || kIsWeb) return;
-    if (_probed && !_installed) return; // nothing on the home screen: skip the IPC
     try {
       await _ch.invokeMethod<void>('updateWidget', {'json': jsonEncode(data.toJson())});
       _installed = true;

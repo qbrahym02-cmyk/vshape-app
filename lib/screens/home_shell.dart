@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../screens/food_screen.dart';
 import '../screens/more_screen.dart';
+import '../screens/settings_screen.dart';
 import '../screens/today_screen.dart';
 import '../screens/training_screen.dart';
 import '../screens/water_screen.dart';
@@ -58,7 +59,13 @@ class HomeShellState extends State<HomeShell> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (rest != null) _RestTimerHost(controller: rest),
-              if (st.pendingUpdate != null) _UpdateStrip(onTap: () => go(4)),
+              // Straight to the update card in Settings - sending the user to
+              // the "More" tab left them hunting for it.
+              if (st.pendingUpdate != null)
+                _UpdateStrip(
+                    onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                        )),
               Container(height: 1, color: t.dividerColor.withValues(alpha: 0.5)),
               NavigationBar(
                 selectedIndex: _index,

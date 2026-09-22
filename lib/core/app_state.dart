@@ -25,8 +25,6 @@ class K {
   static const lastSync = 'last_sync_ms';
   static const lastUpdateCheck = 'last_update_check_ms';
   static const remindersOn = 'reminders_on';
-  static const onboarded = 'onboarded_v1';
-  static const lastContentVersion = 'last_content_version';
 
   static String date() {
     final n = DateTime.now();
@@ -129,9 +127,6 @@ class AppState extends ChangeNotifier {
     return st;
   }
 
-  @visibleForTesting
-  static Future<String> debugReadAsset() => _readAsset();
-
   static Future<String> _readAsset() async {
     try {
       return await rootBundle.loadString(kAssetContent);
@@ -174,7 +169,6 @@ class AppState extends ChangeNotifier {
       contentSource = 'remote';
       await _prefs.setString(K.contentJson, jsonEncode(map));
       await _prefs.setInt(K.lastSync, DateTime.now().millisecondsSinceEpoch);
-      await _prefs.setInt(K.lastContentVersion, fresh.version);
       lastSyncAt = DateTime.now();
       syncStatus = SyncStatus.ok;
       syncMessage = isArabic

@@ -6,7 +6,10 @@
     android:targetCellHeight="2"
     android:minResizeWidth="180dp"
     android:minResizeHeight="110dp"
-    android:updatePeriodMillis="0"
+    <!-- Let the system re-render the widget at least every 30 min (Android
+         floors anything below that), so it never shows numbers from the last
+         app open. Every in-app tap still pushes immediately on top. -->
+    android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/widget_vsystem"
     android:previewLayout="@layout/widget_vsystem"
     android:description="@string/widget_description"

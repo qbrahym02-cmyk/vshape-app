@@ -14,6 +14,8 @@ class UpdateController extends ChangeNotifier {
 
   final AppState _state;
 
+  bool _disposed = false;
+
   bool busy = false;
   bool downloading = false;
   double progress = 0;
@@ -25,15 +27,28 @@ class UpdateController extends ChangeNotifier {
   bool needsUnknownSources = false;
   CancelToken? _cancel;
 
-  /// Installed versionCode with the per-ABI offset removed.
-  int get normalizedCurrent =>
-      currentCode - ReleaseInfo.abiOffsetFor(_installedAbi);
-
   String _installedAbi = '';
+  String _buildFlavor = '';
+
+  /// ChangeNotifier throws in debug builds when a listener is notified after
+  /// dispose; every notify in this class happens after an await, so a user
+  /// leaving Settings mid-check would otherwise trip it.
+  void _notify() {
+    if (!_disposed) notifyListeners();
+  }
+
+  /// Installed versionCode with the per-ABI offset removed - see
+  /// [ReleaseInfo.normalizeInstalledCode] for why the build *flavour*
+  /// (universal vs split) decides whether to subtract at all.
+  int get normalizedCurrent => ReleaseInfo.normalizeInstalledCode(
+        code: currentCode,
+        flavor: _buildFlavor,
+        deviceAbi: _installedAbi,
+      );
 
   bool get hasUpdate =>
       latest != null &&
-      latest!.apkUrl.isNotEmpty &&
+      latest!.hasDownloadableApk &&
       latest!.normalizedCode > normalizedCurrent;
 
   Future<void> loadCurrent() async {
@@ -41,16 +56,29 @@ class UpdateController extends ChangeNotifier {
     currentCode = (p['versionCode'] as num?)?.toInt() ?? 1;
     currentName = (p['versionName'] ?? '1.0.0').toString();
     _installedAbi = await Native.deviceAbi();
-    notifyListeners();
+    _buildFlavor = await Native.buildFlavor();
+    _notify();
   }
+
+  /// Pure decision (kept separate so it is testable): a file downloaded for a
+  /// previous release must not be installed as if it were the new one.
+  static bool isStaleDownload(ReleaseInfo? was, ReleaseInfo? now) =>
+      was != null && now != null && was.tagName != now.tagName;
 
   Future<void> check({bool silent = false}) async {
     busy = true;
     error = null;
-    notifyListeners();
+    _notify();
     try {
       await loadCurrent();
-      latest = await UpdateService.latest(abi: await Native.deviceAbi());
+      final fresh = await UpdateService.latest(abi: await Native.deviceAbi());
+      if (isStaleDownload(latest, fresh)) {
+        // The user downloaded 1.1.0 but never installed it, and 1.2.0 is out:
+        // drop the old file so "Install now" can never install the wrong APK.
+        downloaded = null;
+        progress = 0;
+      }
+      latest = fresh;
       if (latest == null && !silent) {
         error = _state.isArabic
             ? 'ما لقيت نسخة منشورة على GitHub (أو ما فيه إنترنت).'
@@ -60,17 +88,17 @@ class UpdateController extends ChangeNotifier {
       if (!silent) error = e.toString().replaceFirst('Exception: ', '');
     } finally {
       busy = false;
-      notifyListeners();
+      _notify();
     }
   }
 
   Future<bool> download() async {
     final info = latest;
-    if (info == null || info.apkUrl.isEmpty) return false;
+    if (info == null || !info.hasDownloadableApk) return false;
     downloading = true;
     progress = 0;
     error = null;
-    notifyListeners();
+    _notify();
     _cancel = CancelToken();
     try {
       final f = await UpdateService.download(
@@ -78,17 +106,17 @@ class UpdateController extends ChangeNotifier {
         cancel: _cancel,
         onProgress: (p) {
           progress = p;
-          notifyListeners();
+          _notify();
         },
       );
       downloaded = f;
       downloading = false;
-      notifyListeners();
+      _notify();
       return true;
     } catch (e) {
       downloading = false;
       error = e.toString().replaceFirst('Exception: ', '');
-      notifyListeners();
+      _notify();
       return false;
     }
   }
@@ -96,7 +124,7 @@ class UpdateController extends ChangeNotifier {
   void cancelDownload() {
     _cancel?.cancel('user');
     downloading = false;
-    notifyListeners();
+    _notify();
   }
 
   Future<bool> install() async {
@@ -105,12 +133,18 @@ class UpdateController extends ChangeNotifier {
     needsUnknownSources = !(await Native.canRequestUnknownSources());
     if (needsUnknownSources) {
       await Native.openUnknownSourcesSettings();
-      notifyListeners();
+      _notify();
       return false;
     }
     final ok = await Native.installApk(f.path);
-    notifyListeners();
+    _notify();
     return ok;
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }
 
@@ -146,16 +180,21 @@ class UpdateChecker {
     if (info == null) return;
 
     final cur = await Native.versionCode();
-    final abi = await Native.deviceAbi();
-    final installed = cur - ReleaseInfo.abiOffsetFor(abi);
+    final installed = ReleaseInfo.normalizeInstalledCode(
+      code: cur,
+      flavor: await Native.buildFlavor(),
+      deviceAbi: await Native.deviceAbi(),
+    );
 
-    if (isNewer(latestCode: info.normalizedCode, installedCode: installed)) {
+    if (info.hasDownloadableApk &&
+        isNewer(latestCode: info.normalizedCode, installedCode: installed)) {
       // Deliberately *not* remembered as "seen": the green strip has to come
       // back on the next launch, otherwise an update silently never arrives.
       st.pendingUpdate = info;
       st.ping();
-    } else {
+    } else if (st.pendingUpdate != null) {
       st.pendingUpdate = null;
+      st.ping();
     }
   }
 }

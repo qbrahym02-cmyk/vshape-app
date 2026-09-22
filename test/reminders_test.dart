@@ -177,7 +177,9 @@ void main() {
       expect(info.apkUrl, 'https://dl/u.apk');
     });
 
-    test('a release with no APK falls back to the release page', () {
+    test('a release with no APK keeps its page URL out of apkUrl', () {
+      // The page is NOT a downloadable APK: pretending otherwise made the
+      // updater save the HTML as "update.apk" and fail in the installer.
       final info = UpdateService.parseRelease({
         'tag_name': 'v1.0.4+5',
         'html_url': 'https://github.com/o/r/releases/tag/v1.0.4+5',
@@ -185,8 +187,10 @@ void main() {
           {'name': 'checksums.sha256', 'size': 1, 'browser_download_url': 'https://dl/c'},
         ],
       }, abi: 'arm64-v8a');
-      expect(info.apkUrl, contains('/releases/tag/'));
+      expect(info.apkUrl, '');
+      expect(info.hasDownloadableApk, isFalse);
       expect(info.apkSize, 0);
+      expect(info.releaseUrl, contains('/releases/tag/'));
     });
 
     test('the updater offers a build only when it is genuinely newer', () {

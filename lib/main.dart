@@ -43,7 +43,8 @@ Future<void> _afterFirstFrame(AppState st) async {
     } catch (_) {}
   }
 
-  // Once a day, quietly check whether a newer APK was published.
+  // Quietly check for a newer APK: every 6 h normally, every 20 h while an
+  // update is already pending (see UpdateChecker).
   try {
     await UpdateChecker.maybeNotify(st);
   } catch (_) {}

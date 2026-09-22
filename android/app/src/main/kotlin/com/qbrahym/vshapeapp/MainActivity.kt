@@ -16,6 +16,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
+import java.util.zip.ZipFile
 
 class MainActivity : FlutterActivity() {
 
@@ -25,8 +26,6 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         Alarms.createChannel(this)
-
-        flutterEngine.platformViewsController.registry.let { /* no platform views */ }
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channel).setMethodCallHandler { call, result ->
             when (call.method) {
@@ -118,6 +117,9 @@ class MainActivity : FlutterActivity() {
                         ) {
                             result.success(true)
                         } else {
+                            // If a previous ask never got its answer (activity
+                            // recreated, dialog dismissed), unblock it now.
+                            notifPermissionCallback?.success(false)
                             notifPermissionCallback = result
                             requestPermissions(
                                 arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 9001
@@ -147,6 +149,30 @@ class MainActivity : FlutterActivity() {
                 "deviceAbi" -> {
                     val abis = Build.SUPPORTED_ABIS
                     result.success(if (abis.isNotEmpty()) abis[0] else "")
+                }
+
+                // Which APK flavour is installed? A --split-per-abi build
+                // carries exactly one lib/<abi>/ folder, the universal one
+                // carries them all - and their versionCodes differ by the
+                // per-ABI offset, so the Dart updater needs to know which
+                // flavour it is running on to compare codes correctly.
+                "buildFlavor" -> {
+                    try {
+                        val abis = mutableSetOf<String>()
+                        ZipFile(applicationInfo.sourceDir).use { zf ->
+                            val entries = zf.entries()
+                            while (entries.hasMoreElements()) {
+                                val name = entries.nextElement().name
+                                if (name.startsWith("lib/")) {
+                                    val abi = name.removePrefix("lib/").substringBefore('/')
+                                    if (abi.isNotEmpty()) abis.add(abi)
+                                }
+                            }
+                        }
+                        result.success(if (abis.size > 1) "universal" else (abis.firstOrNull() ?: ""))
+                    } catch (e: Exception) {
+                        result.success("")
+                    }
                 }
 
                 "notify" -> {
