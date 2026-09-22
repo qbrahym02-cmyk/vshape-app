@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'app.dart';
 import 'core/app_state.dart';
 import 'core/native_bridge.dart';
+import 'services/prayer_service.dart';
 import 'services/update_controller.dart';
 
 Future<void> main() async {
@@ -26,6 +27,11 @@ Future<void> _afterFirstFrame(AppState st) async {
   await WidgetsBinding.instance.endOfFrame;
   try {
     await Reminders.apply(st);
+  } catch (_) {}
+
+  // Prayer-time notifications: re-arms the 7-day batch (no-op without a city).
+  try {
+    await Prayers.apply(st);
   } catch (_) {}
 
   // Bring the home-screen widget up to date (no-op when it is not installed).

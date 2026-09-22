@@ -6,7 +6,8 @@ publish_to: 'none'
 # NOTE: the jump from +7 to +5000 is deliberate and load-bearing: installs of
 # 1.0.2-1.1.0 subtract the per-ABI offset from this base code, so a normal
 # +8 could never look "newer" to them. 5000 clears that bar on every ABI.
-version: 1.2.0+5000
+# Keep every future base code > 5000.
+version: 1.3.0+5100
 
 environment:
   sdk: ^3.9.0
@@ -22,6 +23,7 @@ dependencies:
   path_provider: ^2.1.5
   url_launcher: ^6.3.1
   crypto: ^3.0.6  # sha-256 verification of downloaded update APKs (pure Dart)
+  adhan: ^2.0.0  # prayer-time astronomy, pure Dart, offline
 
 # objective_c >= 9.4 uses an `Architecture.arm64e` member that this Dart SDK
 # does not expose yet; it is an Apple-only transitive dep, so pin it back.

@@ -132,6 +132,34 @@ class L10n {
       'Long-press an empty spot on your home screen -> Widgets -> find V-System -> drag it onto the screen. It then refreshes automatically with every tap you make in the app.');
   String get widgetUpdated => s('تم تحديث الودجت ✅', 'Widget refreshed ✅');
 
+  // prayer times (v1.3)
+  String get prayerTimes => s('مواقيت الصلاة', 'Prayer times');
+  String get prayerSubtitle => s('المواقيت + الصلاة القادمة + إشعار عند دخول الوقت',
+      'Times, next prayer, and an alert when a time enters');
+  String get nextPrayer => s('الصلاة القادمة', 'Next prayer');
+  String get remaining => s('المتبقي', 'remaining');
+  String get after => s('بعد', 'after');
+  String get tomorrowFajr => s('فجر الغد', 'tomorrow\'s Fajr');
+  String get chooseCity => s('اختر مدينتك', 'Choose your city');
+  String get city => s('المدينة', 'City');
+  String get searchCity => s('ابحث عن مدينة…', 'Search a city…');
+  String get noCityPicked => s('ما اخترت مدينة بعد — المواقيت تحتاج موقعك التقريبي (بدون GPS، بدون صلاحيات).',
+      'No city picked yet - prayer times need your rough location (no GPS, no permissions).');
+  String get calcMethod => s('طريقة الحساب', 'Calculation method');
+  String get methodAuto => s('تلقائي حسب المدينة', 'Automatic (per city)');
+  String get hanafiAsr => s('عصر الحنفي (ظل مضاعف)', 'Hanafi asr (double shadow)');
+  String get prayerNotifications => s('إشعار عند دخول كل وقت صلاة', 'Alert when each prayer time enters');
+  String get prayerNotifyHint => s('تنبيه بصوت/اهتزاز عند دخول الوقت — قناة مستقلة تتحكم بها من إعدادات النظام',
+      'Sound/vibration when a time enters - a dedicated channel you can control from system settings');
+  String get notificationsArmed => s('الإشعارات مفعّلة', 'Notifications armed');
+  String get notificationsOff => s('الإشعارات مطفأة', 'Notifications off');
+  String get prayersScheduled => s('موعد مجدول', 'times scheduled');
+  String get sunriseNotPrayer => s('الشروق ليس وقت صلاة — نهاية وقت الفجر', 'Sunrise is not a prayer - it ends the Fajr window');
+  String get friday => s('الجمعة', 'Friday');
+  String get jumuah => s('صلاة الجمعة تحل محل الظهر في المساجد', 'Jumu\'ah replaces Dhuhr in mosques');
+  String get pick => s('اختيار', 'Pick');
+
+
   // exercise art
   String get showArt => s('رسوم التمارين', 'Exercise illustrations');
 

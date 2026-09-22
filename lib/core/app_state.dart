@@ -68,6 +68,20 @@ class K {
   /// A safety briefing the user has acknowledged.
   static String gate(String id) => 'gate_$id';
 
+  // ---- v1.3 prayer times ------------------------------------------------
+  /// Picked city id (see PrayerService.kCities), null until the user chooses.
+  static const prayerCity = 'prayer_city';
+
+  /// Calculation-method override; '' = use the city's default.
+  static const prayerMethod = 'prayer_method';
+
+  /// Hanafi asr (shadow factor 2 instead of 1).
+  static const prayerHanafi = 'prayer_hanafi';
+
+  /// Whether prayer-time notifications are armed.
+  static const prayerNotify = 'prayer_notify';
+
+
   /// `yyyy-MM` for [d] - the granularity of the monthly checks.
   static String ymOf(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}';

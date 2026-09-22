@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-/** Re-arms all saved reminders after a reboot or an app update. */
+/** Re-arms all saved reminders and prayer alarms after a reboot or an app update. */
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(ctx: Context, intent: Intent) {
         val a = intent.action ?: return
@@ -14,6 +14,11 @@ class BootReceiver : BroadcastReceiver() {
         ) {
             try {
                 Alarms.scheduleAll(ctx)
+            } catch (e: Exception) {
+            }
+            try {
+                // one-shot prayer alarms: re-arm whatever is still in the future
+                Prayers.scheduleAll(ctx)
             } catch (e: Exception) {
             }
             try {

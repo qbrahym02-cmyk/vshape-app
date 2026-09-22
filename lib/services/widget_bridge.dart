@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../core/app_state.dart';
+import 'prayer_service.dart';
 
 /// Payload for the Android home-screen widget.
 ///
@@ -27,6 +28,14 @@ class WidgetData {
   final String workoutEmoji;
   final bool arabic;
 
+  /// Next prayer line (e.g. "🕋 العصر · ٣:٤٥ م"); empty when unconfigured,
+  /// in which case the widget hides the row.
+  final String prayerLine;
+
+  /// Approximate remaining time, rounded to 5 minutes ("بعد ~٤٠ د"), because
+  /// the widget only re-renders on app interaction + the 30-min system tick.
+  final String prayerLeft;
+
   const WidgetData({
     required this.waterMl,
     required this.waterGoalMl,
@@ -42,6 +51,8 @@ class WidgetData {
     required this.workoutTitle,
     required this.workoutEmoji,
     required this.arabic,
+    this.prayerLine = '',
+    this.prayerLeft = '',
   });
 
   /// Reads the current state - safe to call from tests (pure Dart).
@@ -51,6 +62,30 @@ class WidgetData {
     final day = st.content.workout.dayForWeekday(now.weekday);
     final water = st.waterTotal();
     final glass = st.content.water.glassMl == 0 ? 500 : st.content.water.glassMl;
+
+    // Next prayer (pure local astronomy; '' when no city is picked).
+    var prayerLine = '';
+    var prayerLeft = '';
+    try {
+      final next = Prayers.nextForWidget(PrayerSettings.load(st.prefs));
+      if (next != null) {
+        prayerLine = '${next.id == PrayerId.sunrise ? '🌄' : '🕋'} '
+            '${prayerName(next.id, ar)} · ${fmtClock(next.wall, ar)}'
+            '${next.tomorrow ? (ar ? ' (غداً)' : ' (tmrw)') : ''}';
+        final mins = next.wall
+            .difference(now.toUtc().add(DateTime.now().timeZoneOffset))
+            .inMinutes;
+        if (mins > 0) {
+          final r = (mins / 5).round() * 5;
+          prayerLeft = ar ? 'بعد ~$r د' : 'in ~$r min';
+        } else {
+          prayerLeft = ar ? 'الآن' : 'now';
+        }
+      }
+    } catch (_) {
+      // prayer info must never break the widget push
+    }
+
     return WidgetData(
       waterMl: water,
       waterGoalMl: st.content.water.goalMl,
@@ -70,6 +105,8 @@ class WidgetData {
               : '${day.title.t(ar)} · ${day.focus.t(ar)}'),
       workoutEmoji: day?.emoji ?? '💪',
       arabic: ar,
+      prayerLine: prayerLine,
+      prayerLeft: prayerLeft,
     );
   }
 
@@ -101,6 +138,8 @@ class WidgetData {
       'labelSets': l('مجموعات', 'sets'),
       'restDay': restDay,
       'restLabel': l('راحة', 'rest'),
+      'prayer': prayerLine,
+      'prayerLeft': prayerLeft,
     };
   }
 }

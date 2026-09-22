@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
+import '../screens/prayer_screen.dart';
 import '../screens/progress_screen.dart';
 import '../screens/report_screen.dart';
 import '../screens/rules_screen.dart';
@@ -44,6 +45,15 @@ class MoreScreen extends StatelessWidget {
             color: C.cyan,
             onTap: () => Navigator.push(
                 context, MaterialPageRoute(builder: (_) => const ReportScreen())),
+          ),
+          const Gap(10),
+          _BigTile(
+            emoji: '🕋',
+            title: l.prayerTimes,
+            subtitle: l.prayerSubtitle,
+            color: C.violet,
+            onTap: () => Navigator.push(
+                context, MaterialPageRoute(builder: (_) => const PrayerScreen())),
           ),
           const Gap(10),
           _BigTile(

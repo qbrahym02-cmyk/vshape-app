@@ -67,8 +67,8 @@ class HomeWidget : AppWidgetProvider() {
             fun s(key: String, arDefault: String, enDefault: String): String {
                 // optString returns "" (not null) for a missing key, so the
                 // Kotlin defaults only apply when the value is missing *or* blank.
-                val v = d?.optString(key) ?: ""
-                return if (v.isNotBlank()) v else if (ar) arDefault else enDefault
+                val raw = d?.optString(key) ?: ""
+                return if (raw.isNotBlank()) raw else if (ar) arDefault else enDefault
             }
 
             val water = d?.optString("water") ?: "0.0"
@@ -80,6 +80,17 @@ class HomeWidget : AppWidgetProvider() {
             v.setTextViewText(R.id.w_water, "$water / $goal $unit")
             v.setTextViewText(R.id.w_water_sub, "$glasses $glassesWord")
             v.setProgressBar(R.id.w_water_bar, 100, (d?.optInt("waterPct", 0) ?: 0).coerceIn(0, 100), false)
+
+            // Next-prayer row: pre-formatted by Dart, hidden until a city is
+            // picked ("prayer" key blank / missing).
+            val prayer = d?.optString("prayer") ?: ""
+            if (prayer.isNotBlank()) {
+                v.setTextViewText(R.id.w_prayer, prayer)
+                v.setTextViewText(R.id.w_prayer_left, d?.optString("prayerLeft") ?: "")
+                v.setViewVisibility(R.id.w_prayer_row, android.view.View.VISIBLE)
+            } else {
+                v.setViewVisibility(R.id.w_prayer_row, android.view.View.GONE)
+            }
 
             v.setTextViewText(
                 R.id.w_protein,

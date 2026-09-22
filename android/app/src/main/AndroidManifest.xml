@@ -45,6 +45,10 @@
         <receiver
             android:name=".AlarmReceiver"
             android:exported="false"/>
+        <!-- One-shot prayer-time alarms (exact timestamps, 7-day batch) -->
+        <receiver
+            android:name=".PrayerReceiver"
+            android:exported="false"/>
         <receiver
             android:name=".BootReceiver"
             android:exported="true">

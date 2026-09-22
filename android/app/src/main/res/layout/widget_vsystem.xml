@@ -78,6 +78,39 @@
         android:progress="0"
         android:progressDrawable="@drawable/widget_bar_cyan" />
 
+    <!-- Next prayer + rough remaining time; hidden until a city is picked.
+         Populated pre-formatted by the Dart side (HomeWidget.kt renders it). -->
+    <LinearLayout
+        android:id="@+id/w_prayer_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/w_prayer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="🕋"
+            android:textColor="#A78BFA"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/w_prayer_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text=""
+            android:textColor="#67E8F9"
+            android:textSize="10sp" />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

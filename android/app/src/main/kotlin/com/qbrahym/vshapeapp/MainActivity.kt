@@ -142,6 +142,18 @@ class MainActivity : FlutterActivity() {
                     result.success(true)
                 }
 
+                // Replaces the whole prayer-time batch (7 days of one-shot
+                // alarms at exact timestamps, computed offline by Dart).
+                "schedulePrayers" -> {
+                    val list = call.argument<List<Map<String, Any?>>>("prayers") ?: emptyList()
+                    result.success(Prayers.scheduleBatch(this, list))
+                }
+
+                "cancelPrayers" -> {
+                    Prayers.cancelAll(this)
+                    result.success(true)
+                }
+
                 "scheduled" -> {
                     result.success(Alarms.load(this).map { it.toMap() })
                 }
