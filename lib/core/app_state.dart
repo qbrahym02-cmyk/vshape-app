@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/content_service.dart';
 import '../services/widget_bridge.dart';
+import 'achievements.dart';
 import 'models.dart';
 import 'native_bridge.dart';
 import 'plan_math.dart';
@@ -887,6 +888,102 @@ class AppState extends ChangeNotifier {
     }
     return n;
   }
+
+  // ------------------------------------------------------ v1.4 score -------
+  /// One number for today, 0..100. Rest days and exam-dropped days count the
+  /// training share as met, so a perfect rest day still scores 100.
+  int get dayScoreToday {
+    final c = _content;
+    final tasks = c.routine;
+    final doneTasks = tasks.where((r) => taskDone(r.id)).length;
+
+    final today = c.workout.dayForWeekday(DateTime.now().weekday);
+    double workoutShare;
+    if (today == null || today.isRest || !dayIsActive(today) || today.totalSets == 0) {
+      workoutShare = 1;
+    } else {
+      workoutShare = setsDone(today.id) / today.totalSets;
+    }
+
+    return dayScore(
+      water: share(waterTotal(), c.water.goalMl),
+      protein: share(proteinEaten(), c.food.proteinTarget),
+      tasks: share(doneTasks, tasks.length),
+      workout: workoutShare,
+    );
+  }
+
+  // ------------------------------------------------ v1.4 achievements ------
+  /// Every counter the badge list is judged against, scanned over the last
+  /// [days] days. Nothing is stored: an unlocked badge is always re-derivable
+  /// from the same dated keys the streaks and reports already read.
+  AchievementCounts achievementCounts({int days = 120}) {
+    var loggedDays = 0;
+    var waterGoalDays = 0;
+    var proteinGoalDays = 0;
+    var workoutsDone = 0;
+    var sleepOnTime = 0;
+
+    // The report's pass marks are the goals here too, so a badge and the weekly
+    // report can never disagree about what a "good" day is.
+    final waterBar = _content.water.goalMl > 0
+        ? (_content.water.goalMl * _content.report.waterTarget).round()
+        : 0;
+    final proteinBar = _content.food.proteinTarget > 0
+        ? (_content.food.proteinTarget * _content.report.proteinTarget).round()
+        : 0;
+
+    for (var i = 0; i < days; i++) {
+      final key = keyFor(DateTime.now().subtract(Duration(days: i)));
+
+      final water = waterTotalOn(key);
+      final protein = proteinOn(key);
+      final bedtime = sleepTimeOn(key);
+      var anyTask = false;
+      for (final r in _content.routine) {
+        if (_prefs.getBool(K.task(key, r.id)) ?? false) {
+          anyTask = true;
+          break;
+        }
+      }
+
+      if (water > 0 || protein > 0 || bedtime != null || anyTask) loggedDays++;
+      if (waterBar > 0 && water >= waterBar) waterGoalDays++;
+      if (proteinBar > 0 && protein >= proteinBar) proteinGoalDays++;
+      if (bedtime != null &&
+          bedtimeOnTime(bedtime: bedtime, target: _content.sleep.target)) {
+        sleepOnTime++;
+      }
+
+      final parsed = DateTime.tryParse(key);
+      final day = parsed == null ? null : _content.workout.dayForWeekday(parsed.weekday);
+      if (day != null &&
+          !day.isRest &&
+          dayIsActive(day) &&
+          day.totalSets > 0 &&
+          setsDoneOn(key, day.id) >= day.totalSets) {
+        workoutsDone++;
+      }
+    }
+
+    return AchievementCounts(
+      loggedDays: loggedDays,
+      streak: streak(),
+      waterGoalDays: waterGoalDays,
+      proteinGoalDays: proteinGoalDays,
+      workoutsDone: workoutsDone,
+      sleepOnTime: sleepOnTime,
+      records: recordsIn(400),
+      photosDone: _photosDone,
+    );
+  }
+
+  /// Monthly comparison photos ticked off, across all stored months.
+  int get _photosDone => _prefs
+      .getKeys()
+      .where((k) => k.startsWith('mo_') && k.endsWith('_photo'))
+      .where((k) => _prefs.getBool(k) ?? false)
+      .length;
 
   Future<void> wipeAllData() async {
     // Language, theme and the currency symbol are settings, not training data.

@@ -954,6 +954,32 @@ class ReminderConfig {
   }
 }
 
+/// Rotating motivational messages (v6 content). One quote is picked per day,
+/// deterministically, so every phone shows the same one until midnight.
+class MotivationConfig {
+  final Txt title;
+  final List<Txt> quotes;
+
+  const MotivationConfig._(this.title, this.quotes);
+
+  static const MotivationConfig empty = MotivationConfig._(Txt('', ''), <Txt>[]);
+
+  bool get isEmpty => quotes.isEmpty;
+
+  factory MotivationConfig.from(Map<String, dynamic> j) => MotivationConfig._(
+        _txt(j['title']),
+        [for (final e in _maps(j['quotes'])) _txt(e)],
+      );
+
+  /// The quote of the day for [d]; [offset] shifts the rotation (tap-to-cycle).
+  Txt quoteFor(DateTime d, {int offset = 0}) {
+    if (quotes.isEmpty) return const Txt('', '');
+    final day = d.difference(DateTime(d.year)).inDays;
+    final i = ((day + offset) % quotes.length + quotes.length) % quotes.length;
+    return quotes[i];
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Root
 // ---------------------------------------------------------------------------
@@ -976,6 +1002,7 @@ class AppContent {
   final List<Rule> rules;
   final List<Philosophy> philosophy;
   final ReminderConfig reminders;
+  final MotivationConfig motivation;
   final Map<String, dynamic> raw;
 
   AppContent({
@@ -996,6 +1023,7 @@ class AppContent {
     required this.rules,
     required this.philosophy,
     required this.reminders,
+    required this.motivation,
     required this.raw,
   });
 
@@ -1025,6 +1053,7 @@ class AppContent {
         for (final e in _maps(j['philosophy'])) Philosophy.from(e)
       ],
       reminders: ReminderConfig.from(m('reminders')),
+      motivation: MotivationConfig.from(m('motivation')),
       raw: j,
     );
   }

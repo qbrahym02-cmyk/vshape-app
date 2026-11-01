@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../core/achievements.dart';
 import '../core/theme.dart';
+import '../screens/achievements_screen.dart';
 import '../screens/prayer_screen.dart';
 import '../screens/progress_screen.dart';
 import '../screens/report_screen.dart';
@@ -19,12 +21,26 @@ class MoreScreen extends StatelessWidget {
     final l = context.l10n;
     final c = st.content;
 
+    // Live trophy count for the tile badge - recomputed, never stored.
+    final badges = evaluateAchievements(st.achievementCounts());
+    final unlocked = badges.where((b) => b.unlocked).length;
+
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 26),
         children: [
           ScreenHeader(title: l.more, subtitle: c.meta.tagline.t(st.isArabic)),
 
+          _BigTile(
+            emoji: '🏅',
+            title: l.achievements,
+            subtitle: l.unlockedOf(unlocked, badges.length),
+            color: C.amber,
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const AchievementsScreen())),
+            badge: unlocked > 0,
+          ),
+          const Gap(10),
           _BigTile(
             emoji: '📊',
             title: l.progress,

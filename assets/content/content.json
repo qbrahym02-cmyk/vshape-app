@@ -1,17 +1,17 @@
 {
-  "version": 5,
-  "updated_at": "2026-09-16",
+  "version": 6,
+  "updated_at": "2026-11-01",
   "app": {
     "name": {
       "ar": "نظام V",
       "en": "V-System"
     },
     "tagline": {
-      "ar": "٦ أشهر · جسم V · بدون صالة رياضية · بميزانية محدودة",
-      "en": "6 months · V-shape body · no gym · on a budget"
+      "ar": "٦ أشهر · جسم V · بدون صالة رياضية · بميزانية طالب",
+      "en": "6 months · V-shape body · no gym · on a student budget"
     },
     "profile": {
-      "age": 15,
+      "age": 16,
       "height_cm": [
         185,
         190
@@ -562,8 +562,8 @@
         "en": "Expensive red meat and pre-cut 'fillet' breast"
       },
       {
-        "ar": "المكملات — أنت في سن ١٥ وما تحتاجها",
-        "en": "Supplements — at 15 you simply don't need them"
+        "ar": "المكملات — أنت في سن ١٦ وما تحتاجها",
+        "en": "Supplements - at 16 you simply don't need them"
       }
     ],
     "extras": {
@@ -2215,8 +2215,8 @@
         "en": "Ego lifting"
       },
       "text": {
-        "ar": "لا تحاول رفع حقيبة ثقيلة جداً فتقوّس ظهرك. الإصابة في سن ١٥ قد تسبب لك آلاماً مزمنة مدى الحياة. التحكم في الوزن أهم من الوزن نفسه.",
-        "en": "Don't load the bag so heavy that your back rounds. An injury at 15 can become chronic pain for life. Controlling the weight matters more than the weight."
+        "ar": "لا تحاول رفع حقيبة ثقيلة جداً فتقوّس ظهرك. الإصابة في سن ١٦ قد تسبب لك آلاماً مزمنة مدى الحياة. التحكم في الوزن أهم من الوزن نفسه.",
+        "en": "Don't load the bag so heavy that your back rounds. An injury at 16 can become chronic pain for life. Controlling the weight matters more than the weight."
       }
     },
     {
@@ -2280,8 +2280,8 @@
         "en": "You're in the golden window"
       },
       "text": {
-        "ar": "في سن ١٥ جسمك يضخ هرمون النمو والتستوستيرون بشكل طبيعي لم يحدث في أي سن آخر. لا نحتاج منشطات — نحتاج فقط إعطاء جسمك سبباً للبناء (التمرين) ومواد بناء رخيصة (الطعام).",
-        "en": "At 15 your body floods with growth hormone and testosterone like never again. No drugs needed - just give your body a reason to build (training) and cheap building material (food)."
+        "ar": "في سن ١٦ جسمك يضخ هرمون النمو والتستوستيرون بشكل طبيعي لم يحدث في أي سن آخر. لا نحتاج منشطات — نحتاج فقط إعطاء جسمك سبباً للبناء (التمرين) ومواد بناء رخيصة (الطعام).",
+        "en": "At 16 your body floods with growth hormone and testosterone like never again. No drugs needed - just give your body a reason to build (training) and cheap building material (food)."
       }
     },
     {
@@ -2319,5 +2319,69 @@
     "workout": "17:25",
     "sleep": "22:30",
     "enabled": true
+  },
+  "motivation": {
+    "title": {
+      "ar": "رسالة اليوم",
+      "en": "Message of the day"
+    },
+    "quotes": [
+      {
+        "ar": "العضلة تُبنى في المطبخ وتنمو في النوم وتظهر في المرآة بعد شهور. اليوم مجرد طوبة واحدة — ضعها.",
+        "en": "Muscle is built in the kitchen, grows in your sleep and shows in the mirror months later. Today is just one brick - lay it."
+      },
+      {
+        "ar": "لا يوجد تمرين مثالي ولا يوم مثالي. يوجد فقط يوم فعلته ويوم تأجّلته.",
+        "en": "There is no perfect workout and no perfect day. Only the day you did it and the day you postponed it."
+      },
+      {
+        "ar": "التوقيت أهم من الحماس: زجاجة ماء الآن أفضل من نيّة لترٍ غداً.",
+        "en": "Timing beats motivation: a bottle of water now beats the intention of a litre tomorrow."
+      },
+      {
+        "ar": "أنت لا تنافس أحداً في هذه الغرفة. أنت تنافس نسخة الأمس منك.",
+        "en": "You are not competing with anyone. You are competing with yesterday's version of you."
+      },
+      {
+        "ar": "المجموعة الأخيرة هي التي تُبنى بها العضلة — لا تهرب منها.",
+        "en": "The last set builds the muscle - never escape it."
+      },
+      {
+        "ar": "النوم قبل ١١ ليس رفاهية؛ إنه الجزء الخفي من التمرين.",
+        "en": "Asleep before 11 is not a luxury; it is the invisible half of training."
+      },
+      {
+        "ar": "جسمك يسمع كل شيء يقوله عقلك. كلمه بلطف، ثم اذهب ارفع الحقيبة.",
+        "en": "Your body hears everything your mind says. Speak kindly, then go lift the backpack."
+      },
+      {
+        "ar": "البروتين الرخيص + الانتظام = نتائج تفوق المكملات الغالية والفوضى.",
+        "en": "Cheap protein + consistency = results that beat expensive supplements and chaos."
+      },
+      {
+        "ar": "ستة أشهر تمرّ سواء تمرّنت أم لا. السؤال الوحيد: كيف ستجد نفسك في نهايتها؟",
+        "en": "Six months will pass whether you train or not. The only question: who will you be at the end?"
+      },
+      {
+        "ar": "الانضباط هو أن تفعلها حتى في اليوم الذي لا تشتهيه فيه — خاصةً في ذلك اليوم.",
+        "en": "Discipline is doing it on the day you do not feel like it - especially on that day."
+      },
+      {
+        "ar": "كل زجاجة ماء وكل بيضة وكل نومة مبكرة: تصويت لصالح النسخة القادمة منك.",
+        "en": "Every bottle of water, every egg, every early night: a vote for your future self."
+      },
+      {
+        "ar": "لا تحتاج مزاجاً بطولياً. تحتاج ٩٠ ثانية راحة فقط، ثم مجموعة أخرى.",
+        "en": "You do not need a heroic mood. You need 90 seconds of rest, then one more set."
+      },
+      {
+        "ar": "قارن صورتك بصورتك قبل ٣٠ يوماً فقط — لا بحساب أحد على الإنترنت.",
+        "en": "Compare your photo with yours from 30 days ago - not with anyone's account online."
+      },
+      {
+        "ar": "التعب اليومي ليس عائقاً عن الهدف؛ إنه الطريق إليه.",
+        "en": "Daily fatigue is not an obstacle to the goal; it is the road to it."
+      }
+    ]
   }
 }

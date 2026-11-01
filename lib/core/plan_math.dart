@@ -292,6 +292,26 @@ class WeekReport {
 }
 
 // ---------------------------------------------------------------------------
+// Daily score (v1.4)
+// ---------------------------------------------------------------------------
+
+/// One number for the whole day, 0..100.
+///
+/// Water and protein carry the plan, so they weigh the most; the routine and
+/// the session fill the rest. A rest day passes [workout] as 1 so a perfect
+/// rest day can still score 100 - resting *is* the plan that day.
+int dayScore({
+  required double water,
+  required double protein,
+  required double tasks,
+  required double workout,
+}) {
+  double c(num v) => v <= 0 ? 0 : (v >= 1 ? 1 : v.toDouble());
+  final raw = c(water) * 0.30 + c(protein) * 0.30 + c(tasks) * 0.20 + c(workout) * 0.20;
+  return (raw * 100).round();
+}
+
+// ---------------------------------------------------------------------------
 // Streaks and personal records
 // ---------------------------------------------------------------------------
 

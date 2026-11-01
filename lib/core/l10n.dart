@@ -268,6 +268,26 @@ class L10n {
   String get todayLabel => s('اليوم', 'Today');
   String get daysShort => s('يوم', 'd');
 
+  // daily score + quote + achievements (v1.4)
+  String get scoreTitle => s('نقاط اليوم', "Today's score");
+  String get scoreHint =>
+      s('الماء والبروتين والمهام والتمرين في رقم واحد', 'Water, protein, tasks and training in one number');
+  String get quoteTitle => s('رسالة اليوم', 'Message of the day');
+  String get quoteNext => s('اضغط لرسالة أخرى', 'Tap for another one');
+  String get achievements => s('الإنجازات', 'Achievements');
+  String get achievementsHint =>
+      s('أوسمة تُفتح بالتزامك الحقيقي — لا بالكلام', 'Badges unlocked by real consistency - not talk');
+  String unlockedOf(int n, int total) => s('فتحت $n من $total', '$n of $total unlocked');
+  String get lockedLabel => s('مقفل', 'locked');
+  String get goalLabel => s('الهدف', 'goal');
+
+  /// Time-of-day greeting for the Today header.
+  String greetingFor(DateTime now) {
+    if (now.hour < 12) return s('صباح الخير 👋', 'Good morning 👋');
+    if (now.hour < 17) return s('نهارك سعيد ☀️', 'Good afternoon ☀️');
+    return s('مساء الخير 🌙', 'Good evening 🌙');
+  }
+
   static const _wdAr = ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'];
   static const _wdEn = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   static const _wdArS = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح'];

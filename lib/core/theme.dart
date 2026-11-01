@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 
 /// Colour system of the app: deep navy night + cyan (water) + orange (food).
 class C {
-  static const bg = Color(0xFF0B1020);
-  static const surface = Color(0xFF141A2E);
-  static const surface2 = Color(0xFF1C2440);
-  static const border = Color(0xFF26304F);
+  static const bg = Color(0xFF080D1E);
+  static const surface = Color(0xFF111834);
+  static const surface2 = Color(0xFF1A2348);
+  static const border = Color(0xFF283364);
 
   static const cyan = Color(0xFF22D3EE);
   static const blue = Color(0xFF3B82F6);
@@ -16,10 +16,17 @@ class C {
   static const red = Color(0xFFF87171);
   static const violet = Color(0xFFA78BFA);
 
-  static const lightBg = Color(0xFFF4F6FB);
+  static const lightBg = Color(0xFFF2F5FC);
   static const lightSurface = Color(0xFFFFFFFF);
-  static const lightBorder = Color(0xFFE2E7F2);
+  static const lightBorder = Color(0xFFE1E8F7);
   static const lightText = Color(0xFF10162B);
+
+  /// Violet-to-cyan brand gradient used on score pills and hero surfaces.
+  static const brandGradient = LinearGradient(
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+    colors: [Color(0xFF8B5CF6), Color(0xFF22D3EE)],
+  );
 }
 
 const String kFont = 'Cairo';
@@ -69,7 +76,7 @@ ThemeData buildTheme(Brightness b) {
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: dark ? const Color(0xFF0E1428) : C.lightSurface,
+      backgroundColor: dark ? const Color(0xFF0B1226) : C.lightSurface,
       surfaceTintColor: Colors.transparent,
       indicatorColor: (dark ? C.cyan : const Color(0xFF0E7490)).withValues(alpha: 0.18),
       elevation: 0,

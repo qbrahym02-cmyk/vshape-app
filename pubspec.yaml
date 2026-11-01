@@ -7,7 +7,7 @@ publish_to: 'none'
 # 1.0.2-1.1.0 subtract the per-ABI offset from this base code, so a normal
 # +8 could never look "newer" to them. 5000 clears that bar on every ABI.
 # Keep every future base code > 5000.
-version: 1.3.0+5100
+version: 1.4.0+5200
 
 environment:
   sdk: ^3.9.0

@@ -38,7 +38,8 @@ class TodayScreen extends StatelessWidget {
         children: [
           ScreenHeader(
             title: c.meta.name.t(st.isArabic).isEmpty ? 'V-System' : c.meta.name.t(st.isArabic),
-            subtitle: '${l.weekday(now.weekday)} · ${l.monthDay(now)}',
+            subtitle:
+                '${l.greetingFor(now)} · ${l.weekday(now.weekday)} · ${l.monthDay(now)}',
             trailing: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -49,47 +50,15 @@ class TodayScreen extends StatelessWidget {
             ),
           ),
 
-          // ---------------- hero: three rings ----------------
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: LinearGradient(
-                begin: AlignmentDirectional.topStart,
-                end: AlignmentDirectional.bottomEnd,
-                colors: [
-                  C.violet.withValues(alpha: 0.20),
-                  C.cyan.withValues(alpha: 0.10),
-                ],
-              ),
-              border: Border.all(color: C.border.withValues(alpha: 0.7)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _MiniRing(
-                  value: tasks.isEmpty ? 0 : tasksDone / tasks.length,
-                  color: C.green,
-                  emoji: '✅',
-                  top: '$tasksDone/${tasks.length}',
-                  bottom: l.tasksDone,
-                ),
-                _MiniRing(
-                  value: waterPct,
-                  color: C.cyan,
-                  emoji: '💧',
-                  top: '${(waterTotal / 1000).toStringAsFixed(1)}${l.liters}',
-                  bottom: l.water,
-                ),
-                _MiniRing(
-                  value: proteinPct,
-                  color: C.orange,
-                  emoji: '🍗',
-                  top: '${protein}g',
-                  bottom: l.protein,
-                ),
-              ],
-            ),
+          // ---------------- hero: daily score + three rings ----------------
+          _ScoreHero(
+            score: st.dayScoreToday,
+            waterPct: waterPct,
+            proteinPct: proteinPct,
+            tasksPct: tasks.isEmpty ? 0.0 : tasksDone / tasks.length,
+            waterLabel: '${(waterTotal / 1000).toStringAsFixed(1)}${l.liters}',
+            proteinLabel: '${protein}g',
+            tasksLabel: '$tasksDone/${tasks.length}',
           ),
           const Gap(16),
 
@@ -166,6 +135,8 @@ class TodayScreen extends StatelessWidget {
           // ---------------- growth sleep + monthly photo ----------------
           const SleepCard(),
           const Gap(16),
+          const QuoteCard(),
+          const Gap(16),
           if (!c.progress.photoCheckpoint.isEmpty) ...[
             const PhotoCheckpointCard(),
             const Gap(16),
@@ -187,41 +158,208 @@ class TodayScreen extends StatelessWidget {
   }
 }
 
-class _MiniRing extends StatelessWidget {
-  const _MiniRing({
-    required this.value,
-    required this.color,
-    required this.emoji,
-    required this.top,
-    required this.bottom,
+/// Hero of the Today tab: one big 0..100 score plus the three pillar rings.
+///
+/// The score is the single number a 16-year-old glances at between classes;
+/// the rings keep the detail for when he wants it.
+class _ScoreHero extends StatelessWidget {
+  const _ScoreHero({
+    required this.score,
+    required this.waterPct,
+    required this.proteinPct,
+    required this.tasksPct,
+    required this.waterLabel,
+    required this.proteinLabel,
+    required this.tasksLabel,
   });
 
-  final double value;
-  final Color color;
-  final String emoji;
-  final String top;
-  final String bottom;
+  final int score;
+  final double waterPct;
+  final double proteinPct;
+  final double tasksPct;
+  final String waterLabel;
+  final String proteinLabel;
+  final String tasksLabel;
+
+  Color get _accent {
+    if (score >= 80) return C.green;
+    if (score >= 50) return C.cyan;
+    if (score >= 25) return C.amber;
+    return C.orange;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final l = context.l10n;
+    final t = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [
+            _accent.withValues(alpha: 0.20),
+            C.violet.withValues(alpha: 0.06),
+          ],
+        ),
+        border: Border.all(color: _accent.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        children: [
+          // The big score.
+          RingProgress(
+            value: score / 100,
+            color: _accent,
+            size: 108,
+            stroke: 11,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('$score',
+                    style: t.textTheme.headlineSmall
+                        ?.copyWith(fontSize: 34, color: _accent)),
+                Text(l.scoreTitle, style: t.textTheme.labelSmall),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              children: [
+                _PillarRow(
+                  emoji: '✅',
+                  label: l.tasksDone,
+                  value: tasksLabel,
+                  pct: tasksPct,
+                  color: C.green,
+                ),
+                const SizedBox(height: 11),
+                _PillarRow(
+                  emoji: '💧',
+                  label: l.water,
+                  value: waterLabel,
+                  pct: waterPct,
+                  color: C.cyan,
+                ),
+                const SizedBox(height: 11),
+                _PillarRow(
+                  emoji: '🍗',
+                  label: l.protein,
+                  value: proteinLabel,
+                  pct: proteinPct,
+                  color: C.orange,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PillarRow extends StatelessWidget {
+  const _PillarRow({
+    required this.emoji,
+    required this.label,
+    required this.value,
+    required this.pct,
+    required this.color,
+  });
+
+  final String emoji;
+  final String label;
+  final String value;
+  final double pct;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context);
+    return Row(
       children: [
-        RingProgress(
-          value: value,
-          color: color,
-          size: 86,
-          stroke: 9,
+        Text(emoji, style: const TextStyle(fontSize: 15)),
+        const SizedBox(width: 8),
+        Expanded(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 15)),
-              Text(top,
-                  style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: color)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(label, style: t.textTheme.labelMedium),
+                  Text(value,
+                      style: t.textTheme.labelMedium
+                          ?.copyWith(fontWeight: FontWeight.w800, color: color)),
+                ],
+              ),
+              const SizedBox(height: 4),
+              BarProgress(value: pct, color: color, height: 6),
             ],
           ),
         ),
-        const SizedBox(height: 6),
-        Text(bottom, style: Theme.of(context).textTheme.labelSmall),
+      ],
+    );
+  }
+}
+
+/// Rotating message of the day. One deterministic quote per date; tapping
+/// cycles to the next one so re-reading the card never gets stale.
+class QuoteCard extends StatefulWidget {
+  const QuoteCard({super.key});
+
+  @override
+  State<QuoteCard> createState() => _QuoteCardState();
+}
+
+class _QuoteCardState extends State<QuoteCard> {
+  int _offset = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final st = context.st;
+    final l = context.l10n;
+    final cfg = st.content.motivation;
+    if (cfg.isEmpty) return const SizedBox.shrink();
+
+    final quote = cfg.quoteFor(DateTime.now(), offset: _offset);
+    if (quote.isEmpty) return const SizedBox.shrink();
+
+    return SectionCard(
+      emoji: '💬',
+      title: cfg.title.isEmpty ? l.quoteTitle : st.t(cfg.title),
+      accent: C.violet,
+      trailing: const Icon(Icons.touch_app_rounded, size: 17, color: C.violet),
+      children: [
+        InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () {
+            HapticFeedback.selectionClick();
+            setState(() => _offset++);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  st.t(quote),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontSize: 14.5, height: 1.7),
+                ),
+                const Gap(6),
+                Text(
+                  '${_offset + 1}/${cfg.quotes.length} · ${l.quoteNext}',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
