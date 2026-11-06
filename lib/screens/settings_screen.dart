@@ -915,10 +915,9 @@ class _PhotosCardState extends State<_PhotosCard> {
             OutlinedButton.icon(
               onPressed: () async {
                 await ExerciseImages.clear();
-                if (mounted) setState(() {});
-                if (context.mounted) {
-                  snack(context, ar ? 'حُذفت الصور' : 'Photos cleared', color: C.amber);
-                }
+                if (!mounted) return;
+                setState(() {});
+                snack(context, ar ? 'حُذفت الصور' : 'Photos cleared', color: C.amber);
               },
               icon: const Icon(Icons.delete_sweep_outlined, size: 18),
               label: Text(ar ? 'حذف' : 'Clear', maxLines: 1, overflow: TextOverflow.ellipsis),

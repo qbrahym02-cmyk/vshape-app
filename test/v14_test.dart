@@ -186,18 +186,24 @@ void main() {
       st = await _boot();
     });
 
-    test('dayScoreToday starts at 0 and rises with real logs', () async {
-      expect(st.dayScoreToday, 0);
+    test('dayScoreToday starts at its baseline and rises with real logs', () async {
+      // A rest day counts the training share (20 points) as met on purpose, so
+      // the expected starting point depends on which weekday the suite runs on -
+      // it used to assume a training day and failed every Friday.
+      final today = st.content.workout.dayForWeekday(DateTime.now().weekday);
+      final restToday = today == null || today.isRest || today.totalSets == 0;
+      final baseline = restToday ? 20 : 0;
+      expect(st.dayScoreToday, baseline);
 
       // Water to 100% of goal: +30.
       await st.addWater(st.content.water.goalMl);
-      expect(st.dayScoreToday, 30);
+      expect(st.dayScoreToday, baseline + 30);
 
       // All routine tasks: +20.
       for (final r in st.content.routine) {
         await st.setTask(r.id, true);
       }
-      expect(st.dayScoreToday, 50);
+      expect(st.dayScoreToday, baseline + 50);
     });
 
     test('achievementCounts sees logged water and unlocks hydration badges', () async {
