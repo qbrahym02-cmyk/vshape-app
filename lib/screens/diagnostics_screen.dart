@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../core/app_state.dart';
 import '../core/native_bridge.dart';
 import '../core/theme.dart';
 import '../services/content_service.dart';
@@ -89,6 +88,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
     final installedCode = (_pkg?['versionCode'] as num?)?.toInt() ?? 0;
     final latestNorm = latest?.normalizedCode ?? 0;
     final hasUpdate = latest != null && latestNorm > _normalizedCurrent;
+    final latestName = latest?.versionName ?? '';
 
     final lines = <String>[
       'V-System diagnostics / تشخيص',
@@ -153,8 +153,8 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                     ? (ar ? 'جاري الفحص…' : 'Checking…')
                     : hasUpdate
                         ? (ar
-                            ? 'فيه نسخة أحدث (${latest?.versionName}) — لازم يظهر الشريط الأخضر.'
-                            : 'A newer version exists (${latest?.versionName}) - the green strip should appear.')
+                            ? 'فيه نسخة أحدث ($latestName) — لازم يظهر الشريط الأخضر.'
+                            : 'A newer version exists ($latestName) - the green strip should appear.')
                         : (ar
                             ? 'أنت على آخر نسخة منشورة 🎉'
                             : 'You are on the latest published version 🎉'),

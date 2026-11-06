@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../core/achievements.dart';
 import '../core/theme.dart';
+import '../screens/achievements_screen.dart';
 import '../screens/diagnostics_screen.dart';
-import '../screens/progress_screen.dart';
 import '../screens/prayer_screen.dart';
 import '../screens/progress_screen.dart';
 import '../screens/report_screen.dart';
