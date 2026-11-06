@@ -60,6 +60,32 @@ class HomeWidget : AppWidgetProvider() {
             }
         }
 
+        /**
+         * Re-renders the widget after [totalMl] became the new water total
+         * (written by a widget button, not by Dart).
+         */
+        fun applyWaterDelta(ctx: Context, totalMl: Int) {
+            val d = AppWidgetStore.load(ctx) ?: return
+            val goal = d.optInt("waterGoalMl", 3750).coerceAtLeast(1)
+            val glass = d.optInt("glassMl", 500).coerceAtLeast(1)
+            d.put("waterMl", totalMl)
+            d.put("waterGoalMl", goal)
+            d.put("glassMl", glass)
+            d.put("waterGlasses", totalMl / glass)
+            d.put("waterPct", (totalMl * 100 / goal).coerceIn(0, 100))
+            d.put("water", String.format(java.util.Locale.US, "%.1f", totalMl / 1000.0))
+            AppWidgetStore.save(ctx, d.toString())
+            updateAll(ctx)
+        }
+
+        private fun pending(ctx: Context, request: Int, delta: Int): PendingIntent {
+            val i = Intent(ctx, WaterActionReceiver::class.java).putExtra("delta", delta)
+            return PendingIntent.getBroadcast(
+                ctx, request, i,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+
         private fun buildViews(ctx: Context, d: JSONObject?): RemoteViews {
             val v = RemoteViews(ctx.packageName, R.layout.widget_vsystem)
             val ar = (d?.optString("lang", "ar") ?: "ar") == "ar"
@@ -115,6 +141,10 @@ class HomeWidget : AppWidgetProvider() {
                 R.id.w_sets,
                 if (rest) s("restLabel", "راحة", "rest") else "$done/$total ${s("labelSets", "مجموعات", "sets")}"
             )
+
+            // one-tap water buttons
+            v.setOnClickPendingIntent(R.id.w_add_250, pending(ctx, 7201, 250))
+            v.setOnClickPendingIntent(R.id.w_add_500, pending(ctx, 7202, 500))
 
             val launch = ctx.packageManager.getLaunchIntentForPackage(ctx.packageName)
             if (launch != null) {

@@ -436,6 +436,10 @@ class FoodConfig {
 class Exercise {
   final String id;
   final Txt name;
+
+  /// Optional remote illustration (content v7). Empty when the exercise has no
+  /// photo yet - the UI then keeps the built-in vector pose.
+  final String image;
   final Txt target;
   final int sets;
   final Txt reps;
@@ -447,6 +451,7 @@ class Exercise {
   Exercise({
     required this.id,
     required this.name,
+    this.image = '',
     required this.target,
     required this.sets,
     required this.reps,
@@ -459,6 +464,7 @@ class Exercise {
   factory Exercise.from(Map<String, dynamic> j) => Exercise(
         id: _s(j['id']),
         name: _txt(j['name']),
+        image: _s(j['image']),
         target: _txt(j['target']),
         sets: _i(j['sets'], 3),
         reps: _txt(j['reps']),

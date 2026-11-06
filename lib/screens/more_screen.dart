@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../core/achievements.dart';
 import '../core/theme.dart';
-import '../screens/achievements_screen.dart';
+import '../screens/diagnostics_screen.dart';
+import '../screens/progress_screen.dart';
 import '../screens/prayer_screen.dart';
 import '../screens/progress_screen.dart';
 import '../screens/report_screen.dart';
@@ -80,6 +81,17 @@ class MoreScreen extends StatelessWidget {
                 : 'Sand and water bottles: how many kg is safe to carry?',
             color: C.amber,
             onTap: () => showBackpackCalc(context),
+          ),
+          const Gap(10),
+          _BigTile(
+            emoji: '🩺',
+            title: st.isArabic ? 'تشخيص التحديث' : 'Update diagnostics',
+            subtitle: st.isArabic
+                ? 'أرقام النسخة والمقارنة والمحتوى والودجت — لو صار أي خلل'
+                : 'Version maths, release, content and widget state in one place',
+            color: C.cyan,
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const DiagnosticsScreen())),
           ),
           const Gap(10),
           _BigTile(

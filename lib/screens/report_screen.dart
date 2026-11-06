@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/plan_math.dart';
 import '../core/theme.dart';
+import '../widgets/adherence_calendar.dart';
 import '../widgets/common.dart';
 import '../widgets/painters.dart';
 import '../widgets/scope.dart';
@@ -103,6 +104,27 @@ class ReportScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          const Gap(16),
+
+          // --------------------------------------------- 90-day calendar --
+          SectionCard(
+            emoji: '🗓️',
+            title: st.isArabic ? 'التزام آخر ٩٠ يوم' : 'Last 90 days',
+            accent: C.green,
+            subtitle: st.isArabic
+                ? 'كل مربع يوم — يغمق كلما كمّلت أكثر (اضغط أي مربع للتفاصيل)'
+                : 'Each square is a day - darker means more done (tap for details)',
+            trailing: Pill(
+              '${st.isArabic ? 'أفضل سلسلة' : 'best'} ${st.bestStreak()}',
+              color: C.amber,
+              icon: Icons.local_fire_department_rounded,
+            ),
+            children: [
+              AdherenceCalendar(days: st.adherence(days: 91)),
+              const Gap(12),
+              const AdherenceLegend(),
+            ],
           ),
           const Gap(16),
 

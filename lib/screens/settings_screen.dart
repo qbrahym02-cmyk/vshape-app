@@ -6,6 +6,7 @@ import '../core/app_state.dart';
 import '../core/native_bridge.dart';
 import '../core/theme.dart';
 import '../services/content_service.dart';
+import '../services/exercise_images.dart';
 import '../services/update_controller.dart';
 import '../services/widget_bridge.dart';
 import '../widgets/common.dart';
@@ -212,6 +213,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
+          const Gap(16),
+
+          // ------------------------------------------------ exercise photos --
+          _PhotosCard(state: st),
           const Gap(16),
 
           // -------------------------------------------------- home widget --
@@ -795,6 +800,137 @@ class _WidgetCard extends StatelessWidget {
               ? 'الودجت يشتغل حتى والتطبيق مغلق، ويتحدّث تلقائياً مع كل ضغطة + مرة كل ساعة تقريباً.'
               : 'The widget keeps working with the app closed, and refreshes on every tap plus roughly once an hour.',
           style: t.textTheme.labelSmall,
+        ),
+      ],
+    );
+  }
+}
+
+/// Exercise photos: on/off, download-all with progress, cache size and clear.
+class _PhotosCard extends StatefulWidget {
+  const _PhotosCard({required this.state});
+  final AppState state;
+
+  @override
+  State<_PhotosCard> createState() => _PhotosCardState();
+}
+
+class _PhotosCardState extends State<_PhotosCard> {
+  bool _busy = false;
+  int _done = 0;
+  int _total = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    ExerciseImages.prime();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final st = widget.state;
+    final ar = st.isArabic;
+    final urls = st.exerciseImageUrls;
+
+    return SectionCard(
+      emoji: '🖼️',
+      title: ar ? 'صور التمارين' : 'Exercise photos',
+      accent: C.violet,
+      subtitle: ar
+          ? 'صور تُنزّل مرة واحدة وتُخزّن — ما تزيد حجم التطبيق'
+          : 'Photos downloaded once and cached - the APK does not grow',
+      children: [
+        SwitchListTile(
+          value: st.photosOn,
+          onChanged: (v) async {
+            await st.setPhotos(v);
+            setState(() {});
+          },
+          contentPadding: EdgeInsets.zero,
+          title: Text(ar ? 'استخدم الصور بدل الرسوم' : 'Use photos instead of drawings',
+              style: Theme.of(context).textTheme.bodyMedium),
+          subtitle: Text(
+            ar
+                ? 'لو ما نزلت الصورة يظهر الرسم فوراً (يشتغل أوفلاين)'
+                : 'If a photo is missing the drawing shows instantly (works offline)',
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+          activeThumbColor: C.violet,
+        ),
+        const Gap(6),
+        FutureBuilder<List<int>>(
+          future: Future.wait([ExerciseImages.cachedCount(), ExerciseImages.cacheSize()]),
+          builder: (context, snap) {
+            final count = snap.data?[0] ?? 0;
+            final bytes = snap.data?[1] ?? 0;
+            return Row(
+              children: [
+                Pill('$count / ${urls.length}', color: C.violet,
+                    icon: Icons.photo_library_outlined),
+                const SizedBox(width: 8),
+                Pill('${(bytes / 1048576).toStringAsFixed(1)} MB', color: C.blue,
+                    icon: Icons.sd_storage_outlined),
+              ],
+            );
+          },
+        ),
+        const Gap(12),
+        if (_busy) ...[
+          BarProgress(value: _total == 0 ? 0 : _done / _total, color: C.violet, height: 8),
+          const Gap(6),
+          Text('$_done / $_total', style: Theme.of(context).textTheme.labelSmall),
+          const Gap(10),
+        ],
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: _busy
+                    ? null
+                    : () async {
+                        setState(() {
+                          _busy = true;
+                          _done = 0;
+                          _total = urls.length;
+                        });
+                        await ExerciseImages.ensureAll(urls, onProgress: (d, t) {
+                          if (mounted) {
+                            setState(() {
+                              _done = d;
+                              _total = t;
+                            });
+                          }
+                        });
+                        if (!mounted) return;
+                        setState(() => _busy = false);
+                        snack(context, ar ? 'تم تنزيل الصور ✅' : 'Photos downloaded ✅',
+                            color: C.violet);
+                      },
+                icon: const Icon(Icons.download_rounded, size: 18),
+                label: Text(ar ? 'تنزيل كل الصور' : 'Download all',
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton.icon(
+              onPressed: () async {
+                await ExerciseImages.clear();
+                if (mounted) setState(() {});
+                if (context.mounted) {
+                  snack(context, ar ? 'حُذفت الصور' : 'Photos cleared', color: C.amber);
+                }
+              },
+              icon: const Icon(Icons.delete_sweep_outlined, size: 18),
+              label: Text(ar ? 'حذف' : 'Clear', maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        ),
+        const Gap(8),
+        Text(
+          ar
+              ? 'الصور تتبع ملف المحتوى: تغيّر رابط الصورة على GitHub فينزّل التطبيق الجديدة.'
+              : 'Photos follow the content file: change a URL on GitHub and the app fetches the new one.',
+          style: Theme.of(context).textTheme.labelSmall,
         ),
       ],
     );

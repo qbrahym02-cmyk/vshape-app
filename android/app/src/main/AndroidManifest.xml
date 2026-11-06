@@ -72,6 +72,11 @@
                 android:resource="@xml/widget_vsystem_info"/>
         </receiver>
 
+        <!-- "+250 / +500 ml" buttons on the home-screen widget -->
+        <receiver
+            android:name=".WaterActionReceiver"
+            android:exported="false" />
+
         <!-- Lets the app hand a downloaded APK to the system installer -->
         <provider
             android:name="androidx.core.content.FileProvider"

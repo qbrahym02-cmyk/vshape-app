@@ -57,6 +57,12 @@ class K {
   /// Bedtime logged for a given morning, as `HH:MM`.
   static String sleep(String d) => 'sl_$d';
 
+  /// Highest streak ever reached.
+  static const bestStreak = 'streak_best';
+
+  /// Use the downloaded exercise photos instead of the built-in vector poses.
+  static const photos = 'photos_on';
+
   /// Morning readiness / DOMS rating, 1..5.
   static String checkin(String d) => 'ci_$d';
 
@@ -859,6 +865,92 @@ class AppState extends ChangeNotifier {
     await _prefs.setBool(K.remindersOn, on);
     notifyListeners();
     await Reminders.apply(this);
+  }
+
+  // ---------------------------------------------------------- adherence ----
+  /// Sessions (training days) completed - or at least half-ticked - on a date.
+  int sessionsOn(String date) {
+    var n = 0;
+    for (final d in _content.workout.days) {
+      if (d.isRest) continue;
+      final flag = _prefs.getBool(K.dayDone(date, d.id)) ?? false;
+      final sets = setsDoneOn(date, d.id);
+      if (flag || (d.totalSets > 0 && sets * 2 >= d.totalSets)) n++;
+    }
+    return n;
+  }
+
+  bool waterHitOn(String date) => waterTotalOn(date) >= _content.water.goalMl;
+
+  /// 0 = nothing recorded, 1 = some activity, 2 = the day counts (streak rule),
+  /// 3 = water goal reached, 4 = water goal **and** a session.
+  /// Drives the 90-day adherence calendar.
+  int dayLevel(String date) {
+    final water = waterTotalOn(date);
+    var sets = 0;
+    for (final d in _content.workout.days) {
+      if (!d.isRest) sets += setsDoneOn(date, d.id);
+    }
+    final tasks = _content.routine
+        .where((r) => _prefs.getBool(K.task(date, r.id)) ?? false)
+        .length;
+
+    if (water == 0 && sets == 0 && tasks == 0) return 0;
+    if (water >= _content.water.goalMl && sessionsOn(date) > 0) return 4;
+    if (water >= _content.water.goalMl) return 3;
+    if (dayCounts(date)) return 2;
+    return 1;
+  }
+
+  /// (date, level) for the last [days] days, oldest first.
+  List<({String date, int level})> adherence({int days = 91}) {
+    final out = <({String date, int level})>[];
+    for (var i = days - 1; i >= 0; i--) {
+      final key = keyFor(DateTime.now().subtract(Duration(days: i)));
+      out.add((date: key, level: dayLevel(key)));
+    }
+    return out;
+  }
+
+  /// Longest run of counted days (also persisted so it survives a missed day).
+  int bestStreak({int days = 400}) {
+    var best = _prefs.getInt(K.bestStreak) ?? 0;
+    var run = 0;
+    for (var i = days - 1; i >= 0; i--) {
+      final key = keyFor(DateTime.now().subtract(Duration(days: i)));
+      if (dayCounts(key)) {
+        run++;
+        if (run > best) best = run;
+      } else if (i > 0) {
+        run = 0;
+      }
+    }
+    final current = streak();
+    return current > best ? current : best;
+  }
+
+  Future<void> noteBestStreak() async {
+    final best = _prefs.getInt(K.bestStreak) ?? 0;
+    final current = streak();
+    if (current > best) await _prefs.setInt(K.bestStreak, current);
+  }
+
+  // ------------------------------------------------------------- photos ----
+  bool get photosOn => _prefs.getBool(K.photos) ?? true;
+  Future<void> setPhotos(bool on) async {
+    await _prefs.setBool(K.photos, on);
+    notifyListeners();
+  }
+
+  /// exercise id -> photo URL, straight from the content file.
+  Map<String, String> get exerciseImageUrls {
+    final map = <String, String>{};
+    for (final d in _content.workout.days) {
+      for (final e in d.exercises) {
+        if (e.image.isNotEmpty) map[e.id] = e.image;
+      }
+    }
+    return map;
   }
 
   /// True when a day "counts": 60% of the water goal **or** any routine task.

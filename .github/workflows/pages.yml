@@ -12,6 +12,7 @@ on:
     branches: [main]
     paths:
       - 'content.json'
+      - 'img/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -37,6 +38,8 @@ jobs:
         run: |
           mkdir -p _site
           cp content.json _site/content.json
+          # exercise photos referenced by content.json (v7+)
+          if [ -d img ]; then cp -r img _site/img; fi
           printf '<!doctype html><meta charset="utf-8"><title>V-System content</title><pre>%s</pre>' \
             "$(cat content.json | head -c 200000)" > _site/index.html
 

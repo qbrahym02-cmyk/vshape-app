@@ -1,6 +1,6 @@
 {
-  "version": 6,
-  "updated_at": "2026-11-01",
+  "version": 7,
+  "updated_at": "2026-09-16",
   "app": {
     "name": {
       "ar": "نظام V",
@@ -774,7 +774,8 @@
             "note": {
               "ar": "هذا التمرين يضرب الكتف الأمامي بشدة وهو أساس الـ V.",
               "en": "This hammers the front delt and is a cornerstone of the V."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/pike_pushup.jpg"
           },
           {
             "id": "wide_pushup",
@@ -808,7 +809,8 @@
             "note": {
               "ar": "النزول البطيء هو سر التضخيم بدون أوزان.",
               "en": "The slow descent is the secret of growth without weights."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/wide_pushup.jpg"
           },
           {
             "id": "bag_floor_press",
@@ -842,7 +844,8 @@
             "note": {
               "ar": "«حتى الفشل» = آخر تكرارين يكونان بصعوبة شديدة مع الحفاظ على الشكل.",
               "en": "'To failure' = your last two reps are a real grind, but form stays clean."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bag_floor_press.jpg"
           },
           {
             "id": "chair_dips",
@@ -876,7 +879,8 @@
             "note": {
               "ar": "تأكد أن الكرسي لن ينزلق — اسنده بالحائط.",
               "en": "Make sure the chair can't slide - brace it against a wall."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/chair_dips.jpg"
           }
         ]
       },
@@ -928,7 +932,8 @@
             "note": {
               "ar": "هذا هو بديل العقلة، وهو يبني عرض الظهر بشكل مذهل.",
               "en": "This is your pull-up substitute and it builds back width amazingly."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/table_row.jpg"
           },
           {
             "id": "bag_row",
@@ -962,7 +967,8 @@
             "note": {
               "ar": "السحب نحو الجيب هو اللي يشغّل اللاتس فعلياً.",
               "en": "Pulling to the hip is what actually fires the lats."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bag_row.jpg"
           },
           {
             "id": "doorframe_pull",
@@ -996,7 +1002,8 @@
             "note": {
               "ar": "آمن تماماً وممتاز كإحماء أو إنهاء لليوم.",
               "en": "Perfectly safe and great as a warm-up or finisher."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/doorframe_pull.jpg"
           },
           {
             "id": "bag_curl",
@@ -1030,7 +1037,8 @@
             "note": {
               "ar": "لا تتأرجح بالجسم — التحكم أهم من الوزن.",
               "en": "Don't swing your body - control beats weight."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bag_curl.jpg"
           }
         ]
       },
@@ -1080,7 +1088,8 @@
             "note": {
               "ar": "تمرين الأرجل يفرز التستوستيرون الذي يكبّر النصف العلوي كله.",
               "en": "Leg work releases the testosterone that grows your whole upper body."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/goblet_squat.jpg"
           },
           {
             "id": "bulgarian_split",
@@ -1114,7 +1123,8 @@
             "note": {
               "ar": "هذا التمرين يبني أفخاذاً حديدية — لا تتخطاه لأنه صعب.",
               "en": "This builds iron thighs - don't skip it because it hurts."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bulgarian_split.jpg"
           },
           {
             "id": "bag_rdl",
@@ -1148,7 +1158,8 @@
             "note": {
               "ar": "لو انقوس ظهرك، خفّف الوزن فوراً.",
               "en": "If your back rounds, lighten the load immediately."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bag_rdl.jpg"
           },
           {
             "id": "leg_raise",
@@ -1182,7 +1193,8 @@
             "note": {
               "ar": "لا تدفع بأسفل ظهرك — البطن هو اللي يشتغل.",
               "en": "Don't arch your lower back - the abs do the work."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/leg_raise.jpg"
           }
         ]
       },
@@ -1265,7 +1277,8 @@
             "note": {
               "ar": "سجّل عدد التكرارات — هذا مؤشر تقدمك الأساسي.",
               "en": "Log your reps - this is your main progress KPI."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/table_row2.jpg"
           },
           {
             "id": "lateral_raise",
@@ -1299,7 +1312,8 @@
             "note": {
               "ar": "هذا التمرين هو المسؤول الأول عن عرض الكتف. ٥ مجموعات إلزامية.",
               "en": "This exercise is the #1 driver of shoulder width. 5 sets, non-negotiable."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/lateral_raise.jpg"
           },
           {
             "id": "bag_ohp",
@@ -1333,7 +1347,8 @@
             "note": {
               "ar": "لو ثقل كثيراً، استخدم قارورتين ماء بدل الحقيبة.",
               "en": "Too heavy? Use two water bottles instead."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bag_ohp.jpg"
           },
           {
             "id": "superman",
@@ -1367,7 +1382,8 @@
             "note": {
               "ar": "مهم جداً لطولك: يصلح تقوس الظهر فيظهر الطول الحقيقي.",
               "en": "Crucial at your height: it fixes a rounded back so your real height shows."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/superman.jpg"
           }
         ]
       },
@@ -1417,7 +1433,8 @@
             "note": {
               "ar": "لو صعب، افعلها على ركبتيك — الأهم هو الفشل العضلي.",
               "en": "Too hard? Do them from your knees - reaching failure is what matters."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/diamond_pushup.jpg"
           },
           {
             "id": "bag_curl2",
@@ -1451,7 +1468,8 @@
             "note": {
               "ar": "في آخر تكرارين، اعصر البايسبس ثانية كاملة في الأعلى.",
               "en": "On the last two reps, squeeze a full second at the top."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/bag_curl2.jpg"
           },
           {
             "id": "reverse_angels",
@@ -1485,7 +1503,8 @@
             "note": {
               "ar": "يضرب الكتف الخلفي ويصلح تقوس الظهر — لا تهمله.",
               "en": "Hits the rear delt and fixes rounded shoulders - don't skip it."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/reverse_angels.jpg"
           },
           {
             "id": "plank",
@@ -1519,7 +1538,8 @@
             "note": {
               "ar": "لو ٦٠ ثانية صعبة، ابدأ بـ٣٠ وزد ٥ ثوانٍ كل أسبوع.",
               "en": "If 60 s is too much, start at 30 s and add 5 s per week."
-            }
+            },
+            "image": "https://qbrahym02-cmyk.github.io/vshape-app/img/exercises/plank.jpg"
           }
         ]
       },

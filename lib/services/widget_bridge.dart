@@ -16,6 +16,10 @@ class WidgetData {
   final int waterMl;
   final int waterGoalMl;
   final int waterGlasses;
+
+  /// Size of one glass - the widget buttons (+250/+500) use it to recompute the
+  /// glass count after writing the new total.
+  final int glassMl;
   final int proteinG;
   final int proteinGoalG;
   final int kcal;
@@ -40,6 +44,7 @@ class WidgetData {
     required this.waterMl,
     required this.waterGoalMl,
     required this.waterGlasses,
+    required this.glassMl,
     required this.proteinG,
     required this.proteinGoalG,
     required this.kcal,
@@ -90,6 +95,7 @@ class WidgetData {
       waterMl: water,
       waterGoalMl: st.content.water.goalMl,
       waterGlasses: (water / glass).floor(),
+      glassMl: glass,
       proteinG: st.proteinEaten(),
       proteinGoalG: st.content.food.proteinTarget,
       kcal: st.kcalEaten(),
@@ -114,6 +120,11 @@ class WidgetData {
     final ar = arabic;
     String l(String a, String e) => ar ? a : e;
     return <String, dynamic>{
+      // numeric fields: the water buttons live in Kotlin and must recompute the
+      // total without asking Dart.
+      'waterMl': waterMl,
+      'waterGoalMl': waterGoalMl,
+      'glassMl': glassMl,
       'water': (waterMl / 1000).toStringAsFixed(1),
       'waterGoal': (waterGoalMl / 1000).toStringAsFixed(1),
       'waterUnit': l('لتر', 'L'),

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../core/models.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
-import '../widgets/exercise_art.dart';
+import '../widgets/exercise_media.dart';
 import '../widgets/rest_timer.dart';
 import '../widgets/scope.dart';
 
@@ -190,8 +190,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ExerciseArt(
+            ExerciseMedia(
               exerciseId: ex.id,
+              imageUrl: ex.image,
               size: 58,
               color: complete ? C.green : C.violet,
             ),
@@ -282,8 +283,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ExerciseArt(
+                            ExerciseMedia(
                               exerciseId: ex.id,
+                              imageUrl: ex.image,
                               size: 92,
                               color: C.violet,
                               showFrame: false,
